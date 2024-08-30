@@ -1,10 +1,1105 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[长脑子了]]></title><description><![CDATA[Obsidian digital garden]]></description><link>http://github.com/dylang/node-rss</link><image><url>lib\media\favicon.png</url><title>长脑子了</title><link></link></image><generator>Webpage HTML Export plugin for Obsidian</generator><lastBuildDate>Sun, 07 Jul 2024 04:30:18 GMT</lastBuildDate><atom:link href="lib\rss.xml" rel="self" type="application/rss+xml"/><pubDate>Sun, 07 Jul 2024 04:30:06 GMT</pubDate><ttl>60</ttl><dc:creator></dc:creator><item><title><![CDATA[从简单词Good开始]]></title><description><![CDATA[ 
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[长脑子了]]></title><description><![CDATA[Obsidian digital garden]]></description><link>http://github.com/dylang/node-rss</link><image><url>lib\media\favicon.png</url><title>长脑子了</title><link/></image><generator>Webpage HTML Export plugin for Obsidian</generator><lastBuildDate>Fri, 30 Aug 2024 07:39:48 GMT</lastBuildDate><atom:link href="lib\rss.xml" rel="self" type="application/rss+xml"/><pubDate>Fri, 30 Aug 2024 07:39:42 GMT</pubDate><ttl>60</ttl><dc:creator/><item><title><![CDATA[输入文件]]></title><description><![CDATA[ 
+ <br><br>只需要准备一个 csv 格式文件，第一列可不要，其他列名必须是：Haplotype 和classification<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202407051514129.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>classification 的内容是对群体的分类，比如南北等<br><br>
+<br>更改文件路径<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202407051522328.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>haplotype_input_file：填入准备的原始单倍群输入文件路径<br>
+processed_file：计算的累加频率的中间文件路径，需要更改，但文件本身会删掉<br>
+cumulative_file：计算的各级单倍群的累加频率文件<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202407051523298.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>manhattan_output_file：指定群体的曼哈顿图频率差值结果<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202407051523089.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>
+运行代码，填入需要计算的群体<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202407051525736.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+输入的依次是减数和被减数，每次输入后按回车即可
+
+<br>
+得到曼哈顿图结果<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202407051526367.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br><br>import pandas as pd
+import os 
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib import rcParams
+from adjustText import adjust_text
+
+# 定义文件路径
+haplotype_input_file = 'C:/Users/LuzHu/Desktop/所有群体原始单倍群.csv'  # 请替换为你的原始单倍群输入文件路径
+processed_file = 'C:/Users/LuzHu/Desktop/PROCE.csv'
+cumulative_file = 'C:/Users/LuzHu/Desktop/所有群体各级频率总表.csv'  # 请替换为分级单倍群频率输出文件路径
+manhattan_input_file = cumulative_file  # 使用第一个代码生成的累加频率文件
+manhattan_output_file = 'C:/Users/LuzHu/Desktop/曼哈顿图频率.csv'  # 指定群体的曼哈顿图频率差值结果
+
+# 代码1：生成各级不同分类下的各级单倍群频率
+def process_haplotype_data(input_file, output_file, cumulative_file_path):
+    # 读取原始数据
+    data = pd.read_csv(input_file)
+
+    # 计算每个区域内的每个Haplotype的数量
+    haplogroup_counts = data.groupby(['Haplotype', 'classification']).size().reset_index(name='count')
+
+    # 创建数据透视表，将Haplotype作为行，区域作为列
+    haplogroup_pivot = haplogroup_counts.pivot(index='Haplotype', columns='classification', values='count').fillna(0)
+
+    # 计算每个区域内每个Haplotype的频率
+    haplogroup_pivot = haplogroup_pivot.div(haplogroup_pivot.sum(axis=0), axis=1) * 100
+
+    # 提取Haplotype列表并处理
+    haplogroups = data['Haplotype'].tolist()
+    processed_haplogroups = []
+
+    # 按规则处理Haplotype
+    for haplogroup in haplogroups:
+        processed_haplogroups.append(haplogroup)
+        while len(haplogroup) &gt; 1:
+            haplogroup = haplogroup[:-1]
+            processed_haplogroups.append(haplogroup)
+
+    # 去重并排序
+    unique_processed_haplogroups = sorted(set(processed_haplogroups))
+
+    # 创建包含处理后Haplotype的新DataFrame
+    final_df = pd.DataFrame(unique_processed_haplogroups, columns=['Haplotype'])
+
+    # 合并最终DataFrame和Haplotype频率DataFrame
+    proce_df = final_df.merge(haplogroup_pivot, how='left', left_on='Haplotype', right_index=True).fillna(0)
+
+    # 将结果保存到CSV文件
+    proce_df.to_csv(output_file, index=False)
+
+    # 清理数据类型
+    df_cleaned = pd.read_csv(output_file)
+    df_cleaned.iloc[:, 1:] = df_cleaned.iloc[:, 1:].apply(pd.to_numeric, errors='coerce').fillna(0)
+
+    # 获取Haplotype列表
+    haplogroups = df_cleaned['Haplotype'].tolist()
+
+    # 初始化累加频率字典
+    cumulative_freq = {col: {hg: 0 for hg in haplogroups} for col in df_cleaned.columns[1:]}
+
+    # 定义检查Haplotype是否是另一个Haplotype下级的函数
+    def is_descendant(parent, child):
+        return child.startswith(parent) and len(child) &gt; len(parent)
+
+    # 缓存 is_descendant 结果
+    descendant_cache = {}
+
+    for parent in haplogroups:
+        # 先处理 parent 自身的数据
+        for col in df_cleaned.columns[1:]:
+            if not df_cleaned.loc[df_cleaned['Haplotype'] == parent, col].empty:
+                cumulative_freq[col][parent] += df_cleaned.loc[df_cleaned['Haplotype'] == parent, col].values[0]
+
+        for child in haplogroups:
+            if (parent, child) not in descendant_cache:
+                descendant_cache[(parent, child)] = is_descendant(parent, child)
+            if descendant_cache[(parent, child)]:
+                for col in df_cleaned.columns[1:]:
+                    if not df_cleaned.loc[df_cleaned['Haplotype'] == child, col].empty:
+                        cumulative_freq[col][parent] += df_cleaned.loc[df_cleaned['Haplotype'] == child, col].values[0]
+
+    # 创建存储累加频率的新DataFrame
+    cumulative_df = pd.DataFrame(cumulative_freq).reset_index()
+    cumulative_df.rename(columns={'index': 'Haplotype'}, inplace=True)
+
+    # 将所有数值除以100
+    cumulative_df.iloc[:, 1:] = cumulative_df.iloc[:, 1:] / 100
+
+    # 保存累加频率到新文件
+    cumulative_df.to_csv(cumulative_file_path, index=False)
+    # 删除PROCE.csv
+    os.remove(output_file)
+    print("一个不需要的文件已经被删除了;\n累加后的文件路径：", cumulative_file_path)
+    
+    return cumulative_file_path
+
+# 代码2部分
+def data_transformation(input_file, output_file):
+    # 读取输入文件
+    df_input = pd.read_csv(input_file)
+
+    # 创建输出文件的数据框架
+    df_output = pd.DataFrame()
+
+    # 第1列：SNP
+    df_output['SNP'] = df_input.iloc[:, 0]
+
+    # 第2列：CHR
+    df_output['CHR'] = df_output['SNP'].str[0]
+
+    # 第3列：POS
+    df_output['POS'] = range(1, len(df_output) + 1)
+
+    # 打印列名供用户选择
+    print("可计算频率的群体列名如下：")
+    print(df_input.columns)
+
+    # 交互式输入被减数列名
+    first_group_col = input("请输入第一个群体分类（被减数，输入列名）：")
+
+    # 交互式输入减数列名
+    second_group_col = input("请输入第二个群体分类（减数，输入列名）：")
+
+    # 计算差值并填入第四列
+    df_output['P'] = df_input[first_group_col] - df_input[second_group_col]
+
+    # 保存结果到输出文件
+    df_output.to_csv(output_file, index=False)
+
+    print("该曼哈顿图的频率差值文件已保存，文件路径：", manhattan_output_file)
+    return output_file, first_group_col, second_group_col
+
+def plot_manhattan(file_path, title):
+    # 设置字体类型
+    rcParams['pdf.fonttype'] = 42
+    rcParams['ps.fonttype'] = 42
+
+    # 读取数据
+    mydata = pd.read_csv(file_path)
+
+    # 提取绘图所需数据列
+    chrom = mydata['CHR']
+    pos = mydata['POS']
+    pval = mydata['P']
+    snp = mydata['SNP']
+
+    # 设置颜色和形状
+    colors = ['#EA1F1F', '#E88421', '#E5C923', '#ded82d', '#9DEF1B', '#42D726',
+              '#449657', '#4CCCB3', '#369BA8', '#2B7EBC', '#3626D1', '#A128CE', '#999999']
+    shapes = ['o', 's', '^', 'D', 'v', '&lt;', '&gt;', 'p', '*', 'H', '+', 'x', 'd']
+
+    # 设置阈值
+    thresholds = [-0.05, 0.05]
+
+    # 计算每个染色体的SNP数量和位置信息
+    chrom_info = mydata.groupby('CHR')['POS'].agg(['min', 'max', 'count']).reset_index()
+    chrom_info['width'] = chrom_info['max'] - chrom_info['min']
+
+    # 绘制曼哈顿图
+    plt.figure(figsize=(15, 5))
+
+    # 分配每个染色体的X轴位置，避免重叠
+    chrom_mapping = {}
+    current_position = 0
+
+    for _, row in chrom_info.iterrows():
+        chrom = row['CHR']
+        width = row['width']
+        chrom_mapping[chrom] = current_position + width / 2
+        current_position += width + 10  # 加上间隔避免重叠
+
+    # 绘制点
+    texts = []
+    for chrom in chrom_mapping:
+        group = mydata[mydata['CHR'] == chrom]
+        x_base = chrom_mapping[chrom]
+        x_positions = group['POS'] + (x_base - group['POS'].mean())  # 调整x位置使其分布在染色体中心
+        y_positions = group['P']
+        color = colors[list(chrom_mapping.keys()).index(chrom) % len(colors)]
+        shape = shapes[list(chrom_mapping.keys()).index(chrom) % len(shapes)]
+        plt.scatter(x_positions, y_positions, color=color, s=10, marker=shape)
+
+        # 标记超过阈值的点并添加文字标签
+        for (x, y, (_, row)) in zip(x_positions, y_positions, group.iterrows()):
+            if row['P'] &lt; thresholds[0] or row['P'] &gt; thresholds[1]:
+                text = plt.text(x, y, row['SNP'], fontsize=8, ha='right')
+                texts.append(text)
+
+    # 添加阈值线
+    plt.axhline(y=thresholds[0], color='#999999', linestyle='--')
+    plt.axhline(y=thresholds[1], color='#999999', linestyle='--')
+
+    # 自动调整Y轴范围
+    plt.ylim(pval.min() - 0.1, pval.max() + 0.1)
+
+    # 调整文本位置以避免重叠并添加指向的线段
+    adjust_text(texts, 
+                arrowprops=dict(arrowstyle='-&gt;', color='gray', lw=0.5, shrinkA=5),
+                expand_text=(1.5, 1.5),
+                expand_objects=(1.5, 1.5),
+                force_text=(0.5, 0.5),
+                force_objects=(0.5, 0.5),
+                only_move={'points':'y', 'text':'xy'})
+
+    # 设置X轴刻度和标签
+    plt.xticks(ticks=[chrom_mapping[chrom] for chrom in chrom_mapping], labels=chrom_mapping.keys())
+    plt.xlabel('Haplogroup')
+    plt.ylabel('Frequency')
+    plt.title(title)
+
+    # 显示图像
+    plt.show()
+
+if __name__ == "__main__":
+    # 处理Haplotype数据并生成累加频率文件
+    cumulative_file = process_haplotype_data(haplotype_input_file, processed_file, cumulative_file)
+
+    # 曼哈顿图绘制部分
+    # 数据转换并生成曼哈顿图输入文件
+    manhattan_output_file, first_group_col, second_group_col = data_transformation(cumulative_file, manhattan_output_file)
+
+    # 使用生成的输出文件绘图，并设置图的标题为“列名1-列名2”
+    plot_title = f"{first_group_col} - {second_group_col}"
+    plot_manhattan(manhattan_output_file, plot_title)
+
+复制]]></description><link>软件操作\分析软件\从单倍群频率一键出曼哈顿图.html</link><guid isPermaLink="false">软件操作/分析软件/从单倍群频率一键出曼哈顿图.md</guid><pubDate>Fri, 05 Jul 2024 07:26:30 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202407051514129.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202407051514129.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[1 数据准备]]></title><description><![CDATA[ 
+ <br><br>
+<br>
+整理不同单倍群的模版文件，单倍群取4级，分组为省，都不能重复（要去重）。<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404021614755.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+整理数据文件，以备填写各省市频率，不能去重，有表头<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404021615242.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+转换成对应文件格式，csv和txt<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404021619836.png" referrerpolicy="no-referrer" style="width: 275px; max-width: 100%;">
+
+<br>
+使用py脚本，得出结果<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404021616997.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+将结果转换为xlsx<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404021751176.png" referrerpolicy="no-referrer" style="width: 675px; max-width: 100%;">
+
+<br>转置，使单倍群在上，省在左，并加上一列省的中文名，需要与将要使用的省面的字段信息保持一致。再次转换为csv，Arcgis才能识别。<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404021752340.png" referrerpolicy="no-referrer" style="width: 1550px; max-width: 100%;"><br><br>
+<br>
+打开Arcgis，点击新建新建空白地图<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404021756770.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+不断通过右键图层添加图形或数据/窗口-目录。<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404021757124.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404021758759.png" referrerpolicy="no-referrer" style="width: 925px; max-width: 100%;"><br>
+<br>
+先连接一下文件夹，然后之后使用的时候只在文件夹连接里找就可以了。需要的是国界和省面，以及单倍群csv数据。<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404021801788.png" referrerpolicy="no-referrer" style="width: 625px; max-width: 100%;">
+
+<br>
+现在需要连接省面和数据。<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404021802791.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>关于选什么字段，可以右键省面-属性中查看，确定后按如下选择<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404021803116.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>确定验证结果时候和自己的表一致<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404021804438.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>不一致需要按属性中的字段修改，一致则下一步<br>
+<br>右键省面-属性-符号系统-数量，按情况修改，最好选一个色系，更好区分<br>
+<img alt="477fe0d371b40af74acdcd172f2b419.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404021806089.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>得出结果，出现了缺口，可以重加一个省面图层<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404021807755.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>加省面后<br>
+<img alt="e60988a3c1fc71933f2cfbfcf3fbecd.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404021807805.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>添加图注，切换到布局视图<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404021955139.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>在插入中加入所需要的东西<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404021956689.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>点击图例后，不用修改什么<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404021957828.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>注意与刚开始画的单倍群一直<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404022022515.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>设置默认即可<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404022023602.png" referrerpolicy="no-referrer" style="width: 750px; max-width: 100%;"><br>结果<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404022024331.png" referrerpolicy="no-referrer" style="width: 450px; max-width: 100%;"><br>为何会得到大于 1.0 或小于 -1.0 的 Moran's I 指数？<br>
+通常，Global Moran's I 指数介于 -1.0 到 1.0 之间。只有对权重进行了行标准化时才会这样。如果未对权重进行行标准化处理，则指数值可能会落在 -1.0 到 1.0 的范围之外，这表示参数设置有问题  <br>何时采用全局莫兰指数（Global Moran's I），何时采用局部莫兰指数（Local Moran's I），以及，两者有何区别？<br>
+莫兰指数分为全局莫兰指数（Global Moran's I）和局部莫兰指数（Local Moran's I），前者是Patrick Alfred Pierce Moran于1950年提出，用来衡量空间自相关程度的度量；后者是美国亚利桑那州立大学地理与规划学院院长 Luc Anselin 教授在1995年提出的。<br>
+通常情况，先做一个地区的全局指数，全局指数只是告诉我们空间是否出现了集聚或异常值，但并没有告诉我们在哪里出现。换句话说全局Moran'I只回答Yes还是NO；如果全局有自相关出现，接着做局部自相关；局部Moran'I会告诉我们哪里出现了异常值或者哪里出现了集聚，是一个回答Where的工具<br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404022015241.png" referrerpolicy="no-referrer" style="width: 525px; max-width: 100%;"><br>结果在文档-Arcgis的一个html文件<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404022016077.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>打开可以看到<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404022016208.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404022016596.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>解读方法：<br>
+<br>当Z-score值&gt;2.58时则随机产生此高聚类&nbsp;模式的可能性要&lt;1%,即GPD分布具有一定的空间集聚性
+<br>空间自相关工具返回五个值：Moran's I 指数、预期指数、方差、z 得分及 p 值。
+<br>在给定一组要素及相关属性的情况下，该工具评估所表达的模式是聚类模式、离散模式还是随机模式。使用 z 得分或 p 值指示统计显著性时，如果 Moran's I 指数值为正则指示聚类趋势，如果 Moran's I 指数值为负则指示离散趋势。
+<br><br>插入-数据框，然后就可以在数据框中重复上述操作，然后导出两个在一起的结果<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404022100080.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>部分图层可以直接复制粘贴，然后还要修改图例等，暂时先这样<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404022118049.png" referrerpolicy="no-referrer" style="width: 575px; max-width: 100%;">]]></description><link>软件操作\分析软件\单倍群频率地图+热点地图.html</link><guid isPermaLink="false">软件操作/分析软件/单倍群频率地图+热点地图.md</guid><pubDate>Thu, 30 May 2024 05:50:04 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404021614755.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404021614755.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[计算每级单倍群频率]]></title><description><![CDATA[ 
+ <br><br>
+<br>
+准备好原始的单倍群数据和群体分组（数量大于 20 的研究群体）的结果，要有表头，用于之后数据透视表筛选<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405300904806.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+建议从 1 级开始取，获得收拢到上级的单倍群<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405300906361.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405300907548.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>全选数据（而不是全选 A\B\C 列），在插入-数据透视表-表格和区域，数据表就建在当前表中就行<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405300911213.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>分别拖动字段<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405300912581.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>调整值显示方式<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405300913621.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>结果就有了<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405300913617.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>进行下一级统计的时候，直接在前插入一行<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405300915542.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>鼠标放到数据表区域，点击右键，然后刷新一下，就可以得到新的字段，重复之前的操作就可以了<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405300918287.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>获得的所有结果依次粘贴到一个 excel 表格中，1 级在前，下游依次在后<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405300920109.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>进行转置，让单倍群在左，群体在上<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405300922011.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>
+<br>
+这是单倍群 A-Z排序的结果，重复的时候第一个应该是需要的（频率最高），其他的则应该删除。选中第一列，使用条件格式-突出-重复值则可以高亮。在B列新建一列<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405222256425.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+使用公式标记第一次出现的值，在 B 2 中输入以下公式，表示，如果A2单元格中的值在A列中第一次出现，则返回1，否则返回0。
+
+<br>=IF(COUNTIF($A$2:A2,A2)=1,1,0)
+复制<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405222258451.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>再次筛选为 0 的值，删除即可，剩下的都是需要的单倍群<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405300923010.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+]]></description><link>软件操作\分析软件\单倍群频率计算与排序（数据透视表）.html</link><guid isPermaLink="false">软件操作/分析软件/单倍群频率计算与排序（数据透视表）.md</guid><pubDate>Thu, 30 May 2024 01:27:36 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405300904806.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405300904806.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[单倍群频率热图]]></title><description><![CDATA[ 
+ <br>
+<br>
+输入文件是地区与频率<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404022236040.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+用Fst脚本就可以，一般来说去掉group文件<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404022237308.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+结果<br>
+<img alt="21a6ece13cd9fc44172559af017b887.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404022237094.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>有些频率太低了，需要修改图例频率范围，如上图是修改到0-0.5，根据自己的情况也可以修改其他的，如下图0-0.1；<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404030845567.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>频率差别太大，所以可以分开跑，用不同的颜色会更好看一些。<br>
+这是高频的放在一起<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404030846158.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>这是低频的放在一起<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404030847115.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>但是这样的话，有两个问题：1. 省的顺序不一样，就没办法直接拼在一起；2.发育树会影响放在一起。可以通过改变一下代码实现<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404030855797.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+cluster_rows如果选择设置为FALSE，那么行将按照数据框mydata中的顺序排列<br>
+cluster_cols参数设置为FALSE，这样就不会在列（单倍群）上进行聚类，也不会显示树状图。<br>
+结果如下<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404030906803.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404030906895.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>然后放在一起<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404030914800.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">]]></description><link>软件操作\分析软件\单倍群频率热图.html</link><guid isPermaLink="false">软件操作/分析软件/单倍群频率热图.md</guid><pubDate>Wed, 12 Jun 2024 13:11:21 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404022236040.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404022236040.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[Dem 文件简介]]></title><description><![CDATA[ 
+ <br><br><br>高程数据是指地表高度的测量数据。它们可以表示地球表面的高度变化，通常以数值的形式表示。高程数据可以通过各种方式获取，例如地形测量、卫星遥感和激光雷达（LiDAR）。<br><br>数字高程模型（DEM）是一种数字化的地形表示方法，它使用一系列规则的网格点来描述地球表面的高度。DEM文件包含了这些网格点的高程数据，通常以栅格（raster）的形式存储。每个栅格单元代表地表的一个区域，并包含该区域的平均高度值。<br>
+DEM文件通常有以下几种格式：<br>
+<br>GeoTIFF：一种常见的栅格格式，具有地理空间参考信息。
+<br>ESRI ASCII Grid：一种文本格式，适用于简单的数据交换。
+<br>DTED（Digital Terrain Elevation Data）：一种由美国国防部标准化的格式。
+<br><br>
+<br>
+网站<a data-tooltip-position="top" aria-label="https://earthexplorer.usgs.gov/" rel="noopener" class="external-link" href="https://earthexplorer.usgs.gov/" target="_blank">EarthExplorer (usgs.gov)</a>
+
+<br>
+注册才能下载，先注册；填写好所有的，验证邮箱就可以登录，回到界面<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406271516298.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+根据研究区域选择范围，可以直接用地图勾选<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406271552452.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406271552414.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>点击 Data sets<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406271715532.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>选择常用的 dem 文件：SRTM (Shuttle Radar Topography Mission) 1 Arc-Second Global：提供全球范围内1弧秒分辨率的高程数据。<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406271533124.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>得到结果，手动加入批量下载<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406271701431.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>点击商品篮<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406271727307.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406271728259.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406271728214.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406271729013.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406271730758.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>设置好文件过后，就可以点击开始下载<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406271730058.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406271706143.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>点击开启下载<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406271706830.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>选择下载的位置<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406271708740.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>保存更改<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406271708926.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406271709586.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>1.导入文件<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406271740321.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406271738904.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">]]></description><link>软件操作\分析软件\高程数据下载.html</link><guid isPermaLink="false">软件操作/分析软件/高程数据下载.md</guid><pubDate>Thu, 27 Jun 2024 10:01:44 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406271516298.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406271516298.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[输入文件]]></title><description><![CDATA[ 
+ <br><br>csv 文件，共四列<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202407031700015.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>SNP 和 CHR列：单倍群名字，CHR 列以宏单倍群命名<br>
+POS：每一个数字都要不一样，以保证图标的位置不重叠<br>
+P：单倍群频率差值，留下正负<br><br>使用代码 曼哈顿图.R<br># 安装CMplot包
+# install.packages("CMplot")
+# 安装qqman包
+# install.packages("qqman")
+
+# 设置工作目录为桌面路径
+setwd("C:/Users/LuzHu/Desktop/")
+# 加载qqman包
+library(qqman)
+# 加载CMplot包
+library(CMplot)
+
+# 读取数据文件，包含列名
+mydata &lt;- read.csv("All_南北频率差值.csv", header = TRUE)
+
+# 定义输出文件路径和名称
+output_path &lt;- "C:/Users/LuzHu/Desktop/"
+output_file &lt;- "1.pdf"
+output_full_path &lt;- file.path(output_path, output_file)
+
+# 设置PDF绘图设备
+pdf(file = output_full_path, width = 10, height = 5)
+
+
+# 使用CMplot绘制曼哈顿图
+CMplot(mydata,
+       plot.type="m",          # 图类型 "d"（密度图）, "c"（累计图）, "m"（曼哈顿图）, "q"（Q-Q图）, "b"（基本图）
+       cex=1.0,                # 点的大小
+       pch=16,                 # 点的形状
+       r=0.4,                  # 半径（用于圆形曼哈顿图）
+       threshold=c(-0.05,0.05),       # 阈值，设置为0.1
+       # col=c("#556B2F","#4DBBD5B2","#80C342","#A945FF","#326397","#11A4C8","#7E277C","#F8941E","#00FFFF","#FF1493","#FF0000","#556B2F","#8B0000","#8B7500","#FFFF00","#4DBBD5B2","#3C5488B2","#F39B7FB2","#91D1C2B2","#7E6148B2","#A4A4A4","#D3D3D3","#00A087B2","#8C2A1C","#00FA9A","#63C2C5","#725DA8","#FF8C00","#0000FF","#FF00FF","#00BFFF","#BFF217"), # 不同染色体的颜色集合
+       # # cir.chr.h=1.5,          # 圆形曼哈顿图中染色体的高度
+       col=c('#EA1F1F', '#E88421', '#E5C923','#ded82d','#9DEF1B','#42D726','#449657','#4CCCB3','#369BA8','#2B7EBC','#3626D1','#A128CE','#999999'), # 不同染色体的颜色集合
+       amplify=TRUE,           # 是否放大超出阈值的点
+       threshold.lty=c(2),     # 阈值线的线型
+       threshold.col=c("#999999"), # 阈值线的颜色
+       signal.cex=1.0,         # 信号点的大小
+       signal.pch=17,          # 信号点的形状
+       signal.line=1,          # 信号线的宽度
+       signal.col=c("#EA1F1F"),    # 信号点的颜色
+       # chr.den.col=c("darkgreen","yellow","red"), # 染色体密度的颜色
+       bin.size=1e6,           # 染色体密度计算的bin大小
+       outward=FALSE,          # 是否绘制外向的圆形曼哈顿图
+       file.output=FALSE,      # 不让CMplot函数自己保存文件
+       verbose=FALSE,          # 是否显示详细信息
+       LOG10=FALSE,            # 是否使用-log10转换P值
+       ylim=c(-0.3, 0.1) )      # 设置Y轴范围
+
+# 关闭PDF绘图设备
+dev.off()
+复制<br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202407041545473.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>需要在 AI 中进行修饰]]></description><link>软件操作\分析软件\曼哈顿图绘制.html</link><guid isPermaLink="false">软件操作/分析软件/曼哈顿图绘制.md</guid><pubDate>Thu, 04 Jul 2024 07:45:45 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202407031700015.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202407031700015.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[准备数据]]></title><description><![CDATA[ 
+ <br><br>
+<br>
+在魔方中搜索目标单倍群，例如O1b1a1a1a1b；但是发现只有下游的<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406132146663.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+现在选择 ISOGG 中最近的下游， O1b1a1a1a1b1a1<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406132149418.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>对应魔方的位点是O-FGC19713，单倍群为O1a2b1b1a1a1a1a1，单倍群为16级<br>
+<br>找到魔方16级单倍群对应的频率表，查找 O1a2b1b1a1a1a1a1<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406132207062.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>粘贴到准备的相关性图模版中<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406132209426.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>输入文件长这样<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406132218469.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br><br>
+<br>安装对应的包，修改输入文件路径，<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406132231126.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>注意不要存在明明表格没有内容，但是占用了空格的情况，否则会报错<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406132230723.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>这部分代码要设置成 True 才能显示置信区间<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406140908465.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>画出的结果保存<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406140914170.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br><br># 加载所需的包
+library(httpgd)
+library(ggplot2)
+library(ggpubr)
+library(ggExtra)
+
+# 加载数据，不使用row.names参数
+data &lt;- read.csv("C:/Users/LuzHu/Desktop/O1a2b1b1a1a1a1a1_经纬度相关性.csv", header = TRUE, row.names = 1)
+
+# 定义自定义形状和颜色
+custom_shapes &lt;- c(15)
+custom_colors &lt;- c("#de283b")
+
+# 创建带边际直方图的函数，用于一个变量的绘图
+create_marginal_plot &lt;- function(group_data, x_var, y_var, x_label, y_label, marginal_var) {
+  p &lt;- ggplot(group_data, aes(x = .data[[x_var]], y = .data[[y_var]], colour = index, shape = index)) +
+    geom_point() +
+    geom_smooth(method = "lm", se = TRUE) +  # 显示置信区间
+    scale_shape_manual(values = custom_shapes) +
+    scale_colour_manual(values = custom_colors) +
+    theme_bw() +
+    theme(legend.position = "none") +
+    stat_cor(method = 'pearson', aes(x = .data[[x_var]], y = .data[[y_var]])) +
+    xlab(x_label) + ylab(y_label)
+}
+
+# 对每个组应用边际直方图绘图函数（针对 Lat 变量）
+plots_lat &lt;- lapply(unique(data$index), function(group) {
+  group_data &lt;- subset(data, index == group)
+  create_marginal_plot(group_data, "Fre", "Lat", "Fre", "Lat", "x")
+})
+
+# 对每个组应用边际直方图绘图函数（针对 Long 变量）
+plots_long &lt;- lapply(unique(data$index), function(group) {
+  group_data &lt;- subset(data, index == group)
+  create_marginal_plot(group_data, "Fre", "Long", "Fre", "Long", "x")
+})
+
+# 在网格布局中显示所有图表
+ggarrange(plotlist = c(plots_lat, plots_long), ncol = 2, nrow = ceiling((length(plots_lat) + length(plots_long)) / 2))
+
+复制<br><br>
+<br>选择海南黎族的单倍群，O1b1a1a1a1b2a1a1<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406132159461.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>对应的是魔方的 O-F2517，单倍群 O1a2b1b1a1a1a2a1a1a，19级<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406132200386.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">]]></description><link>软件操作\分析软件\魔方单倍群经纬度相关性绘制.html</link><guid isPermaLink="false">软件操作/分析软件/魔方单倍群经纬度相关性绘制.md</guid><pubDate>Fri, 21 Jun 2024 06:00:23 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406132146663.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406132146663.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[魔方目标单倍群寻找]]></title><description><![CDATA[ 
+ <br>
+<br>
+确定自己感兴趣的单倍群，此处为 O2a2a1a2a1a1<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406211128020.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+在 ISOGG 中寻找，发现位点<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406211129561.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+在魔方数据中搜索位点 O-F1275，对应魔方单倍群为 O2a1b2a1a1a1a，13级<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406211132059.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+在已经获得的16级单倍群频率表中搜索即可，获得频率<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406211140074.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+]]></description><link>软件操作\分析软件\魔方目标单倍群寻找.html</link><guid isPermaLink="false">软件操作/分析软件/魔方目标单倍群寻找.md</guid><pubDate>Fri, 21 Jun 2024 03:40:41 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406211128020.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406211128020.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[三维地形图]]></title><description><![CDATA[ 
+ <br>
+<br>裁剪 Dem数据<br>
+提取前<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406272129652.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>选择工具<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406272117044.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>提取后<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406272129680.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>添加三维地形效果<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406272120643.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406272124572.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">]]></description><link>软件操作\分析软件\三维地形图.html</link><guid isPermaLink="false">软件操作/分析软件/三维地形图.md</guid><pubDate>Thu, 27 Jun 2024 13:30:05 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406272129652.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406272129652.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[似然树构建]]></title><description><![CDATA[ 
+ <br><br>构建进化树的方法和软件很多，前面我们讲解构<a data-tooltip-position="top" aria-label="http://mp.weixin.qq.com/s?__biz=MzIyNzIyNTczNA==&amp;mid=2247491242&amp;idx=3&amp;sn=b4a8232832d08bf1c08c9291503354a8&amp;chksm=e8652743df12ae55c8b120eee15e9e6774ac7714ad5467b1e1046ddf7e7740729d6e3f0d889e&amp;scene=21#wechat_redirect" rel="noopener" class="external-link" href="http://mp.weixin.qq.com/s?__biz=MzIyNzIyNTczNA==&amp;mid=2247491242&amp;idx=3&amp;sn=b4a8232832d08bf1c08c9291503354a8&amp;chksm=e8652743df12ae55c8b120eee15e9e6774ac7714ad5467b1e1046ddf7e7740729d6e3f0d889e&amp;scene=21#wechat_redirect" target="_blank">建进化树的原理</a>时提过，最准确的方法为贝叶斯方法，但是贝叶斯的方法计算量太大太耗时，对于大量的数据不适用，其次就是最大似然法，这里我们解释三种利用最大似然法构建进化树的软件：fasttree，iqtree2，RAxML-ng.输入的数据为做群体遗传进化得到的SNP数据。  <br><img alt="图片" src="https://mmbiz.qpic.cn/mmbiz_png/bjvWWMcEDllRjKyOZo0rc7kWeAKLnYaKuA5Kqv6kCvH1S42cNvsMwg1A6XwEQkH0wkvQfHvPA96Y8ZaU2hZulQ/640?wx_fmt=png&amp;tp=wxpic&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" referrerpolicy="no-referrer"><br>数据准备<br>做完重测序分析后，我们可以得到包含 SNP的变异结果vcf文件作为输入文件。详见课程：<a data-tooltip-position="top" aria-label="http://mp.weixin.qq.com/s?__biz=MzIyNzIyNTczNA==&amp;mid=2247490638&amp;idx=1&amp;sn=bc420d5bea451c9998162b2616276791&amp;chksm=e86525a7df12acb1527d54312c9d08c6625dd0bf12b3e8fc64c2a187442af55c73f59b21cfbf&amp;scene=21#wechat_redirect" rel="noopener" class="external-link" href="http://mp.weixin.qq.com/s?__biz=MzIyNzIyNTczNA==&amp;mid=2247490638&amp;idx=1&amp;sn=bc420d5bea451c9998162b2616276791&amp;chksm=e86525a7df12acb1527d54312c9d08c6625dd0bf12b3e8fc64c2a187442af55c73f59b21cfbf&amp;scene=21#wechat_redirect" target="_blank">重测序数据分析课程</a>，然后利用omicsclass/pop-evol-gwas:v1.3 镜像进行前期数据准备与后续进化树构建分析：<br>#运行环境准备：docker镜像启动#镜像下载：docker&nbsp;pull&nbsp;omicsclass/pop-evol-gwas:v1.3#启动遗传进化镜像docker&nbsp;run&nbsp;--rm&nbsp;-it&nbsp;-m&nbsp;4G&nbsp;--cpus&nbsp;1&nbsp;&nbsp;-v&nbsp;D:\pop:/work&nbsp;omicsclass/pop-evol-gwas:v1.3#对vcf文件进行数据过滤vcftools&nbsp;--gzvcf&nbsp;all.varFilter.vcf.gz&nbsp;--recode&nbsp;--recode-INFO-all&nbsp;--stdout&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--maf&nbsp;0.05&nbsp;&nbsp;--max-missing&nbsp;0.7&nbsp;&nbsp;--minDP&nbsp;4&nbsp;&nbsp;--maxDP&nbsp;1000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;--minQ&nbsp;30&nbsp;--minGQ&nbsp;0&nbsp;--min-alleles&nbsp;2&nbsp;&nbsp;--max-alleles&nbsp;2&nbsp;--remove-indels&nbsp;|gzip&nbsp;-&nbsp;&gt;&nbsp;clean.vcf.gz#利用tassel软件对文件进行排序run_pipeline.pl&nbsp;-Xmx30G&nbsp;&nbsp;-SortGenotypeFilePlugin&nbsp;-inputFile&nbsp;clean.vcf.gz&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;-outputFile&nbsp;clean.sorted.vcf.gz&nbsp;-fileType&nbsp;VCF#vcf文件格式转换成Phylip格式，用于后续构建进化树run_pipeline.pl&nbsp;&nbsp;-Xmx5G&nbsp;-importGuess&nbsp;&nbsp;$workdir/00.filter/clean.sorted.vcf.gz&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;-ExportPlugin&nbsp;-saveAs&nbsp;supergene.phy&nbsp;-format&nbsp;Phylip_Inter
+复制<br><br>FastTree 是基于最大似然法构建进化树的软件，它最大的特点就是运行速度快，支持几百万条序列的建树任务。但是fasttree不支持bootstrap检验以及支持的替换模型有限。官网如下：<a rel="noopener" class="external-link" href="http://www.microbesonline.org/fasttree/" target="_blank">http://www.microbesonline.org/fasttree/</a><br><br>FastTree 支持核酸和蛋白的进化树构建，对于核酸，可选的替换模型包括以下几种：JC（Jukes-Cantor）、GTR（generalized time-reversible），默认的模型为JC。对于蛋白质，可选的替换模型包括以下几种：JTT (Jones-Taylor-Thornton 1992)、LG(Le and Gascuel 2008)、WAG(Whelan &amp; Goldman 2001) 默认的模型为JTT。FastTree要求输入的多序列比对结果为FASTA或者Phylip格式。<br>
+构建进化树命令举例：<br>fasttree&nbsp;-nt&nbsp;-gtr&nbsp;&nbsp;supergene.fa&nbsp;&nbsp;&nbsp;&gt;&nbsp;&nbsp;fasttree.nwk
+复制<br>FastTree 其他命令举例：<br>#对于蛋白质的进化树构建，基本用法如下fasttree&nbsp;protein.fasta&nbsp;&gt;&nbsp;tree#也可以选择LG或者WAG替换模型，用法如下fasttree&nbsp;-lg&nbsp;protein.fasta&nbsp;&gt;&nbsp;treefasttree&nbsp;-wag&nbsp;protein.fasta&nbsp;&gt;&nbsp;tree#对于核酸序列，基本用法如下fasttree&nbsp;-nt&nbsp;nucleotide.fasta&nbsp;&gt;&nbsp;tree#也可以选择GTR替换模型，用法如下fasttree&nbsp;-nt&nbsp;&nbsp;-gtr&nbsp;nucleotide.fasta&nbsp;&gt;&nbsp;tree
+复制<br><br>IQ-tree也是一款最大似然法构建进化树的软件，目前IQ-tree已经更新到2.0版本功能和性能也有很大的提升，主要有四大功能，高效建树（efficient tree reconstruction），模型选择（modelfinder: fast and accurate model selection），超快bootstrap（ultrafast bootstrap approximation），大型数据（big data analysis），以上特点特别适用于高通量测序的大量SNP构建进化树。<br><br>构建进化树有很多模型对于初学者往往不知道那种模型最适合，iqtree提供自动模型选择功能，使用的软件为modelfinder。Modelfinder是一款速度超快的自动最佳模型选择软件。其在保证准确性的情况下，速度上比jmodeltest（针对DNA）和prottest（针对蛋白）要快100倍（ModelFinder is up to 100 times faster than jModelTest/ProtTest.），使用命令举例：<br>#自动选择最佳模型并构建进化树：-m&nbsp;MFPiqtree&nbsp;-s&nbsp;supergene.phy&nbsp;-m&nbsp;MFP#只是想找最佳模型不构建进化树：iqtree&nbsp;-s&nbsp;example.phy&nbsp;-m&nbsp;MF#查找模型计算过程：ModelFinder&nbsp;will&nbsp;test&nbsp;up&nbsp;to&nbsp;546&nbsp;protein&nbsp;models&nbsp;(sample&nbsp;size:&nbsp;36415)&nbsp;...&nbsp;No.&nbsp;Model&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-LnL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;df&nbsp;&nbsp;AIC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AICc&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BIC&nbsp;&nbsp;1&nbsp;&nbsp;LG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10134094.366&nbsp;349&nbsp;20268886.731&nbsp;20268893.505&nbsp;20271854.186&nbsp;&nbsp;2&nbsp;&nbsp;LG+I&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10133927.677&nbsp;350&nbsp;20268555.354&nbsp;20268562.167&nbsp;20271531.312&nbsp;&nbsp;3&nbsp;&nbsp;LG+G4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10043239.052&nbsp;350&nbsp;20087178.104&nbsp;20087184.917&nbsp;20090154.062&nbsp;&nbsp;4&nbsp;&nbsp;LG+I+G4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10043175.024&nbsp;351&nbsp;20087052.048&nbsp;20087058.900&nbsp;20090036.508&nbsp;&nbsp;5&nbsp;&nbsp;LG+R2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10063911.721&nbsp;351&nbsp;20128525.442&nbsp;20128532.294&nbsp;20131509.902&nbsp;&nbsp;6&nbsp;&nbsp;LG+R3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10045448.117&nbsp;353&nbsp;20091602.235&nbsp;20091609.165&nbsp;20094603.701
+复制<br>MFP为ModelFinder Plus的缩写，该参数使程序执行ModelFinder选择最适模型并完成建树分析。ModelFinder为许多不同的模型计算初始简约树的逻辑概率，并产生Akaike information criterion (AIC), corrected Akaike information criterion (AICc), and the Bayesian information criterion (BIC)三个结果标准值，通常ModelFinder选择BIC分数最低的模型（当然也可以指定AIC和AICc通过指定选项-AIC或者-AICc)。如果你想节约时间，可指定选择的模型及编码参数，例如:从WAG ,LG ,JTT 核苷酸替代模型里选一个: -mset WAG,LG,JTT；在+G和+I，以及+I+G三个里面选择rate ：-mrate G,I,I+G；heterogeneity参数：-mfreq FU,F<br>命令行如下：<br>iqtree&nbsp;-s&nbsp;example.phy&nbsp;-m&nbsp;MPF&nbsp;-mset&nbsp;WAG,LG,JTT&nbsp;&nbsp;-mrate&nbsp;G,I,I+G&nbsp;-mfreq&nbsp;FU,F
+复制<br><br>MODEL：model name+FreqType：(可选项)frequency type+RateType：(可选项)rate heterogeneity type
+复制<br><br>
+<br>DNA模型:<br>
+
+<br>JC/JC69, F81, K2P/K80, HKY/HKY85, TN/TrN/TN93, TNe,<br>
+K3P/K81, K81u, TPM2, TPM2u, TPM3, TPM3u, TIM, TIMe,<br>
+TIM2, TIM2e, TIM3, TIM3e, TVM, TVMe, SYM, GTR and 6-digit<br>
+<br>蛋白质模型：<br>
+
+<br>BLOSUM62, cpREV, Dayhoff, DCMut, FLU, HIVb, HIVw, JTT,<br>
+JTTDCMut, LG, mtART, mtMAM, mtREV, mtZOA, mtMet, mtVer,<br>
+mtInv, Poisson, PMB, rtREV, VT, WAG<br><br>每个核苷酸位点上的替代是随机发生的，则A,T,C,G出现的频率应该大致相等。实际情况：DNA受到自然选择的压力，各个位点的碱基出现频率并不相等。<br><img alt="图片" src="https://mmbiz.qpic.cn/mmbiz_png/bjvWWMcEDln3nqZicVREABdiayxb9qcQpCfhy36EErP0R4ykdUyax3MpVqlst5zSVkMibsXKj9OA1gw9rCm6JSib4w/640?wx_fmt=png&amp;tp=wxpic&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" referrerpolicy="no-referrer"><br>+RateType：rate heterogeneity across sites可选设置：<br><img alt="图片" src="https://mmbiz.qpic.cn/mmbiz_png/bjvWWMcEDln3nqZicVREABdiayxb9qcQpC4CAFcUQMACLF5uBjQLtPm4Pk90nq0QeW5x8mFevne0Ev4zS6dzZ4aQ/640?wx_fmt=png&amp;tp=wxpic&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" referrerpolicy="no-referrer"><br>指定替换模型构建进化树命令举例：<br>iqtree&nbsp;-s&nbsp;example.phy&nbsp;-m&nbsp;TIM2+I+G
+复制<br><br>真实的进化信息只有一个，而我们总是拿着有限的序列信息，希望去获得他。能否获得他，是一个问题。而我们使用的序列信息是否能真实且稳定地反应一个进化信息，那么是另外一个事情。bootstrap法常用的，尤其是ML法构建进化树上，分支可靠性检验方法。但是这个计算逻辑最大的问题在于，抽样重新跑，抽样再重新跑，不断重复，直到收敛或者是到指定的比如1000次。计算量大，耗时长。IQ-tree的作者团队在前述提出了一个快速的BS方法，最后整合到IQ-tree中。使用的方式是<br>iqtree&nbsp;-s&nbsp;example.phy&nbsp;-m&nbsp;TIM2+I+G&nbsp;-b&nbsp;1000
+复制<br><br>大概是IQTREE的精髓所在。顾名思义，ultrafast bootstrap approximation的特点就是超快。这里涉及到的细节，感兴趣的读者可以参见IQTREE的开发者写的几篇文章。作者认为，UFBoot is 10 to 40 times faster than RAxML rapid bootstrap and obtains less biased support values。<br>iqtree&nbsp;-s&nbsp;example.phy&nbsp;-m&nbsp;TIM2+I+G&nbsp;-B&nbsp;1000
+复制<br>除ultrafast bootstrap之外，IQTREE还提供了以下检验树的拓扑结构可信度的方法。<br>
+<br>-alrt：SH-aLRT检验(4)，没记错的话FastTree2使用的就是这个吧？<br>
+
+<br>-abayes：approximate Bayes test，由瑞士苏黎世应用科学教授Maria Anisimova提出(5)<br>
+
+<br>-lbp：fast local bootstrap probability method，由Adachi and Hasegawa提出（<a data-tooltip-position="top" aria-label="http://www.is.titech.ac.jp/~shimo/class/doc/csm96.pdf%EF%BC%89" rel="noopener" class="external-link" href="http://www.is.titech.ac.jp/~shimo/class/doc/csm96.pdf%EF%BC%89" target="_blank">http://www.is.titech.ac.jp/~shimo/class/doc/csm96.pdf）</a><br>
+
+<br>iqtree&nbsp;-s&nbsp;example.phy&nbsp;-m&nbsp;TIM2+I+G&nbsp;-B&nbsp;1000&nbsp;-alrt&nbsp;1000
+复制<br>如果你指定了多个检验方法，那么其结果会在树里（.treefile）呈现出来，不同检验所得数值用斜线隔开，比如：((a,b)100/98:0.1,c:0.2)90/95<br>最后，iqtree做群体遗传进化构建进化树推荐命令：<br>iqtree2&nbsp;-s&nbsp;supergene.phy&nbsp;-st&nbsp;DNA&nbsp;-T&nbsp;2&nbsp;&nbsp;-mem&nbsp;8G&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;-m&nbsp;&nbsp;GTR&nbsp;&nbsp;-redo&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;-B&nbsp;1000&nbsp;-bnni&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;--prefix&nbsp;iqtree&nbsp;
+复制<br><br>RAxML是最大似然法（maximum likelihood）建树的经典工具，其由来自德国海德堡理论科学研究所（Heidelberg Institute for Theoretical Studies）的Alexandros Stamatakis开发,最新已经更新了版本RAxML-NG，支持的替换模型更多，运行速度更快。<br><br>RAxML采用最大似然法建树，即将系统树的拓扑结构、分支长度及进化模型等的全部或者部分作为需要估计的参数，在给定的数据集及进化模型的基础上，用最大似然法的标准-似然值最大化来估计这些参数。首先，要选择进化模型，以简约树或者联接树为基础，采用似然法估计模型中各个参数。设置好参数后，以简约树或者联接树作为起始树，进行似然分析，最后用统计学方法从多个似然树中寻找最佳得分树。<br><br>RAxML软件支持输入文件的格式可以是比对好的fasta格式或者phylip格式，例如DNA比对序列，核苷酸替代模型为GTR，rate heterogeneity设置为gamma分布，不做bootstraping，命令如下：<br>raxml-ng&nbsp;&nbsp;--msa&nbsp;supergene.phy&nbsp;--model&nbsp;GTR+G&nbsp;&nbsp;--prefix&nbsp;raxml_tree&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--threads&nbsp;2&nbsp;--seed&nbsp;123
+复制<br>如果是建树和bootstrap一起做，可以加--all参数一步完成：<br>raxml-ng&nbsp;&nbsp;--msa&nbsp;supergene.phy&nbsp;--model&nbsp;GTR+G&nbsp;&nbsp;--prefix&nbsp;raxml_tree&nbsp;--threads&nbsp;2&nbsp;--seed&nbsp;123&nbsp;&nbsp;&nbsp;
+复制<br>关于raxml-ng模型的设置与iq-tree类似，支持很多种个性化的模型设置：<br><img alt="图片" src="https://mmbiz.qpic.cn/mmbiz_png/bjvWWMcEDllRjKyOZo0rc7kWeAKLnYaKXNLALJgqBa5JibO42u60UichzzOnhOpHV6PE7efFl73ovvp0icibDKpGYg/640?wx_fmt=png&amp;wxfrom=13&amp;tp=wxpic" referrerpolicy="no-referrer"><br>详细设置方法见：<a rel="noopener" class="external-link" href="https://github.com/amkozlov/raxml-ng/wiki/Input-data#evolutionary-model" target="_blank">https://github.com/amkozlov/raxml-ng/wiki/Input-data#evolutionary-model</a>]]></description><link>软件操作\分析软件\似然树构建.html</link><guid isPermaLink="false">软件操作/分析软件/似然树构建.md</guid><pubDate>Thu, 22 Aug 2024 03:36:11 GMT</pubDate><enclosure url="https://mmbiz.qpic.cn/mmbiz_png/bjvWWMcEDllRjKyOZo0rc7kWeAKLnYaKuA5Kqv6kCvH1S42cNvsMwg1A6XwEQkH0wkvQfHvPA96Y8ZaU2hZulQ/640?wx_fmt=png&amp;tp=wxpic&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" length="0" type="false"/><content:encoded>&lt;figure&gt;&lt;img src="https://mmbiz.qpic.cn/mmbiz_png/bjvWWMcEDllRjKyOZo0rc7kWeAKLnYaKuA5Kqv6kCvH1S42cNvsMwg1A6XwEQkH0wkvQfHvPA96Y8ZaU2hZulQ/640?wx_fmt=png&amp;tp=wxpic&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[1 数据准备]]></title><description><![CDATA[ 
+ <br><br>
+<br>根据模版文件准备好一个基于Fst的后缀为.meg的文件，前面一段不用管<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403012150493.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>需要改的有分组名（上面蓝色箭头部分，#号也会在树上显示出来）和矩阵，分组注意001和后面名字之间没有空格<br>矩阵只需要Fst的半矩阵，去掉对角线的0和第一排第一列0<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403012153967.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>
+<br>
+打开win端的MEGA，点击open a file<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403012216254.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+选择你的.meg文件，导入后是这样，
+
+<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403012217436.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>
+点击phylogeny-NJ画树<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403012218862.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+不用修改什么<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403012219751.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+画出来是这样，左侧可以做很多修改<br>
+<img alt="1709301271800.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403012154647.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+在稍微修改一下tree width那些过后，可以保存为.nwk文件，然后前往itol美化<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403012159062.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>选择支长，但实际上之后会省略，因为只需要拓扑结构<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403012200082.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>会出现这个界面，不管它，点击x退出<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403012201826.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403012201719.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>保存名字即可<br><br>官网地址：<a rel="noopener" class="external-link" href="https://itol.embl.de/" target="_blank">https://itol.embl.de/</a><br>
+<br>登录自己的账号，然后点击uoload<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403012207777.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403012207182.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>可以直接拖拽，也可以上传<br>
+<br>点击自己上传的文件<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403012208504.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>进入到树界面即可进行美化<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403012209130.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>现在枝长不好看，所以点击ignore<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403012210016.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>这样就好多了<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403012211559.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>其他的自己慢慢探索吧！]]></description><link>软件操作\分析软件\用mega画nj树.html</link><guid isPermaLink="false">软件操作/分析软件/用Mega画NJ树.md</guid><pubDate>Fri, 01 Mar 2024 14:21:57 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403012150493.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403012150493.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[AMOVA工作流程]]></title><description><![CDATA[ 
+ <br>准备工作：<br>
+<br>通过vcf2ArlequinDiploid.py脚本实现 .vcf 转 .Arp，因为Arlequin需要Arp文件格式
+<br>#去掉第5列中的X，转换成.并且输出一个新文件，没有改变原文件
+awk 'BEGIN{FS=OFS="\t"} $5=="X"{$5="."}1' Illumina2636_Y.vcf &gt; Illumina2636_Y_modified.vcf
+#激活python环境
+conda activate py-popgen
+#现在实行vcf转Arp，population.txt是一个只有两列且没有表头的文本文件，第一列是ID，第二列是分组
+python /home/liuyunhui/VCFtoArp/vcf2ArlequinDiploid.py --vcf Illumina2636_Y_modified.vcf --popFile population.txt --splitContigs
+复制<br>
+<br>下载[Arlequin](<a data-tooltip-position="top" aria-label="http://cmpg.unibe.ch/software/arlequin35/" rel="noopener" class="external-link" href="http://cmpg.unibe.ch/software/arlequin35/" target="_blank">Arlequin 3.5 (unibe.ch)</a>)。
+<br><br>
+<br>
+打开已准备好的Arp文件<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402192120267.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+点击Structure editor，可以看到分好的组，组名根据情况进行区分，但不能是0，否则无法勾选<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402192121863.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+点击Settings，按方框中勾选<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402192124722.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+然后点击Start，开始运行<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402192126556.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>会弹窗，正在进行<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402192126383.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402192130805.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>点击View results<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402192132151.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>会跳出一个网页<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402192133184.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>找到结果文件（通常在安装软件的文件夹里，但也可能在桌面），用记事本打开XML文件<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402192136935.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>把文本文件拉到中间、最后，可以看到结果，例如下方<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402192140939.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402192142558.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>Fst结果<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402271756639.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">]]></description><link>软件操作\分析软件\amova工作流程.html</link><guid isPermaLink="false">软件操作/分析软件/AMOVA工作流程.md</guid><pubDate>Tue, 27 Feb 2024 09:57:56 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402192120267.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402192120267.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[数据准备]]></title><description><![CDATA[ 
+ <br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402292222009.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>
+<br>打开软件 Arcgis pro，新建地图（可以保存到推荐路径，但是由于样本的 csv 数据是会被移动的，所以下次打开后实际上保存的结果会出现丢失，需要重新 link）<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406071027452.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>注意调整窗格的方式<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406140939663.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>
+将地图包和自己的数据添加到目录的收藏夹中方便使用，注意只能添加文件夹，所以需要把数据放在文件夹中<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406071035392.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+添加以下内容到地图中，并添加数据（展示采样点应该用 XY 数据，分级色彩图才放在省面）<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406071054709.png" referrerpolicy="no-referrer" style="width: 725px; max-width: 100%;">
+
+<br>
+在省面上右键进行添加连接，然后选好字段<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406071127297.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+修改符号系统，这里才能设置点大小<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406071138281.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406071142985.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>调整好过后就可以切换到布局视图了<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406071143535.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>选择 A4纸大小，然后插入地图框<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406071145469.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>在布局中放置地图<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406071151364.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>右键-激活，可以调整地图在框中的位置，此时会变成地图框的层级<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406071151632.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>同样在插入菜单栏，可以将图例和地图框进行插入，获得手动版本的南海附图框<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406071155461.png" referrerpolicy="no-referrer" style="width: 550px; max-width: 100%;">
+]]></description><link>软件操作\分析软件\arcgis-pro采样地图.html</link><guid isPermaLink="false">软件操作/分析软件/Arcgis pro采样地图.md</guid><pubDate>Fri, 16 Aug 2024 03:08:43 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402292222009.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402292222009.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[频率地图]]></title><description><![CDATA[ 
+ <br><br>
+<br>
+数据准备，csv 格式<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406140931467.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+添加2019版市的 shp<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406140940551.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>添加频率文件 csv<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406140941647.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>在市的图层上添加连接<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406140942015.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406140943691.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>可以验证连接，一共有364个市<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406140943111.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>点击市的符号系统<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406140946812.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>采用分级<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406140947094.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406141041246.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>河流使用的是一级<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406141034334.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+效果<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406141042164.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>插入图例等<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406141044282.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406141046505.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>导出 PDF<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406141048122.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br><br>
+<br>选择菜单栏的分析-工具<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406141002692.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>修改一下<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406141003943.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">]]></description><link>软件操作\分析软件\arcgis-pro单倍群频率地图+热点.html</link><guid isPermaLink="false">软件操作/分析软件/Arcgis pro单倍群频率地图+热点.md</guid><pubDate>Fri, 14 Jun 2024 02:48:29 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406140931467.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406140931467.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[Arcgis采样地图]]></title><description><![CDATA[ 
+ <br>
+<br>准备好一个文件夹，内有省份经纬度的csv文件以及地图文件<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402292221280.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>注意csv文件有表头<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402292222009.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>
+然后打开Arcgis，刚开始不用管，直接ok进入，然后右键图层，新建数据<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402292225162.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+依次添加这些内容<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402292225906.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>文件-添加数据-添加XY<br>
+<img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404051629733.png" referrerpolicy="no-referrer"><br>然后地理坐标选Asia-北京1954<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404051629533.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>结果如图，可以右键表格，选择标注要素，即可显示标签<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402292228125.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>草图就画好了<br>
+通过属性-符号系统-数量，可以画出样本分布数量图<br>
+<br>
+在视图-布局视图下，可以增加一些标注
+
+<br>
+在插入中，可以添加指针、图例、比例尺等，如果需要修改图例的某个部分，则直接右键-转换图形，即可拥有取消编组的效果
+
+<br>
+保存时，直接点击另存为，选择位置即可，得到的是mxd文件格式<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402292232824.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+]]></description><link>软件操作\分析软件\arcgis采样地图.html</link><guid isPermaLink="false">软件操作/分析软件/Arcgis采样地图.md</guid><pubDate>Fri, 05 Apr 2024 08:33:01 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402292221280.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402292221280.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[1 选支系]]></title><description><![CDATA[ 
+ <br><br>挑选研究群体的高频支系，然后搜索所有该单倍群，看时间<br>
+第一步：在研究群体中挑选高频单倍群<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408221608956.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>第二步：把所有该单倍群的群体都提出来<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408221630165.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>第三步：选择外群<br>
+每个宏单倍群选4个，单倍群组成尽量一样，如四个都是 N1b2支系，实在不行2个一样<br>
+定时间的支系每个选6个，如以 NO 支系定年，则每个 N 或 O 选6个<br>
+尽量选用1KG 、HGDP 做外群<br><br>在确定数据过后，应该要跑一个模型，来确定在设置的模型参数（暂时直接选用的 GTR）<br><br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408222133215.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408222135779.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408222141851.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408222153563.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408222154353.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>10K_5个数据集的总位点数：7247765<br>
+130个 O1a1a1a1的 snp 数：11764<br>
+PINV=0.9983768789（未变异位点的比例）<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408222157820.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408222158743.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408222200662.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408222203000.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">]]></description><link>软件操作\分析软件\beast-beast树.html</link><guid isPermaLink="false">软件操作/分析软件/Beast-Beast树.md</guid><pubDate>Wed, 28 Aug 2024 01:01:02 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408221608956.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408221608956.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[1 BEAUti]]></title><description><![CDATA[ 
+ <br>未提及的地方是默认的，不需要更改<br><br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408161436204.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408161437129.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408161436118.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>
+<br>
+pINV 值<br>
+10K_5个数据集的总位点数：7247765<br>
+94个 HM的 snp 数：4693<br>
+PINV=0.99935249（未变异位点的比例）<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408161534717.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+突变速率<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408161434710.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408161536211.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408161537325.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>
+<br>
+先查看 log 文件<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408181957298.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+构建 BSP 结果<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408181958489.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br><br>
+<br>烧树
+]]></description><link>软件操作\分析软件\beast-bsp设置.html</link><guid isPermaLink="false">软件操作/分析软件/Beast-BSP设置.md</guid><pubDate>Sun, 18 Aug 2024 12:01:39 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408161436204.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408161436204.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[报错内容]]></title><description><![CDATA[ 
+ <br><br>
+<br>Beast跑出的结果 log 和 tree 文件在拉入 tracer 时遇到了报错，此时需要借助 logCombiner 来将现有文件进行拆分和合并<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408291712203.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br><br>
+<br>找到 log 结果文件中错误的行，如上图，是状态27516000的位置<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408291715665.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>步长不一致，不是4000的增长；拉到后面，看到长度明显不一致。<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408292125921.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>
+再找 tree 文件中状态27516000，没有找到的话下就查看位置相近的状态，这里是27504000，步长也不一致，与 log 文件的状态缺失的范围还不一样。<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408291718366.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+要保证 log 和 tree 文件中状态数字一致，并分割成2个文件，用于合并。所以以有更少状态数字为准。由于我删掉了 log 文件出错的27516000前的27504000，所以最后取的状态是27500000和27548000。方法是直接粘贴一个 log 文件，删掉不需要的部分即可，不要自己每个部分去粘贴新的，容易出错。<br>
+log1如下<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408292131469.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>log2如下<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408292134994.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>tree1如下<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408292135363.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>tree2如下<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408292135843.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>合并的时候一定要把状态从0开始的作为第一个文件，状态更大的作为第二个文件。<br><br>注意 File 的类型要选择 log<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408292141604.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>注意 File 的类型要选择 tree<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408292140777.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>注意：<br>
+需要两个文件开始和结束状态的数目一致，有部分不一致的话就删掉，一定要保持二者首尾状态一致。<br>
+<br>
+log合并结果<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408292144937.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408292146341.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+tree合并结果<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408292143035.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408292147724.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">]]></description><link>软件操作\分析软件\beast-logcombiner.html</link><guid isPermaLink="false">软件操作/分析软件/Beast-logCombiner.md</guid><pubDate>Thu, 29 Aug 2024 13:56:58 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408291712203.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408291712203.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[数据准备]]></title><description><![CDATA[ 
+ <br><br>
+<br>
+Fasta 文件，是有单倍群后缀的<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406071519166.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+前期工作：<br>
+获得连好后缀的 ID：用_连接第 1,2 列. Py （这里得到的文件可以供第 2 步分组使用）<br>
+提取这些样本的 fasta：提取 fasta 中特定 fasta. Py
+
+<br>
+分组文件，无标题，制表符tab 分割<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406071538006.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+分组文件，其他条件，如群体，无标题，制表符 tab 分割<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406071545205.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+在 wsl 中运行代码 Network 大礼包 copy. sh 来获得输入文件, 需要修改这 5 个路径<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406071550828.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+注意 fastHaN 的路径可以先添加到工作区再粘贴<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406071551721.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>在 wsl 终端运行脚本即可<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406071555317.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>得到的结果如下<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406071557104.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>其中 .gml 文件和分组 csv 文件是需要的输入文件<br><br>
+<br>
+找到这个 html 文件，用浏览器打开（我的必须在软件目录里打开才能使用）<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406071600357.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+使用前说明：<br>
+<img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406071612176.png" referrerpolicy="no-referrer"><br>
+红框内 Group 是自定的其他分组文件（这里是群体名），黄框内 Hap 是单倍群分组文件，每次画图只展现其中一种分组。如果先展现其他分组的图，则将红框内的 groupconf.csv 是填入 Groups 中，而 hapconf.csv 是填入 Haplotypes 中。两个 updated.csv 是彩虹色配色。
+
+<br>
+依次点击
+
+<br>
+<br>
+选择 TCS 或其他算法的 gml 文件<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406071610100.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+先选 Group<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406071621031.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+再选 haplotype<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406071622939.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+<br>导出结果为 svg，可以在 AI 中打开<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406071632515.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+]]></description><link>软件操作\分析软件\fasthan软件制作network.html</link><guid isPermaLink="false">软件操作/分析软件/FastHaN软件制作Network.md</guid><pubDate>Fri, 07 Jun 2024 08:32:58 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406071519166.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406071519166.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[Fst流程]]></title><description><![CDATA[ 
+ <br>
+<br>
+将 Arp 分组为每个群体 1 个组<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405201104682.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+参数选择<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405201104532.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+结果粘贴到 excel 中，半矩阵丢给 chat 变成全矩阵（下三角转置到上三角），注意将负值转换为 0，保存为 csv<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405201135966.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+准备好分组文件 csv，有表头<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405201716343.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>分组文件可以有多列<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406122112417.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>在 Fst_heatmap. R 跑，修改文件路径和 2 个文件名<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405201718571.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>（如果分组是 txt 文件，记得要改分隔符）<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406121732061.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br># 在开始之前请确保你已经安装了下列package
+# 载入需要的package
+library(ape)
+library(igraph)
+library(ggplot2)
+
+library(pheatmap)
+library(reshape2)
+library(ggsci)
+library(gridExtra)
+
+# 设置工作路径，你需要把Fst文件和分组文件放到工作路径
+setwd("C:/Users/LuzHu/Desktop")
+
+# 清除内存
+rm(list=ls())
+
+# 读取数据
+mydata&lt;-read.table("2207Y_10级0.1.csv",header=TRUE,sep=",", row.names = 1)
+#group &lt;-read.table("group.csv",header=TRUE,sep=",", row.names = 1)
+
+# 创建绘图PDF
+pdf("Fre2207_10级0.1_3.pdf", width=20, height=8.5)
+
+# 绘制图像
+pheatmap(mydata, 
+         cluster_cols=FALSE, # 建议换成FALSE
+         cluster_rows=FALSE, # 建议换成FALSE
+         angle_col = c("45"),
+         fontsize = 8,
+         fontsize_row =8,
+         fontsize_col =6,
+         #annotation_col = group, 
+         #annotation_row = group,
+         cellwidth =8, 
+         cellheight = 8, 
+         cutree_cols=1, # 建议换成1
+         cutree_rows=1, # 建议换成1
+         main = "Frequency",
+         color = colorRampPalette(c("#00A087FF","#3C5488FF","#F39B7FFF"))(10000),
+         display_numbers = matrix(ifelse(abs(mydata)&gt; 50, "++", ifelse(abs(mydata)&gt;=40,"+"," ")), nrow(mydata)))
+# 结束绘图
+dev.off()
+
+# 换个样式
+pheatmap(mydata, 
+         cluster_cols=TRUE, 
+         cluster_rows=TRUE, 
+         angle_col = c("45"),
+         fontsize = 8,
+         fontsize_row =8,
+         fontsize_col =6,
+         annotation_col = group, 
+         annotation_row = group,
+         cellwidth =8, 
+         cellheight = 8, 
+         cutree_cols=4,
+         cutree_rows=4, 
+         main = "FstMatrix",
+         color = colorRampPalette(c("#F8F8FF","#91D1C2FF","#3C5488FF"))(10000),
+         display_numbers = matrix(ifelse(abs(mydata)&gt; 50, "++", ifelse(abs(mydata)&gt;=40,"+"," ")), nrow(mydata)))
+
+
+
+
+# 换个样式
+pheatmap(mydata,
+         cluster_cols=TRUE,
+         cluster_rows=TRUE,
+         angle_col = c("45"),
+         fontsize = 8,
+         fontsize_row =8,
+         fontsize_col =6,
+         annotation_col = group,
+         annotation_row = group,
+         cellwidth =8,
+         cellheight = 8,
+         cutree_cols=4,
+         cutree_rows=4,
+         main = "FstMatrix",
+         color = colorRampPalette(c("#20364F","#31646C","#4E9280","#96B89B","#DCDFD2","#ECD9CF","#D49C87","#B86265","#8B345E","#50184E"))(10000),
+         display_numbers = matrix(ifelse(abs(mydata)&gt; 50, "++", ifelse(abs(mydata)&gt;=40,"+"," ")), nrow(mydata)))
+
+# 换个样式
+pheatmap(mydata,
+         cluster_cols=TRUE,
+         cluster_rows=TRUE,
+         angle_col = c("45"),
+         fontsize = 8,
+         fontsize_row =8,
+         fontsize_col =6,
+         annotation_col = group,
+         annotation_row = group,
+         cellwidth =8,
+         cellheight = 8,
+         cutree_cols=4,
+         cutree_rows=4,
+         main = "FstMatrix",
+         color = colorRampPalette(c("#023047","#126883","#279EBC","#90C9E6","#FC9E7F","#F75B41","#D52120"))(10000),
+         display_numbers = matrix(ifelse(abs(mydata)&gt; 50, "++", ifelse(abs(mydata)&gt;=40,"+"," ")), nrow(mydata)))
+复制]]></description><link>软件操作\分析软件\fst流程.html</link><guid isPermaLink="false">软件操作/分析软件/Fst流程.md</guid><pubDate>Wed, 12 Jun 2024 13:12:33 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405201104682.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405201104682.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[MDS工作流程]]></title><description><![CDATA[ 
+ <br>
+<br>
+输入文件：只需要准备好Fst矩阵，同Fst流程中的csv文件<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402281112676.png" referrerpolicy="no-referrer" style="width: 550px; max-width: 100%;">
+
+<br>
+使用MDSRUN脚本（不用MDS脚本），会得到一个转化为变异值的文件<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402281113442.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>R脚本里真正需要的其实只有这一点点，所以需要安装ggplot2包<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402281114727.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+注意修改路径和文件名，因为是csv文件，要修改table位置。运行的时候也直接点到setwd那里开始run就可以。最后一个write得到的是结果文件<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402281118544.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>得到输出的结果文件，其实就相当于是PCA的向量文件
+<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402281122268.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>使用PCA的r和py脚本，用同样的方式修改路径等即可画出MDS，py脚本只是把原来的改良了一下<br>
+准备好以下4个文件<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402281138934.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>poplist文件其实就是Fst中类似的矩阵名再次分组的group文件，但是要按照这种格式，我这里的南北是乱分的<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402281147426.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>首先对py脚本进行修改<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402281139416.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>现在R脚本已经修改好了，然后按照之前PCA的方式修改路径<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402281342636.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>标签的大小改一下，否则会报错显示太宽了<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402281348089.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>（其实可以改成4,1,0,2，比较好看）拉动窗口是可以看到图随之变化的，不需要去改代码<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403012033979.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>导出的时候使用Portrait！！<br>
+<br>这是结果，会发现横纵轴还是PC1、PC2，要么导出过后在AI/adobePDF修改，要么就要把R代码中的PCA替换成MDS<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402281349649.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+]]></description><link>软件操作\分析软件\mds工作流程.html</link><guid isPermaLink="false">软件操作/分析软件/MDS工作流程.md</guid><pubDate>Sun, 16 Jun 2024 13:09:22 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402281112676.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402281112676.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[Network + Network Publisher]]></title><description><![CDATA[ 
+ <br>
+<br>对于Y-STR，需要的是输入的需要是.ych文件。打开Network后依次点击<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404211720299.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>选择自己的ych文件后，出现一些提示，直接点yes就行<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404211721092.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>然后点击计算，会提示再次保存一个pro文件，并开始计算<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404211721368.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404211722578.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>然后会提示是否继续收缩树枝，选择yes到最后完成即可，这时候会保存一个SCO文件<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404211722054.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404211723967.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>现在计算MJ数据，依次点击后选择sco文件进行MJ计算<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404211735033.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>然后点击计算，最后会得到一个out文件<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404211736971.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>现在再对out文件进行一个MP最大简约法优化，不用更改参数，最后得到一个sto文件。<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404211811098.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+]]></description><link>软件操作\分析软件\network-+-network-publisher.html</link><guid isPermaLink="false">软件操作/分析软件/Network + Network Publisher.md</guid><pubDate>Sun, 21 Apr 2024 10:12:36 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404211720299.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202404211720299.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[NJ Tree]]></title><description><![CDATA[ 
+ <br>谁说明问题就用谁（何老师说用 UPGMA）<br>
+<br>
+算法 UPGMA<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405282233122.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+算法邻接<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405282235610.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+]]></description><link>软件操作\分析软件\nj-tree.html</link><guid isPermaLink="false">软件操作/分析软件/NJ Tree.md</guid><pubDate>Tue, 28 May 2024 14:50:07 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405282233122.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405282233122.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[PCA计算变异解释度]]></title><description><![CDATA[ 
+ <br>
+<br>使用 Lineagetracker 跑 PCA 会获得每一级单倍群的对应文件，以 4 级单倍群为例<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406032218252.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>变异解释度在这个文件中<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406032223120.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>变异解释度计算方法：将获得的所有值求和，然后用每一个值去除以总值，第一行代表 PC1，第二行代表 PC2，以此类推。<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406032222022.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+]]></description><link>软件操作\分析软件\pca计算变异解释度.html</link><guid isPermaLink="false">软件操作/分析软件/PCA计算变异解释度.md</guid><pubDate>Mon, 03 Jun 2024 14:23:36 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406032218252.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202406032218252.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[sublime用法-序列检查]]></title><description><![CDATA[ 
+ <br><br>因为1条序列由1个&gt;开头，&gt;的数量应与我们实际需要比对的序列数量一致。比如我这次需要比对18条序列，在 Sublime 中按&nbsp;Ctrl&nbsp;+&nbsp;F进入搜索模式，然后搜索&gt;，如下图所示，此时左下角会出现文档中的&gt;的数量(绿色方框)，显示18个即说明序列数量正确。<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202401242034862.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>对于CDs序列，大部分的序列应该都是以ATG 起始密码子起始（有些物种可能出现GTG），我们不能直接搜索以ATG开头的行，这样会与序列中间的以ATG开头的行混淆。再仔细看一下这些序列，发现都是&gt;所在的行以1个数字结尾，然后另起一行以ATG开头，我们通过精确匹配就能准确搜索到到所有以ATG开始的序列。  <br>在 Sublime 中按&nbsp;Ctrl&nbsp;+&nbsp;F进入搜索模式，如下图所示，点击下方最左侧的正则表达式搜索，搜索式为[1-9]\nATG，此时左下角显示18个即说明序列方向应该正确。（该搜索式中，[1-9]代表第1个字符匹配1-9之间的所有数字，\n代表换行符）<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202401242036325.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>同样的，我用表达式TAG\n\n搜索时，发现所有18条序列都是以TAG结尾（终止密码子一般是 TAA、TAG、TGA）,因此可以确认我的所有序列都是完整的，且方向也是对的。<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202401242037065.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>一般从genbank上下载下来的序列&gt;所在的行不会像例子中这么干净，一般会有一串信息。因为之后构建进化树的时候软件一般会默认使用&gt;后面的信息给树中的序列命名，所以这里可以提前用 Sublime 进行批量整理。<br>在下面的例子中，如果我们想只保留&gt;后面的 genbank登录号，只需要搜索:，然后点击右侧的 Find All，此时光标会出现在所有匹配的:上，此时想批量删除:右侧的信息，只需要按Fn+Shift+右方向键选中，然后按退格键删除即可。<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202401242038776.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">]]></description><link>软件操作\分析软件\sublime用法-序列检查.html</link><guid isPermaLink="false">软件操作/分析软件/sublime用法-序列检查.md</guid><pubDate>Wed, 24 Jan 2024 12:40:28 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202401242034862.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202401242034862.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[WGS操作流程]]></title><description><![CDATA[ 
+ <br><br>具体流程如下：<br>
+<br>测序数据生成：实验室中进行DNA测序实验，生成原始的测序数据，通常以FASTQ格式保存。
+<br>数据质控：对FASTQ文件进行质控，包括去除低质量读段、去除接头序列等，以确保数据质量。
+<br>比对：使用比对工具（如BWA、Bowtie等）将质控后的FASTQ文件比对到参考基因组上，生成SAM格式的比对结果。
+<br>SAM转BAM：将SAM格式的比对结果转换为BAM格式，BAM文件包含了比对信息，并且通常被压缩以节省存储空间。
+<br>排序和索引：对BAM文件进行排序和索引，以便更快地访问和处理数据。
+<br>后续分析：对BAM文件进行后续的生物信息学分析，如变异检测、基因表达分析等。
+<br>bam转gvcf，是得出变异位点的信息，包括检测出的变异位点和未检测出的位点<br>使用gvcf得到vcf]]></description><link>软件操作\分析软件\wgs操作流程.html</link><guid isPermaLink="false">软件操作/分析软件/WGS操作流程.md</guid><pubDate>Tue, 09 Apr 2024 11:37:49 GMT</pubDate></item><item><title><![CDATA[输入文件 ：vcf 或vcf.gz]]></title><description><![CDATA[ 
+ <br><br>这是本代码中唯一需要准备的输入文件。注意是一个已经进行过上游处理（异质性等），并且只选择变异位点后（二等位基因、AC=0）的 vcf  文件或者压缩的 vcf.gz 文件。区别只在于代码处理时是否需要解压缩的步骤。<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408301449484.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>表头最后1行，从第10列开始是 ID 信息。此时的 vcf 文件中 ID 不包含单倍群。<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408301450032.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br><br>ped 文件是基因型信息。ID 有两列，从第7列开始是基因型，每个位点的信息重复了1次，如位点原本为G，显示为 GG<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408301459556.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>map 文件是物理位置信息，第四列展示的是每一个 snp位点的物理位置<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408301501476.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br><br>这个软件需要的输入文件有两个，一个是上述提到的 vcf 文件，另一个是 vcf 文件中ID 的 list ，list 文件没有表头，本文最后整合的代码中已经生成这个 list，所以不需要额外准备 list 文件。<br>
+<img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408301505642.png" referrerpolicy="no-referrer"><br><br><br>-o $name.list.haploGrouper 结果文件如下，其中包含单倍群信息<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408301511136.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>-x $name.list.haploGrouper1 结果文件如下。具体暂时没用到，仍不是很清楚这个文件的作用<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408301512375.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>$name.list.haploGrouper2 文件如下。提取出单倍群信息<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408301518628.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>最后将 ped 文件的序列信息和 name.list.haploGrouper2 文件的单倍群信息进行处理，就得到了带有单倍群信息的fasta 文件。<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408301520064.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>#!/bin/bash
+name=haplo.mult.hc.gall.all.binary.noindel.nolowq.het.missing.nowoman.Mm2.AC0.4014  # 将文件名替换为自己的vcf文件名，无.vcf后缀
+bgzip -c  -d $name.vcf.gz &gt;$name.vcf  # 如果输入vcf文件，则不需要解压的这一步
+plink --vcf $name.vcf --recode compound-genotypes --double-id  --out $name  
+bcftools view -h $name.vcf |tail -n 1 |cut -f10-|perl -npe "s/\t/\n/g" &gt; $name.list  
+python /home/biosoftware/haploGrouper/hGrpr2.py \  #haplogrouper软件路径。若在超算中使用，需要更改
+                 -v $name.vcf  \
+                 -t /home/biosoftware/haploGrouper/data/treeFileNEW_isogg2019.txt \  # 软件自带文件，不用管
+                 -l /home/biosoftware/haploGrouper/data/snpFile_b37_isogg2019.txt \  # 软件自带文件，不用管
+                 -i $name.list \
+                 -o $name.list.haploGrouper \
+                 -x $name.list.haploGrouper1
+
+awk '{print $1 "\t" $2}' $name.list.haploGrouper &gt;$name.list.haploGrouper2
+paste -d' '  &lt;(tail --lines=+2  $name.list.haploGrouper2) &lt;(cat $name.ped |cut -d' ' -f3-) |perl -npe "s/\t/_/"|cut -d' ' -f1,6-|perl -npe "s/^/&gt;/;s/ ([ATCG]){2}/ \1/g;s/ 00/ N/g"|perl -npe  "s/ /\t/;s/ //g;"|perl -npe "s/.*\t\?+$//"|grep -v "^$"|perl -npe "s/\t/\n/"&gt; $name.fasta
+
+复制]]></description><link>软件操作\分析软件\从vcf获得带单倍群信息的fasta.html</link><guid isPermaLink="false">软件操作/分析软件/从Vcf获得带单倍群信息的fasta.md</guid><pubDate>Fri, 30 Aug 2024 07:35:13 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408301449484.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408301449484.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[从简单词Good开始]]></title><description><![CDATA[ 
  <br>就像送一个八音盒给家人，加或者不加包装，差别很大，同时也让你的礼物本身有了让人更喜欢/没那么吸引人的区别。<br>语言也是如此，表达同一个意思，但说法不同，效果大有不同。<br><br>首先，请列出和good相近含义的一些词<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402290923450.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>揭晓答案<br>
 good的近义词，1-5很常见，但如果用上了6-7，就会变得更加独特<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402290921956.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>你可能觉得改变一个词没什么大不了，但实际上通过替换常见词（common word），可以让我们的语言变得更多样化（varied），同时显得更流畅（fluent）。<br><br>现在我们来看同义替换是否真的会有所不同。<br>假如只用good，效果会是这样<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402290928957.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>但假如用刚刚提到的词去替换good<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402290930230.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>你会发现，这样更加流程了，而你只换了一个词而已！<br>所以，请牢记这个问题：How you say it is just as important as what you say.<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402290931848.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>假如别人邀请你吃饭并评价这顿饭，而你只会说good，那你可能再也不会被邀请了~<br>实际上可以这样<br>
 <img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402290934583.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>可能这略显复杂，那么刚开始需要做的其实就是替换掉你想说的常见词<br>
 假如你本来想说：I think the dinner was good，替换掉常见词<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402290936691.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>你就会得到这句话：In my opinion, the dinner was fantastic.<br><br>要学会再说话时自如的替换常用词汇<br>
 It is important to be comfortable about changing thing around when we speak.<br>换句话说，就是要creative<br>尝试不同的东西，实验自己的语言<br>
-Try different things, experiment with your language]]></description><link>小鹿绅士\1-文体学概述：开始创造性地使用语言.html</link><guid isPermaLink="false">小鹿绅士/1 文体学概述：开始创造性地使用语言.md</guid><pubDate>Thu, 29 Feb 2024 01:41:43 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402290923450.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src=&quot;https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402290923450.png&quot;&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[1 以猫为例]]></title><description><![CDATA[ 
+Try different things, experiment with your language]]></description><link>小鹿绅士\1-文体学概述：开始创造性地使用语言.html</link><guid isPermaLink="false">小鹿绅士/1 文体学概述：开始创造性地使用语言.md</guid><pubDate>Thu, 29 Feb 2024 01:41:43 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402290923450.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202402290923450.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[1 以猫为例]]></title><description><![CDATA[ 
  <br>假如你家有一只漂亮的猫，现在要你不看照片，用英语描述她的漂亮，你会发现这很困难<br>
 <img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403010927622.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>能否恰当的描述事物，是英语能力的重要一环<br>
 Describing things properly makes a huge a difference in your English level<br><br>那么如何描述一个事物呢？回到这只猫上<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403010930132.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>首先，我需要做的事陈述这个事物的存在<br>
@@ -16,7 +1111,7 @@ So as you can see adding details is the key to successfully describing anyone or
 And always remember, you don't need to use any elaborate complex words<br>只需要把你已知的词汇用有创造力的方式使用出来就可以了！<br><br>如何在使用语言时更加有创造性呢？<br>这次再次以猫为例，但关注一下她的缺点。<br>两个形容词<br>
 <img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403010956777.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>加上with<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403010957017.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>加上that<br>
 <img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403010958830.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>现在你可能完全不再喜欢这只猫了。所以你发现了吗？不同的描述侧重点将带来完全不同的感受。<br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403011002311.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>揭晓答案<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403011003537.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403011005211.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>要有创造性，那么你就要学会看到事物的正反面，要记得使用little helpful words，如with、that等<br>顺便回顾一下上次课程提到的同义替换（rephrasing/paraphrasing），这非常重要，总会有更好的词来使句子变得更美<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403011008224.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>再回到今天的课程中，有些词可以换一下<br>关于cute<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403011010261.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>关于big<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403011010444.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>关于sleep<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403011011108.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>关于fat<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403011011251.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>关于lazy<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403011011069.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>关于smelly<br>
-<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403011012270.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>关于like<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403011013294.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">]]></description><link>小鹿绅士\2-句子扩展：让语句更加具体且形象.html</link><guid isPermaLink="false">小鹿绅士/2 句子扩展：让语句更加具体且形象.md</guid><pubDate>Fri, 01 Mar 2024 02:13:12 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403010927622.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src=&quot;https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403010927622.png&quot;&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[3 同义表达：使用有自己特色的语言]]></title><description><![CDATA[ 
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403011012270.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>关于like<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403011013294.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">]]></description><link>小鹿绅士\2-句子扩展：让语句更加具体且形象.html</link><guid isPermaLink="false">小鹿绅士/2 句子扩展：让语句更加具体且形象.md</guid><pubDate>Fri, 01 Mar 2024 02:13:12 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403010927622.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403010927622.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[3 同义表达：使用有自己特色的语言]]></title><description><![CDATA[ 
  <br>前文已经提到了rephrasing，即替换，它的含义是：<br>改变表达方式但不改变表达意思<br>
 changing the form of your words without changing the meaning<br>今天，将要集中讨论一种替换，即同义词替换，使用synonym，那么什么是synonym呢？<br>
 <img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403041445245.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>为什么要使用synonym？<br>
@@ -54,7 +1149,7 @@ Do not restrain yourself in the ways you speak.<br>
 <img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403050930341.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>同时可以结合所学，把之前讲的更全面的描述运用起来<br>step1：添加第2个形容词<br>
 <img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403050932908.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>step2：加上小词with<br>
 <img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403050933090.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>step3：用who构成从句，或使用and来增加一个特征<br>
-<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403050934500.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>step4：rephrase形容词<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403050935325.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>最后，选择一个句子来进行扩写和替换<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403050937644.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">]]></description><link>小鹿绅士\3-同义表达：使用有自己特色的语言.html</link><guid isPermaLink="false">小鹿绅士/3 同义表达：使用有自己特色的语言.md</guid><pubDate>Sat, 23 Mar 2024 07:41:43 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403041445245.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src=&quot;https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403041445245.png&quot;&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[4 连接词：让独立的句子变成更加流畅的段落]]></title><description><![CDATA[ 
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403050934500.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>step4：rephrase形容词<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403050935325.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>最后，选择一个句子来进行扩写和替换<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403050937644.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">]]></description><link>小鹿绅士\3-同义表达：使用有自己特色的语言.html</link><guid isPermaLink="false">小鹿绅士/3 同义表达：使用有自己特色的语言.md</guid><pubDate>Sat, 23 Mar 2024 07:41:43 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403041445245.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403041445245.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[4 连接词：让独立的句子变成更加流畅的段落]]></title><description><![CDATA[ 
  <br>在说英语时，经常遇到的问题是不知道如何将话题继续进行下去<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403081417734.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>即使开始了一个话题，也不知道该如何继续下去，结果只说了一句话，当然就显得不够流畅<br>举个例子，描述朋友买了一条新裙子<br>
 <img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403081418949.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>然后大多数人就停下来了，不知道说啥。那么如何去扩展句子呢？<br>
 其实就是在之前所说的主题（她穿裙子）之下，找一些关联的话题<br><br>假如继续使用之前学过的技巧，加一些细节。<br>
@@ -66,7 +1161,7 @@ If l was to put the sentences just the way they are. lt will sound a little clum
 Proper speech is never on the same line.<br>不会永远是统一的或者对立的，语言应该灵活<br>
 You don't only say positives or negatives. Your speech is alive.<br>例如，用上这些连接词后，语言就自然流畅多了！<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403141431302.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>现在我们来试试用上所学的各种连接词，并且学会分析哪些是添加，哪些是对立，哪些是因果<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403141433006.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>记住，这些词不仅仅是词汇而已，更是一种帮助你说得更多的方式<br>
 它们可以帮助你多说一些，多想一些<br>
-They are the helpful words that will allow you speak more, to think more,<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403141436371.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">]]></description><link>小鹿绅士\4-连接词：让独立的句子变成更加流畅的段落.html</link><guid isPermaLink="false">小鹿绅士/4 连接词：让独立的句子变成更加流畅的段落.md</guid><pubDate>Thu, 14 Mar 2024 06:36:24 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403081417734.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src=&quot;https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403081417734.png&quot;&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[5 细节词汇：增加句子的信息量，更加生动的描述]]></title><description><![CDATA[ 
+They are the helpful words that will allow you speak more, to think more,<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403141436371.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">]]></description><link>小鹿绅士\4-连接词：让独立的句子变成更加流畅的段落.html</link><guid isPermaLink="false">小鹿绅士/4 连接词：让独立的句子变成更加流畅的段落.md</guid><pubDate>Thu, 14 Mar 2024 06:36:24 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403081417734.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403081417734.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[5 细节词汇：增加句子的信息量，更加生动的描述]]></title><description><![CDATA[ 
  <br>今天，我们将介绍另一类有相似连接作用的词汇，并且可以用来扩展的句子的词——detailing words 细节词<br>这些词是用来给一句话加入更多的细节信息，同时不会将一句话拆分开<br>举个例子，当我们不使用细节词时，之前形容猫的1个句子会变成2个句子<br>
 <img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403141440678.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>但假如我们用上了细节词，如that，就不会中断这个句子<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403141441572.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>这些词汇的作用是，它们让我们继续我们的句子，不会中断它们<br>
 Now that is what these words do, they simply allow us to continue our sentence without breaking it.<br>细节词list如下<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403141442366.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>who当然是用来谈论人的<br>
@@ -82,7 +1177,7 @@ to point out a detail about an object that has other objects around it.<br>举�
 <img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403231531204.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>但假如有很多糖，就会用which这样问，因为有很多，代表可以选择<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403231532032.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>所以，我们在多个物品可能被谈及的时候用它<br>
 We use it when there is more than one object that could be referred to<br>例如<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403231533974.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403231534802.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>练习时间<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403231534851.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>where用来描述地点<br>例如<br>
 <img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403231535861.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403231535977.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>练习时间<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403231536749.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>when用来添加时间方面的细节<br>例如<br>
-<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403231537845.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403231537185.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>练习时间<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403231537572.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>现在有三个句子，我们使用所学变成连贯的句子<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403231539333.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>用连接词和细节词连在一起<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403231540675.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>练习时间<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403231540394.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">]]></description><link>小鹿绅士\5-细节词汇：增加句子的信息量，更加生动的描述.html</link><guid isPermaLink="false">小鹿绅士/5 细节词汇：增加句子的信息量，更加生动的描述.md</guid><pubDate>Sat, 23 Mar 2024 07:40:36 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403141440678.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src=&quot;https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403141440678.png&quot;&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[6 风格：不同场景下的不同表达风格]]></title><description><![CDATA[ 
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403231537845.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403231537185.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>练习时间<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403231537572.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>现在有三个句子，我们使用所学变成连贯的句子<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403231539333.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>用连接词和细节词连在一起<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403231540675.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>练习时间<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403231540394.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">]]></description><link>小鹿绅士\5-细节词汇：增加句子的信息量，更加生动的描述.html</link><guid isPermaLink="false">小鹿绅士/5 细节词汇：增加句子的信息量，更加生动的描述.md</guid><pubDate>Sat, 23 Mar 2024 07:40:36 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403141440678.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403141440678.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[6 风格：不同场景下的不同表达风格]]></title><description><![CDATA[ 
  <br>就像每天干的事情不同，穿的衣服也不同一样，语言也有不同语境之下的风格<br>
 <img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403231545961.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>我们一般把语言分成两类，正式和非正式<br>
 Generally we tend to simply divide them into two groups: formal and informal speech<br>但之下也有很多亚群，也就是types of sentences，即不同的风格<br><br>用来传递直截了当的事实，例如<br>
@@ -102,7 +1197,7 @@ make sb / was xx
 <br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403242221789.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>现在尝试把一个informative sentence 变成narrative sentence<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403242223628.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>就是缩短词语<br>例如<br>
 thank you=tx/thx<br>
 Laughing out loud =L0L<br>
-sleeping=zzz<br>这种方式一般见面不会使用，但是短信啥的比较常见]]></description><link>小鹿绅士\6-风格：不同场景下的不同表达风格.html</link><guid isPermaLink="false">小鹿绅士/6 风格：不同场景下的不同表达风格.md</guid><pubDate>Sun, 24 Mar 2024 14:26:53 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403231545961.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src=&quot;https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403231545961.png&quot;&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[7 比喻：通过明喻或暗喻描述物品及人物]]></title><description><![CDATA[ 
+sleeping=zzz<br>这种方式一般见面不会使用，但是短信啥的比较常见]]></description><link>小鹿绅士\6-风格：不同场景下的不同表达风格.html</link><guid isPermaLink="false">小鹿绅士/6 风格：不同场景下的不同表达风格.md</guid><pubDate>Sun, 24 Mar 2024 14:26:53 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403231545961.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403231545961.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[7 比喻：通过明喻或暗喻描述物品及人物]]></title><description><![CDATA[ 
  <br>今天是一个炎热的夏天，我感觉像茶壶一样<br>
 Today is a hot summer day, so l feel like a tea kettle<br>这句话听起来可能会很奇怪，但实际上这是一个analogy，比喻<br>
 比喻在英文中有很重要的位置，让你的语言从简单的叙述，变成真正美丽的文字<br>首先我们要知道，实际上有两种比喻：明喻和暗喻，前者有like/as这样的词，后者没有<br>
@@ -110,7 +1205,7 @@ Today is a hot summer day, so l feel like a tea kettle<br>这句话听起来可�
 明喻：<br>
 I feel like a tea kettle.<br>
 暗喻：<br>
-I am a tea kettle today.]]></description><link>小鹿绅士\7-比喻：通过明喻或暗喻描述物品及人物.html</link><guid isPermaLink="false">小鹿绅士/7 比喻：通过明喻或暗喻描述物品及人物.md</guid><pubDate>Wed, 27 Mar 2024 01:50:54 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403270949542.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src=&quot;https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403270949542.png&quot;&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[8 强调：通过重音强调，让语言听起来]]></title><description><![CDATA[ 
+I am a tea kettle today.]]></description><link>小鹿绅士\7-比喻：通过明喻或暗喻描述物品及人物.html</link><guid isPermaLink="false">小鹿绅士/7 比喻：通过明喻或暗喻描述物品及人物.md</guid><pubDate>Wed, 27 Mar 2024 01:50:54 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403270949542.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403270949542.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[8 强调：通过重音强调，让语言听起来]]></title><description><![CDATA[ 
  <br>说话有抑扬顿挫，也就是有重音。<br>
 我们通过重音调集听者的注意力，以表示这是更加重要的信息。<br>
 to put the listeners attention onto certain words to indicate that something is more important<br>
@@ -150,7 +1245,7 @@ Word stress exists in order to indicate the meaning of a sentence<br>举个例�
 
 <br>所以你发现了，重音可以强调你所想表达的含义，所以是很重要的，每个词都可以加重音<br>
 Stress simply indicates what are you talking about<br>重音朗读是学习重音的一种练习方式，也就是把重音放在每个词来读一读<br>
-<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403260941113.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>所以不同的重音会呈现不同的意思，在聊天的时候一定要注意重音放置的位置，不然就会很尴尬哟！]]></description><link>小鹿绅士\8-强调：通过重音强调，让语言听起来.html</link><guid isPermaLink="false">小鹿绅士/8 强调：通过重音强调，让语言听起来.md</guid><pubDate>Tue, 26 Mar 2024 01:44:32 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403250929387.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src=&quot;https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403250929387.png&quot;&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[9 礼貌语言：让自己的语言更加礼貌]]></title><description><![CDATA[ 
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403260941113.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>所以不同的重音会呈现不同的意思，在聊天的时候一定要注意重音放置的位置，不然就会很尴尬哟！]]></description><link>小鹿绅士\8-强调：通过重音强调，让语言听起来.html</link><guid isPermaLink="false">小鹿绅士/8 强调：通过重音强调，让语言听起来.md</guid><pubDate>Tue, 26 Mar 2024 01:44:32 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403250929387.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403250929387.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[9 礼貌语言：让自己的语言更加礼貌]]></title><description><![CDATA[ 
  <br>有些人问问题时会说你想喝点茶吗，你可能会直接说要或者不要，这里只考虑了功能，而并不会注重礼貌。<br>
 有一些简单的词，可以凸显礼貌。<br>你想喝点茶吗?好的谢谢或不谢谢你<br>
 Would you like to have some tea? Yes, please. Or no Thank you.<br>但实际上可以用一些方式来显得更有礼貌<br>
@@ -185,4 +1280,4 @@ May l answer this question in a different way?<br>现在是练习时间<br>
 <br>can不礼貌，要用would/may
 <br>不要干巴巴地只说yes/no，也不太礼貌，可以加一些feeling在里面
 <br>不要忘记说please
-]]></description><link>小鹿绅士\9-礼貌语言：让自己的语言更加礼貌.html</link><guid isPermaLink="false">小鹿绅士/9 礼貌语言：让自己的语言更加礼貌.md</guid><pubDate>Wed, 27 Mar 2024 01:45:48 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403260950446.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src=&quot;https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403260950446.png&quot;&gt;&lt;/figure&gt;</content:encoded></item></channel></rss>
+]]></description><link>小鹿绅士\9-礼貌语言：让自己的语言更加礼貌.html</link><guid isPermaLink="false">小鹿绅士/9 礼貌语言：让自己的语言更加礼貌.md</guid><pubDate>Wed, 27 Mar 2024 01:45:48 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403260950446.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/Gianthuiobsidian/202403260950446.png"&gt;&lt;/figure&gt;</content:encoded></item></channel></rss>

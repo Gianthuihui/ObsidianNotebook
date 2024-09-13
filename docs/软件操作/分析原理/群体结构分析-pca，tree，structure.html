@@ -1,0 +1,218 @@
+<!DOCTYPE html> <html><head>
+		<title>群体结构分析-PCA，TREE，STRUCTURE</title>
+		<base href="..\../">
+		<meta id="root-path" root-path="..\../">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, minimum-scale=1.0, maximum-scale=5.0">
+		<meta charset="UTF-8">
+		<meta name="description" content="长脑子了 - 群体结构分析-PCA，TREE，STRUCTURE">
+		<meta property="og:title" content="群体结构分析-PCA，TREE，STRUCTURE">
+		<meta property="og:description" content="长脑子了 - 群体结构分析-PCA，TREE，STRUCTURE">
+		<meta property="og:type" content="website">
+		<meta property="og:url" content="软件操作/分析原理/群体结构分析-pca，tree，structure.html">
+		<meta property="og:image" content="https://mmbiz.qpic.cn/sz_mmbiz_png/yLNbnJQIBAHVjvTrsXNSJPcECiaXLW151teJVqTW4HvCJYYhZMSmlOP8AWW1CA0gUItxmt40FPicVOicMXLjSkPaQ/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1">
+		<meta property="og:site_name" content="长脑子了">
+		<link rel="alternate" type="application/rss+xml" title="RSS Feed" href="lib/rss.xml"><script async="" id="webpage-script" src="lib/scripts/webpage.js" onload="this.onload=null;this.setAttribute(&quot;loaded&quot;, &quot;true&quot;)"></script><script type="module" async="" id="graph-view-script" src="lib/scripts/graph-view.js"></script><script async="" id="graph-wasm-script" src="lib/scripts/graph-wasm.js" onload="this.onload=null;this.setAttribute(&quot;loaded&quot;, &quot;true&quot;)"></script><script async="" id="graph-render-worker-script" src="lib/scripts/graph-render-worker.js" onload="this.onload=null;this.setAttribute(&quot;loaded&quot;, &quot;true&quot;)"></script><script async="" id="tinycolor-script" src="lib/scripts/tinycolor.js" onload="this.onload=null;this.setAttribute(&quot;loaded&quot;, &quot;true&quot;)"></script><script async="" id="pixi-script" src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.4.0/pixi.min.js" onload="this.onload=null;this.setAttribute(&quot;loaded&quot;, &quot;true&quot;)"></script><script async="" id="minisearch-script" src="https://cdn.jsdelivr.net/npm/minisearch@6.3.0/dist/umd/index.min.js" onload="this.onload=null;this.setAttribute(&quot;loaded&quot;, &quot;true&quot;)"></script><link rel="icon" href="lib/media/favicon.png"><script async="" id="graph-data-script" src="lib/scripts/graph-data.js" onload="this.onload=null;this.setAttribute(&quot;loaded&quot;, &quot;true&quot;)"></script><style>body{--line-width:40em;--line-width-adaptive:40em;--file-line-width:40em;--sidebar-width:min(20em, 80vw);--collapse-arrow-size:11px;--tree-horizontal-spacing:0.6em;--tree-vertical-spacing:0.6em;--sidebar-margin:12px}.sidebar{height:100%;min-width:calc(var(--sidebar-width) + var(--divider-width-hover));max-width:calc(var(--sidebar-width) + var(--divider-width-hover));font-size:14px;z-index:10;position:relative;overflow:hidden;transition:min-width ease-in-out,max-width ease-in-out;transition-duration:.2s;contain:size}.sidebar-left{left:0}.sidebar-right{right:0}.sidebar.is-collapsed{min-width:0;max-width:0}body.floating-sidebars .sidebar{position:absolute}.sidebar-content{height:100%;min-width:calc(var(--sidebar-width) - var(--divider-width-hover));top:0;padding:var(--sidebar-margin);padding-top:4em;line-height:var(--line-height-tight);background-color:var(--background-secondary);transition:background-color,border-right,border-left,box-shadow;transition-duration:var(--color-fade-speed);transition-timing-function:ease-in-out;position:absolute;display:flex;flex-direction:column}.sidebar:not(.is-collapsed) .sidebar-content{min-width:calc(max(100%,var(--sidebar-width)) - 3px);max-width:calc(max(100%,var(--sidebar-width)) - 3px)}.sidebar-left .sidebar-content{left:0;border-top-right-radius:var(--radius-l);border-bottom-right-radius:var(--radius-l)}.sidebar-right .sidebar-content{right:0;border-top-left-radius:var(--radius-l);border-bottom-left-radius:var(--radius-l)}.sidebar:has(.sidebar-content:empty):has(.topbar-content:empty){display:none}.sidebar-topbar{height:2em;width:var(--sidebar-width);top:var(--sidebar-margin);padding-inline:var(--sidebar-margin);z-index:1;position:fixed;display:flex;align-items:center;transition:width ease-in-out;transition-duration:inherit}.sidebar.is-collapsed .sidebar-topbar{width:calc(2.3em + var(--sidebar-margin) * 2)}.sidebar .sidebar-topbar.is-collapsed{width:0}.sidebar-left .sidebar-topbar{left:0}.sidebar-right .sidebar-topbar{right:0}.topbar-content{overflow:hidden;overflow:clip;width:100%;height:100%;display:flex;align-items:center;transition:inherit}.sidebar.is-collapsed .topbar-content{width:0;transition:inherit}.clickable-icon.sidebar-collapse-icon{background-color:transparent;color:var(--icon-color-focused);padding:0!important;margin:0!important;height:100%!important;width:2.3em!important;margin-inline:0.14em!important;position:absolute}.sidebar-left .clickable-icon.sidebar-collapse-icon{transform:rotateY(180deg);right:var(--sidebar-margin)}.sidebar-right .clickable-icon.sidebar-collapse-icon{transform:rotateY(180deg);left:var(--sidebar-margin)}.clickable-icon.sidebar-collapse-icon svg.svg-icon{width:100%;height:100%}.sidebar-section-header{margin:0 0 1em 0;text-transform:uppercase;letter-spacing:.06em;font-weight:600}body{transition:background-color var(--color-fade-speed) ease-in-out}.webpage-container{display:flex;flex-direction:row;height:100%;width:100%;align-items:stretch;justify-content:center}.document-container{opacity:1;flex-basis:100%;max-width:100%;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;transition:opacity .2s ease-in-out;contain:inline-size}.hide{opacity:0;transition:opacity .2s ease-in-out}.document-container>.markdown-preview-view{margin:var(--sidebar-margin);margin-bottom:0;width:100%;width:-webkit-fill-available;width:-moz-available;width:fill-available;background-color:var(--background-primary);transition:background-color var(--color-fade-speed) ease-in-out;border-top-right-radius:var(--window-radius,var(--radius-m));border-top-left-radius:var(--window-radius,var(--radius-m));overflow-x:hidden!important;overflow-y:auto!important;display:flex!important;flex-direction:column!important;align-items:center!important;contain:inline-size}.document-container>.markdown-preview-view>.markdown-preview-sizer{padding-bottom:80vh!important;width:100%!important;max-width:var(--line-width)!important;flex-basis:var(--line-width)!important;transition:background-color var(--color-fade-speed) ease-in-out;contain:inline-size}.markdown-rendered img:not([width]),.view-content img:not([width]){max-width:100%;outline:0}.document-container>.view-content.embed{display:flex;padding:1em;height:100%;width:100%;align-items:center;justify-content:center}.document-container>.view-content.embed>*{max-width:100%;max-height:100%;object-fit:contain}:has(> :is(.math,table)){overflow-x:auto!important}.document-container>.view-content{overflow-x:auto;contain:content;padding:0;margin:0;height:100%}.scroll-highlight{position:absolute;width:100%;height:100%;pointer-events:none;z-index:1000;background-color:hsla(var(--color-accent-hsl),.25);opacity:0;padding:1em;inset:50%;translate:-50% -50%;border-radius:var(--radius-s)}</style><script defer="">async function loadIncludes(){if("file:"!=location.protocol){let e=document.querySelectorAll("include");for(let t=0;t<e.length;t++){let o=e[t],l=o.getAttribute("src");try{const e=await fetch(l);if(!e.ok){console.log("Could not include file: "+l),o?.remove();continue}let t=await e.text(),n=document.createRange().createContextualFragment(t),i=Array.from(n.children);for(let e of i)e.classList.add("hide"),e.style.transition="opacity 0.5s ease-in-out",setTimeout((()=>{e.classList.remove("hide")}),10);o.before(n),o.remove(),console.log("Included file: "+l)}catch(e){o?.remove(),console.log("Could not include file: "+l,e);continue}}}else{if(document.querySelectorAll("include").length>0){var e=document.createElement("div");e.id="error",e.textContent="Web server exports must be hosted on an http / web server to be viewed correctly.",e.style.position="fixed",e.style.top="50%",e.style.left="50%",e.style.transform="translate(-50%, -50%)",e.style.fontSize="1.5em",e.style.fontWeight="bold",e.style.textAlign="center",document.body.appendChild(e),document.querySelector(".document-container")?.classList.remove("hide")}}}document.addEventListener("DOMContentLoaded",(()=>{loadIncludes()}));let isFileProtocol="file:"==location.protocol;function waitLoadScripts(e,t){let o=e.map((e=>document.getElementById(e+"-script"))),l=0;!function e(){let n=o[l];l++,n&&"true"!=n.getAttribute("loaded")||l<o.length&&e(),l<o.length?n.addEventListener("load",e):t()}()}</script><link rel="stylesheet" href="lib/styles/obsidian.css"><link rel="stylesheet" href="lib/styles/theme.css"><link rel="preload" href="lib/styles/global-variable-styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="lib/styles/global-variable-styles.css"></noscript><link rel="preload" href="lib/styles/main-styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="lib/styles/main-styles.css"></noscript></head><body class="publish css-settings-manager theme-dark show-inline-title show-ribbon"><script defer="">let theme=localStorage.getItem("theme")||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");"dark"==theme?(document.body.classList.add("theme-dark"),document.body.classList.remove("theme-light")):(document.body.classList.add("theme-light"),document.body.classList.remove("theme-dark")),window.innerWidth<480?document.body.classList.add("is-phone"):window.innerWidth<768?document.body.classList.add("is-tablet"):window.innerWidth<1024?document.body.classList.add("is-small-screen"):document.body.classList.add("is-large-screen")</script><div class="webpage-container workspace"><div class="sidebar-left sidebar"><div class="sidebar-handle"></div><div class="sidebar-topbar"><div class="topbar-content"><label class="theme-toggle-container" for="theme_toggle"><input class="theme-toggle-input" type="checkbox" id="theme_toggle"><div class="toggle-background"></div></label></div><div class="clickable-icon sidebar-collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="svg-icon"><path d="M21 3H3C1.89543 3 1 3.89543 1 5V19C1 20.1046 1.89543 21 3 21H21C22.1046 21 23 20.1046 23 19V5C23 3.89543 22.1046 3 21 3Z"></path><path d="M10 4V20"></path><path d="M4 7H7"></path><path d="M4 10H7"></path><path d="M4 13H7"></path></svg></div></div><div class="sidebar-content"><div class="search-input-container"><input enterkeyhint="search" type="search" spellcheck="false" placeholder="Search..."><div class="search-input-clear-button" aria-label="Clear search"></div></div><include src="lib/html/file-tree.html"></include></div><script defer="">let ls = document.querySelector(".sidebar-left"); ls.classList.add("is-collapsed"); if (window.innerWidth > 768) ls.classList.remove("is-collapsed"); ls.style.setProperty("--sidebar-width", localStorage.getItem("sidebar-left-width"));</script></div><div class="document-container markdown-reading-view hide"><div class="markdown-preview-view markdown-rendered allow-fold-headings allow-fold-lists is-readable-line-width"><style id="MJX-CHTML-styles">mjx-container[jax=CHTML]{line-height:0}mjx-container [space="1"]{margin-left:.111em}mjx-container [space="2"]{margin-left:.167em}mjx-container [space="3"]{margin-left:.222em}mjx-container [space="4"]{margin-left:.278em}mjx-container [space="5"]{margin-left:.333em}mjx-container [rspace="1"]{margin-right:.111em}mjx-container [rspace="2"]{margin-right:.167em}mjx-container [rspace="3"]{margin-right:.222em}mjx-container [rspace="4"]{margin-right:.278em}mjx-container [rspace="5"]{margin-right:.333em}mjx-container [size="s"]{font-size:70.7%}mjx-container [size=ss]{font-size:50%}mjx-container [size=Tn]{font-size:60%}mjx-container [size=sm]{font-size:85%}mjx-container [size=lg]{font-size:120%}mjx-container [size=Lg]{font-size:144%}mjx-container [size=LG]{font-size:173%}mjx-container [size=hg]{font-size:207%}mjx-container [size=HG]{font-size:249%}mjx-container [width=full]{width:100%}mjx-box{display:inline-block}mjx-block{display:block}mjx-itable{display:inline-table}mjx-row{display:table-row}mjx-row>*{display:table-cell}mjx-mtext{display:inline-block;text-align:left}mjx-mstyle{display:inline-block}mjx-merror{display:inline-block;color:red;background-color:#ff0}mjx-mphantom{visibility:hidden}mjx-assistive-mml{top:0;left:0;clip:rect(1px,1px,1px,1px);user-select:none;position:absolute!important;padding:1px 0 0!important;border:0!important;display:block!important;width:auto!important;overflow:hidden!important}mjx-assistive-mml[display=block]{width:100%!important}mjx-math{display:inline-block;text-align:left;line-height:0;text-indent:0;font-style:normal;font-weight:400;font-size:100%;letter-spacing:normal;border-collapse:collapse;overflow-wrap:normal;word-spacing:normal;white-space:nowrap;direction:ltr;padding:1px 0}mjx-container[jax=CHTML][display=true]{display:block;text-align:center;margin:1em 0}mjx-container[jax=CHTML][display=true][width=full]{display:flex}mjx-container[jax=CHTML][display=true] mjx-math{padding:0}mjx-container[jax=CHTML][justify=left]{text-align:left}mjx-container[jax=CHTML][justify=right]{text-align:right}mjx-c{display:inline-block}mjx-utext{display:inline-block;padding:.75em 0 .2em}mjx-mo{display:inline-block;text-align:left}mjx-stretchy-h{display:inline-table;width:100%}mjx-stretchy-h>*{display:table-cell;width:0}mjx-stretchy-h>*>mjx-c{display:inline-block;transform:scaleX(1)}mjx-stretchy-h>*>mjx-c::before{display:inline-block;width:initial}mjx-stretchy-h>mjx-ext{overflow:clip visible;width:100%}mjx-stretchy-h>mjx-ext>mjx-c::before{transform:scaleX(500)}mjx-stretchy-h>mjx-ext>mjx-c{width:0}mjx-stretchy-h>mjx-beg>mjx-c{margin-right:-.1em}mjx-stretchy-h>mjx-end>mjx-c{margin-left:-.1em}mjx-stretchy-v{display:inline-block}mjx-stretchy-v>*{display:block}mjx-stretchy-v>mjx-beg{height:0}mjx-stretchy-v>mjx-end>mjx-c{display:block}mjx-stretchy-v>*>mjx-c{transform:scaleY(1);transform-origin:left center;overflow:hidden}mjx-stretchy-v>mjx-ext{display:block;height:100%;box-sizing:border-box;border:0 solid transparent;overflow:visible clip}mjx-stretchy-v>mjx-ext>mjx-c::before{width:initial;box-sizing:border-box}mjx-stretchy-v>mjx-ext>mjx-c{transform:scaleY(500) translateY(.075em);overflow:visible}mjx-mark{display:inline-block;height:0}mjx-mfrac{display:inline-block;text-align:left}mjx-frac{display:inline-block;vertical-align:.17em;padding:0 .22em}mjx-frac[type="d"]{vertical-align:.04em}mjx-frac[delims]{padding:0 .1em}mjx-frac[atop]{padding:0 .12em}mjx-frac[atop][delims]{padding:0}mjx-dtable{display:inline-table;width:100%}mjx-dtable>*{font-size:2000%}mjx-dbox{display:block;font-size:5%}mjx-num{display:block;text-align:center}mjx-den{display:block;text-align:center}mjx-mfrac[bevelled]>mjx-num{display:inline-block}mjx-mfrac[bevelled]>mjx-den{display:inline-block}mjx-den[align=right],mjx-num[align=right]{text-align:right}mjx-den[align=left],mjx-num[align=left]{text-align:left}mjx-nstrut{display:inline-block;height:.054em;width:0;vertical-align:-.054em}mjx-nstrut[type="d"]{height:.217em;vertical-align:-.217em}mjx-dstrut{display:inline-block;height:.505em;width:0}mjx-dstrut[type="d"]{height:.726em}mjx-line{display:block;box-sizing:border-box;min-height:1px;height:.06em;border-top:.06em solid;margin:.06em -.1em;overflow:hidden}mjx-line[type="d"]{margin:.18em -.1em}mjx-mn{display:inline-block;text-align:left}mjx-texatom{display:inline-block;text-align:left}mjx-msup{display:inline-block;text-align:left}mjx-c::before{display:block;width:0}.MJX-TEX{font-family:MJXZERO,MJXTEX}.TEX-B{font-family:MJXZERO,MJXTEX-B}.TEX-I{font-family:MJXZERO,MJXTEX-I}.TEX-MI{font-family:MJXZERO,MJXTEX-MI}.TEX-BI{font-family:MJXZERO,MJXTEX-BI}.TEX-S1{font-family:MJXZERO,MJXTEX-S1}.TEX-S2{font-family:MJXZERO,MJXTEX-S2}.TEX-S3{font-family:MJXZERO,MJXTEX-S3}.TEX-S4{font-family:MJXZERO,MJXTEX-S4}.TEX-A{font-family:MJXZERO,MJXTEX-A}.TEX-C{font-family:MJXZERO,MJXTEX-C}.TEX-CB{font-family:MJXZERO,MJXTEX-CB}.TEX-FR{font-family:MJXZERO,MJXTEX-FR}.TEX-FRB{font-family:MJXZERO,MJXTEX-FRB}.TEX-SS{font-family:MJXZERO,MJXTEX-SS}.TEX-SSB{font-family:MJXZERO,MJXTEX-SSB}.TEX-SSI{font-family:MJXZERO,MJXTEX-SSI}.TEX-SC{font-family:MJXZERO,MJXTEX-SC}.TEX-T{font-family:MJXZERO,MJXTEX-T}.TEX-V{font-family:MJXZERO,MJXTEX-V}.TEX-VB{font-family:MJXZERO,MJXTEX-VB}mjx-stretchy-h mjx-c,mjx-stretchy-v mjx-c{font-family:MJXZERO,MJXTEX-S1,MJXTEX-S4,MJXTEX,MJXTEX-A!important}@font-face{font-family:MJXZERO;src:url("lib/fonts/mathjax_zero.woff") format("woff")}@font-face{font-family:MJXTEX;src:url("lib/fonts/mathjax_main-regular.woff") format("woff")}@font-face{font-family:MJXTEX-B;src:url("lib/fonts/mathjax_main-bold.woff") format("woff")}@font-face{font-family:MJXTEX-I;src:url("lib/fonts/mathjax_math-italic.woff") format("woff")}@font-face{font-family:MJXTEX-MI;src:url("lib/fonts/mathjax_main-italic.woff") format("woff")}@font-face{font-family:MJXTEX-BI;src:url("lib/fonts/mathjax_math-bolditalic.woff") format("woff")}@font-face{font-family:MJXTEX-S1;src:url("lib/fonts/mathjax_size1-regular.woff") format("woff")}@font-face{font-family:MJXTEX-S2;src:url("lib/fonts/mathjax_size2-regular.woff") format("woff")}@font-face{font-family:MJXTEX-S3;src:url("lib/fonts/mathjax_size3-regular.woff") format("woff")}@font-face{font-family:MJXTEX-S4;src:url("lib/fonts/mathjax_size4-regular.woff") format("woff")}@font-face{font-family:MJXTEX-A;src:url("lib/fonts/mathjax_ams-regular.woff") format("woff")}@font-face{font-family:MJXTEX-C;src:url("lib/fonts/mathjax_calligraphic-regular.woff") format("woff")}@font-face{font-family:MJXTEX-CB;src:url("lib/fonts/mathjax_calligraphic-bold.woff") format("woff")}@font-face{font-family:MJXTEX-FR;src:url("lib/fonts/mathjax_fraktur-regular.woff") format("woff")}@font-face{font-family:MJXTEX-FRB;src:url("lib/fonts/mathjax_fraktur-bold.woff") format("woff")}@font-face{font-family:MJXTEX-SS;src:url("lib/fonts/mathjax_sansserif-regular.woff") format("woff")}@font-face{font-family:MJXTEX-SSB;src:url("lib/fonts/mathjax_sansserif-bold.woff") format("woff")}@font-face{font-family:MJXTEX-SSI;src:url("lib/fonts/mathjax_sansserif-italic.woff") format("woff")}@font-face{font-family:MJXTEX-SC;src:url("lib/fonts/mathjax_script-regular.woff") format("woff")}@font-face{font-family:MJXTEX-T;src:url("lib/fonts/mathjax_typewriter-regular.woff") format("woff")}@font-face{font-family:MJXTEX-V;src:url("lib/fonts/mathjax_vector-regular.woff") format("woff")}@font-face{font-family:MJXTEX-VB;src:url("lib/fonts/mathjax_vector-bold.woff") format("woff")}mjx-c.mjx-c3D::before{padding:.583em .778em .082em 0;content:"="}mjx-c.mjx-c31::before{padding:.666em .5em 0 0;content:"1"}mjx-c.mjx-c2E::before{padding:.12em .278em 0 0;content:"."}mjx-c.mjx-c30::before{padding:.666em .5em .022em 0;content:"0"}mjx-c.mjx-c28::before{padding:.75em .389em .25em 0;content:"("}mjx-c.mjx-c39::before{padding:.666em .5em .022em 0;content:"9"}mjx-c.mjx-c32::before{padding:.666em .5em 0 0;content:"2"}mjx-c.mjx-c2013::before{padding:.285em .5em 0 0;content:"–"}mjx-c.mjx-c29::before{padding:.75em .389em .25em 0;content:")"}mjx-c.mjx-cD7::before{padding:.491em .778em 0 0;content:"×"}mjx-c.mjx-c2212::before{padding:.583em .778em .082em 0;content:"−"}mjx-c.mjx-c33::before{padding:.665em .5em .022em 0;content:"3"}mjx-c.mjx-c2F::before{padding:.75em .5em .25em 0;content:"/"}mjx-c.mjx-c36::before{padding:.666em .5em .022em 0;content:"6"}</style><div class="markdown-preview-sizer markdown-preview-section"><h1 class="page-title heading inline-title" id="群体结构分析-PCA，TREE，STRUCTURE"><p dir="auto">群体结构分析-PCA，TREE，STRUCTURE</p></h1><div class="heading-wrapper"><h2 data-heading="群体结构分析" dir="auto" class="heading" id="群体结构分析"><div class="heading-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>群体结构分析</h2><div class="heading-children"><div class="heading-wrapper"><h3 data-heading="PCA" dir="auto" class="heading" id="PCA"><div class="heading-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>PCA</h3><div class="heading-children"><div><ul>
+<li data-line="0" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p>分析原理</p>
+<ul>
+<li data-line="1" dir="auto">PCA(Principal Component Analysis)，即主成分分析方法，是一种使用最广泛的数据降维算法。</li>
+<li data-line="2" dir="auto">PCA的主要思想是将n维特征映射到k维上，这k维是全新的正交特征也被称为主成分，是在原有n维特征的基础上重新构造出来的k维特征。</li>
+<li data-line="3" dir="auto">PCA的工作就是从原始的空间中顺序地找一组相互正交的坐标轴，新的坐标轴的选择与数据本身是密切相关的。</li>
+<li data-line="4" dir="auto">其中，第一个新坐标轴选择是原始数据中方差最大的方向，第二个新坐标轴选取是与第一个坐标轴正交的平面中使得方差最大的，第三个轴是与第1,2个轴正交的平面中方差最大的。依次类推，可以得到n个这样的坐标轴。通过这种方式获得的新的坐标轴，我们发现，大部分方差都包含在前面k个坐标轴中，后面的坐标轴所含的方差几乎为0。</li>
+<li data-line="5" dir="auto">于是，我们可以忽略余下的坐标轴，只保留前面k个含有绝大部分方差的坐标轴。事实上，这相当于只保留包含绝大部分方差的维度特征，而忽略包含方差几乎为0的特征维度，实现对数据特征的降维处理。</li>
+</ul>
+</li>
+<li data-line="7" dir="auto">
+<p>简洁点来讲现在有这样的数据，100个样品，2M标记，即是2000000X100的矩阵，那么就通过数学降维的方法简化到100X3甚至100X2乘（即PC1，PC2）</p>
+</li>
+<li data-line="12" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p>分析软件</p>
+<ul>
+<li data-line="13" dir="auto">GCTA</li>
+<li data-line="14" dir="auto">tassel</li>
+<li data-line="15" dir="auto">EIGENSTRAT</li>
+</ul>
+</li>
+<li data-line="20" dir="auto">
+<p>结果展示</p>
+</li>
+<li data-line="23" dir="auto">
+<p>这个结果每一个值对应的维度的解释情况，行数与样品数量一致，第一行代表第一维，依次类推；每一行除以所有行数的和即是其第几维解释的比例<br>
+</p>
+</li>
+<li data-line="25" dir="auto">
+<p>第一列样品名称，第二列PC1的值，第三列PC2的值，第四列PC3的值（也就是平时看到的结果图的横纵坐标来源）<br>
+</p>
+</li>
+<li data-line="27" dir="auto">
+<p>PCA结果矩阵（特征向量）&nbsp;<code>GWAS_1 0.0295707 0.0174155 -0.0245656   GWAS_10 0.0212291 -0.0552983 -0.0280335   GWAS_100 -0.0645872 0.00456635 0.00588907   GWAS_101 -0.0779853 -0.0317529 0.0138288   GWAS_102 -0.0790227 -0.0295285 0.0147819   GWAS_105 -0.0845384 0.000685319 0.0108059   GWAS_108 -0.0779536 -0.00380985 0.0101755   GWAS_109 -0.0789908 -0.00534946 0.012742   GWAS_11 0.0152839 0.0185823 -0.0305629   GWAS_110 -0.080786 -0.00255263 0.0131448</code><br>
+</p>
+</li>
+<li data-line="29" dir="auto">
+<p>PCA解释数据结果（特征值）</p>
+<p>  &nbsp;<code>54.402   32.2402   25.6809   18.0063   13.7968   9.6096   9.46086   9.00158   8.16587   7.60115</code></p>
+</li>
+<li data-line="34" dir="auto">
+<p>PCA结果图  </p>
+</li>
+</ul></div><div><p dir="auto"><img alt="图片" src="https://mmbiz.qpic.cn/sz_mmbiz_png/yLNbnJQIBAHVjvTrsXNSJPcECiaXLW151teJVqTW4HvCJYYhZMSmlOP8AWW1CA0gUItxmt40FPicVOicMXLjSkPaQ/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" referrerpolicy="no-referrer"></p></div><div><p dir="auto"><img alt="图片" src="https://mmbiz.qpic.cn/sz_mmbiz_png/yLNbnJQIBAHVjvTrsXNSJPcECiaXLW151wzZaDeMlvm7tJIAOqd0JghTALO91sSiaQbyykwkIKowEfDTeicXo5v9A/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" referrerpolicy="no-referrer"></p></div><div><p dir="auto"><img alt="图片" src="https://mmbiz.qpic.cn/sz_mmbiz_png/yLNbnJQIBAHVjvTrsXNSJPcECiaXLW151FNk3batcf4uCCWUia4mN3uicnf4UhWSnasBPXvWpaWnzeoIy8icPabKpA/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" referrerpolicy="no-referrer"></p></div><div><p dir="auto"><img alt="图片" src="https://mmbiz.qpic.cn/sz_mmbiz_png/yLNbnJQIBAHVjvTrsXNSJPcECiaXLW151VXPjSYY4icFic8AKaJpXZO6f7RuLyCqXE57ArwibR59xSLZjnBLUF1bPA/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" referrerpolicy="no-referrer"></p></div><div><ul>
+<li data-line="0" dir="auto">
+<p>结果要点</p>
+</li>
+<li data-line="3" dir="auto">
+<p>结果图中相对分群结果合理，大部分跟生产经验相一致<br>
+</p>
+</li>
+<li data-line="5" dir="auto">
+<p>解释度可接受，这个方面想了解的话，可以看看文献的，不是硬标准<br>
+</p>
+</li>
+</ul></div><div><hr></div></div></div><div class="heading-wrapper"><h3 data-heading="TREE" dir="auto" class="heading" id="TREE"><div class="heading-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>TREE</h3><div class="heading-children"><div><ul>
+<li data-line="0" dir="auto">
+<p>分析原理</p>
+</li>
+<li data-line="3" dir="auto">
+<p>系统发育分析中，最重要和最常见的内容为构建系统发育树。系统发育树也称为系统发生树（phylogenetic tree）、聚类树或者进化树（evolutionary tree）。以树状结构表示各个节点的进化关系，支点可以是物种、同一物种的样本、基因等单元。<br>
+</p>
+</li>
+<li data-line="5" dir="auto">
+<p>根据SNP或者Indel 构建其系统进化树，可以展示群体中不同个体的相互关系，基因变异相似的往往会在同一个树的cluster中，一颗好的树可以给你一个群体大概的分类(你这个群体中有多少个cluster，一般同一个亚种或者有亲缘关系的个体会形成一个cluster），这是群体遗传中重要的一部分。其构建的核心原理就是把每个位点SNPs的信息提取，然后计算每个变异位点的差异得到算法中的“距离”。</p>
+</li>
+<li data-line="8" dir="auto">
+<p>分析软件</p>
+</li>
+<li data-line="11" dir="auto">
+<p>treebest<br>
+</p>
+</li>
+<li data-line="13" dir="auto">
+<p>mega<br>
+</p>
+</li>
+<li data-line="15" dir="auto">
+<p>taseel<br>
+</p>
+</li>
+<li data-line="17" dir="auto">
+<p>snphylo<br>
+</p>
+</li>
+<li data-line="19" dir="auto">
+<p>phylip</p>
+</li>
+<li data-line="22" dir="auto">
+<p>算法</p>
+</li>
+<li data-line="25" dir="auto">
+<p>nj 临近算法<br>
+</p>
+</li>
+<li data-line="27" dir="auto">
+<p>ml 最大似然值</p>
+</li>
+<li data-line="30" dir="auto">
+<p>结果展示<br>
+</p>
+</li>
+</ul></div><div><p dir="auto"><img alt="图片" src="https://mmbiz.qpic.cn/sz_mmbiz_png/yLNbnJQIBAHVjvTrsXNSJPcECiaXLW151xWvjEs62rV0dV2v9FzA41lBruUANJrL4XpqCZqyexe7jFnOAnSjdJw/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" referrerpolicy="no-referrer"></p></div><div><p dir="auto"><img alt="图片" src="https://mmbiz.qpic.cn/sz_mmbiz_png/yLNbnJQIBAHVjvTrsXNSJPcECiaXLW151NVRFDEJ1ydZFTBLh7FrO8Jd0ZvcJS88dlxxQGnTHy0Lfa6TMfu05MA/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" referrerpolicy="no-referrer"></p></div><div><ul>
+<li data-line="0" dir="auto">
+<p>结果要点</p>
+</li>
+<li data-line="3" dir="auto">
+<p>分群清晰,大部分样品与已知生产经验一致<br>
+</p>
+</li>
+</ul></div><div><hr></div></div></div><div class="heading-wrapper"><h3 data-heading="STructure" dir="auto" class="heading" id="STructure"><div class="heading-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>STructure</h3><div class="heading-children"><div><ul>
+<li data-line="0" dir="auto">
+<p>分析原理</p>
+</li>
+<li data-line="3" dir="auto">
+<p>先预设群体由若干亚群（k=x）构成，通过模拟算法找出在k=x的情况下，最合理的样本分类方法。最后再根据每次模拟的最大似然值，找出最适用这群体的K值。</p>
+</li>
+<li data-line="6" dir="auto">
+<p>分析软件</p>
+</li>
+<li data-line="9" dir="auto">
+<p>STRUCTURE<br>
+</p>
+</li>
+<li data-line="11" dir="auto">
+<p>ADMIXTURE<br>
+</p>
+</li>
+<li data-line="13" dir="auto">
+<p>FRAPPE<br>
+</p>
+</li>
+<li data-line="15" dir="auto">
+<p>fast-STRUCTURE</p>
+</li>
+<li data-line="18" dir="auto">
+<p>算法</p>
+</li>
+<li data-line="21" dir="auto">
+<p>主要涉及两种模型 no admixture model和admixture model。前者假设亚群间不存在杂交，后者则假设亚群间存在杂交。在绝大部分情况下，当然是选择admixture 模型更合理了。<br>
+</p>
+</li>
+<li data-line="23" dir="auto">
+<p>以k=2为例，解释一下structure是如何找到样本的最优分类。其实简单说来，就是利用了计算机超强的运行能力，一开始计算机只是随机将样本分为两份，然后在每个亚群内进行哈温平衡检验。如果不符合哈温平衡（拍脑袋的分类，一开始当然是惨不忍睹），计算机继续调整分类，然后继续检验。<br>
+</p>
+</li>
+<li data-line="25" dir="auto">
+<p>如此这般，在计算n次后，计算机再从这一堆结果中找到最佳的分类。这个过程称为“隐马科夫-蒙特卡罗链”的过程，计算次数n就是这个链的长度，这是structure一个重要的参数“Number of MCMC Reps”，需要预先设定。<br>
+</p>
+</li>
+<li data-line="27" dir="auto">
+<p>但因为这个计算的过程是从随机模拟开始的。如果一开始拍脑袋拍的不好（随机分类与真实分类差距太大），计算机一黑到底，最后把n次用完了，都没有找到一个合理的分类。所以，分析软件往往有个预实验的过程。<br>
+</p>
+</li>
+<li data-line="29" dir="auto">
+<p>就是在正式进行大规模运算前，计算机先尝试各种各样的随机分类，运行非常短的次数，然后评估哪种随机分类是最合理的。之后，在根据最优的随机分类，进行后续的大规模运算。这个过程就称为burn-in period，预实验的次数就称为burin-in的次数。这也是structure分析另外一个重要的参数“length of burn-in period”。<br>
+</p>
+</li>
+<li data-line="31" dir="auto">
+<p>同一个体基因组上的不同SNP可能来源不同亚群体,软件是对每个位点单独进行分群的,然后统计比例,所以要求进行分析的每个位点是独立,不然会造成比例的不准确<br>
+</p>
+</li>
+<li data-line="33" dir="auto">
+<p>那么，软件在如何确定样本的最优分类方法呢？其实基于一个假设：在各个亚群内部个体应该符合哈代-温伯格平衡（哈温平衡的概念可以在百度查询），那么这个亚群内的基因频率分布应该可通过哈温平衡检验。例如，现在有40个个体的1个SNP位点的基因型，我预设亚群数k=2。我先随机将40个个体分成两份，然后检验是否符合哈温平衡。如果不符合，我继续调整分类策略，直到找到一种最优的分类方法：40个个体被分为了两份，每个亚群都由若干个体构成，每个亚群内部都最大程度地符合哈温平衡。<br>
+</p>
+</li>
+<li data-line="35" dir="auto">
+<p>亚群内符合哈温平衡<br>
+</p>
+</li>
+<li data-line="37" dir="auto">
+<p>每个位点是独立的<br>
+</p>
+</li>
+<li data-line="39" dir="auto">
+<p>每个样本的血统构成<br>
+</p>
+</li>
+<li data-line="41" dir="auto">
+<p>选择使用那种模型</p>
+</li>
+<li data-line="44" dir="auto">
+<p>结果展示</p>
+</li>
+<li data-line="48" dir="auto">
+<p><img alt="图片" src="https://mmbiz.qpic.cn/sz_mmbiz_png/yLNbnJQIBAHVjvTrsXNSJPcECiaXLW1512YcTibjyvtdTzS1xAFLTrT6TU2GIj3UlECSica6SDjSlWbnaFVO3ItKQ/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" referrerpolicy="no-referrer"><br>
+</p>
+</li>
+<li data-line="50" dir="auto">
+<p>结果要点</p>
+</li>
+<li data-line="53" dir="auto">
+<p>最终k值选取的结果跟实际生产相符性<br>
+</p>
+</li>
+<li data-line="55" dir="auto">
+<p>一般会以该结果的0.8或者0.6以上血缘比例的作为标准(血缘复杂的根据情况有些可以追溯原因)</p>
+</li>
+</ul></div><div class="mod-footer"></div></div></div></div></div></div></div></div><div class="sidebar-right sidebar"><div class="sidebar-handle"></div><div class="sidebar-topbar"><div class="topbar-content"></div><div class="clickable-icon sidebar-collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="svg-icon"><path d="M21 3H3C1.89543 3 1 3.89543 1 5V19C1 20.1046 1.89543 21 3 21H21C22.1046 21 23 20.1046 23 19V5C23 3.89543 22.1046 3 21 3Z"></path><path d="M10 4V20"></path><path d="M4 7H7"></path><path d="M4 10H7"></path><path d="M4 13H7"></path></svg></div></div><div class="sidebar-content"><div class="graph-view-wrapper"><div class="sidebar-section-header">Interactive Graph</div><div class="graph-view-placeholder">
+		<div class="graph-view-container">
+			<div class="graph-icon graph-expand" role="button" aria-label="Expand" data-tooltip-position="top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg></div>
+			<canvas id="graph-canvas" class="hide" width="512px" height="512px"></canvas>
+		</div>
+		</div></div><div class="tree-container mod-root nav-folder tree-item outline-tree" data-depth="0"><div class="tree-header"><span class="sidebar-section-header">Table Of Contents</span><button class="clickable-icon collapse-tree-button" aria-label="Collapse All"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg></button></div><div class="tree-scroll-area tree-item-children nav-folder-children"><div class="tree-item mod-tree-folder nav-folder mod-collapsible is-collapsed" style="display: none;"></div><div class="tree-item" data-depth="1"><a class="tree-link" href="软件操作\分析原理\群体结构分析-pca，tree，structure.html#群体结构分析-PCA，TREE，STRUCTURE"><div class="tree-item-contents heading-link" heading-name="群体结构分析-PCA，TREE，STRUCTURE"><span class="tree-item-title">群体结构分析-PCA，TREE，STRUCTURE</span></div></a><div class="tree-item-children nav-folder-children"><div class="tree-item mod-collapsible" data-depth="2"><a class="tree-link" href="软件操作\分析原理\群体结构分析-pca，tree，structure.html#群体结构分析"><div class="tree-item-contents heading-link" heading-name="群体结构分析"><div class="collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div><span class="tree-item-title">群体结构分析</span></div></a><div class="tree-item-children nav-folder-children"><div class="tree-item" data-depth="3"><a class="tree-link" href="软件操作\分析原理\群体结构分析-pca，tree，structure.html#PCA"><div class="tree-item-contents heading-link" heading-name="PCA"><span class="tree-item-title">PCA</span></div></a><div class="tree-item-children nav-folder-children"></div></div><div class="tree-item" data-depth="3"><a class="tree-link" href="软件操作\分析原理\群体结构分析-pca，tree，structure.html#TREE"><div class="tree-item-contents heading-link" heading-name="TREE"><span class="tree-item-title">TREE</span></div></a><div class="tree-item-children nav-folder-children"></div></div><div class="tree-item" data-depth="3"><a class="tree-link" href="软件操作\分析原理\群体结构分析-pca，tree，structure.html#STructure"><div class="tree-item-contents heading-link" heading-name="STructure"><span class="tree-item-title">STructure</span></div></a><div class="tree-item-children nav-folder-children"></div></div></div></div></div></div></div></div></div><script defer="">let rs = document.querySelector(".sidebar-right"); rs.classList.add("is-collapsed"); if (window.innerWidth > 768) rs.classList.remove("is-collapsed"); rs.style.setProperty("--sidebar-width", localStorage.getItem("sidebar-right-width"));</script></div></div></body></html>

@@ -1,0 +1,723 @@
+<!DOCTYPE html> <html><head>
+		<title>Vcf上游处理全流程</title>
+		<base href="..\../">
+		<meta id="root-path" root-path="..\../">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, minimum-scale=1.0, maximum-scale=5.0">
+		<meta charset="UTF-8">
+		<meta name="description" content="长脑子了 - Vcf上游处理全流程">
+		<meta property="og:title" content="Vcf上游处理全流程">
+		<meta property="og:description" content="长脑子了 - Vcf上游处理全流程">
+		<meta property="og:type" content="website">
+		<meta property="og:url" content="软件操作/linux命令行/vcf上游处理全流程.html">
+		<meta property="og:image" content="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405241059254.png">
+		<meta property="og:site_name" content="长脑子了">
+		<link rel="alternate" type="application/rss+xml" title="RSS Feed" href="lib/rss.xml"><script async="" id="webpage-script" src="lib/scripts/webpage.js" onload="this.onload=null;this.setAttribute(&quot;loaded&quot;, &quot;true&quot;)"></script><script type="module" async="" id="graph-view-script" src="lib/scripts/graph-view.js"></script><script async="" id="graph-wasm-script" src="lib/scripts/graph-wasm.js" onload="this.onload=null;this.setAttribute(&quot;loaded&quot;, &quot;true&quot;)"></script><script async="" id="graph-render-worker-script" src="lib/scripts/graph-render-worker.js" onload="this.onload=null;this.setAttribute(&quot;loaded&quot;, &quot;true&quot;)"></script><script async="" id="tinycolor-script" src="lib/scripts/tinycolor.js" onload="this.onload=null;this.setAttribute(&quot;loaded&quot;, &quot;true&quot;)"></script><script async="" id="pixi-script" src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.4.0/pixi.min.js" onload="this.onload=null;this.setAttribute(&quot;loaded&quot;, &quot;true&quot;)"></script><script async="" id="minisearch-script" src="https://cdn.jsdelivr.net/npm/minisearch@6.3.0/dist/umd/index.min.js" onload="this.onload=null;this.setAttribute(&quot;loaded&quot;, &quot;true&quot;)"></script><link rel="icon" href="lib/media/favicon.png"><script async="" id="graph-data-script" src="lib/scripts/graph-data.js" onload="this.onload=null;this.setAttribute(&quot;loaded&quot;, &quot;true&quot;)"></script><style>body{--line-width:40em;--line-width-adaptive:40em;--file-line-width:40em;--sidebar-width:min(20em, 80vw);--collapse-arrow-size:11px;--tree-horizontal-spacing:0.6em;--tree-vertical-spacing:0.6em;--sidebar-margin:12px}.sidebar{height:100%;min-width:calc(var(--sidebar-width) + var(--divider-width-hover));max-width:calc(var(--sidebar-width) + var(--divider-width-hover));font-size:14px;z-index:10;position:relative;overflow:hidden;transition:min-width ease-in-out,max-width ease-in-out;transition-duration:.2s;contain:size}.sidebar-left{left:0}.sidebar-right{right:0}.sidebar.is-collapsed{min-width:0;max-width:0}body.floating-sidebars .sidebar{position:absolute}.sidebar-content{height:100%;min-width:calc(var(--sidebar-width) - var(--divider-width-hover));top:0;padding:var(--sidebar-margin);padding-top:4em;line-height:var(--line-height-tight);background-color:var(--background-secondary);transition:background-color,border-right,border-left,box-shadow;transition-duration:var(--color-fade-speed);transition-timing-function:ease-in-out;position:absolute;display:flex;flex-direction:column}.sidebar:not(.is-collapsed) .sidebar-content{min-width:calc(max(100%,var(--sidebar-width)) - 3px);max-width:calc(max(100%,var(--sidebar-width)) - 3px)}.sidebar-left .sidebar-content{left:0;border-top-right-radius:var(--radius-l);border-bottom-right-radius:var(--radius-l)}.sidebar-right .sidebar-content{right:0;border-top-left-radius:var(--radius-l);border-bottom-left-radius:var(--radius-l)}.sidebar:has(.sidebar-content:empty):has(.topbar-content:empty){display:none}.sidebar-topbar{height:2em;width:var(--sidebar-width);top:var(--sidebar-margin);padding-inline:var(--sidebar-margin);z-index:1;position:fixed;display:flex;align-items:center;transition:width ease-in-out;transition-duration:inherit}.sidebar.is-collapsed .sidebar-topbar{width:calc(2.3em + var(--sidebar-margin) * 2)}.sidebar .sidebar-topbar.is-collapsed{width:0}.sidebar-left .sidebar-topbar{left:0}.sidebar-right .sidebar-topbar{right:0}.topbar-content{overflow:hidden;overflow:clip;width:100%;height:100%;display:flex;align-items:center;transition:inherit}.sidebar.is-collapsed .topbar-content{width:0;transition:inherit}.clickable-icon.sidebar-collapse-icon{background-color:transparent;color:var(--icon-color-focused);padding:0!important;margin:0!important;height:100%!important;width:2.3em!important;margin-inline:0.14em!important;position:absolute}.sidebar-left .clickable-icon.sidebar-collapse-icon{transform:rotateY(180deg);right:var(--sidebar-margin)}.sidebar-right .clickable-icon.sidebar-collapse-icon{transform:rotateY(180deg);left:var(--sidebar-margin)}.clickable-icon.sidebar-collapse-icon svg.svg-icon{width:100%;height:100%}.sidebar-section-header{margin:0 0 1em 0;text-transform:uppercase;letter-spacing:.06em;font-weight:600}body{transition:background-color var(--color-fade-speed) ease-in-out}.webpage-container{display:flex;flex-direction:row;height:100%;width:100%;align-items:stretch;justify-content:center}.document-container{opacity:1;flex-basis:100%;max-width:100%;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;transition:opacity .2s ease-in-out;contain:inline-size}.hide{opacity:0;transition:opacity .2s ease-in-out}.document-container>.markdown-preview-view{margin:var(--sidebar-margin);margin-bottom:0;width:100%;width:-webkit-fill-available;width:-moz-available;width:fill-available;background-color:var(--background-primary);transition:background-color var(--color-fade-speed) ease-in-out;border-top-right-radius:var(--window-radius,var(--radius-m));border-top-left-radius:var(--window-radius,var(--radius-m));overflow-x:hidden!important;overflow-y:auto!important;display:flex!important;flex-direction:column!important;align-items:center!important;contain:inline-size}.document-container>.markdown-preview-view>.markdown-preview-sizer{padding-bottom:80vh!important;width:100%!important;max-width:var(--line-width)!important;flex-basis:var(--line-width)!important;transition:background-color var(--color-fade-speed) ease-in-out;contain:inline-size}.markdown-rendered img:not([width]),.view-content img:not([width]){max-width:100%;outline:0}.document-container>.view-content.embed{display:flex;padding:1em;height:100%;width:100%;align-items:center;justify-content:center}.document-container>.view-content.embed>*{max-width:100%;max-height:100%;object-fit:contain}:has(> :is(.math,table)){overflow-x:auto!important}.document-container>.view-content{overflow-x:auto;contain:content;padding:0;margin:0;height:100%}.scroll-highlight{position:absolute;width:100%;height:100%;pointer-events:none;z-index:1000;background-color:hsla(var(--color-accent-hsl),.25);opacity:0;padding:1em;inset:50%;translate:-50% -50%;border-radius:var(--radius-s)}</style><script defer="">async function loadIncludes(){if("file:"!=location.protocol){let e=document.querySelectorAll("include");for(let t=0;t<e.length;t++){let o=e[t],l=o.getAttribute("src");try{const e=await fetch(l);if(!e.ok){console.log("Could not include file: "+l),o?.remove();continue}let t=await e.text(),n=document.createRange().createContextualFragment(t),i=Array.from(n.children);for(let e of i)e.classList.add("hide"),e.style.transition="opacity 0.5s ease-in-out",setTimeout((()=>{e.classList.remove("hide")}),10);o.before(n),o.remove(),console.log("Included file: "+l)}catch(e){o?.remove(),console.log("Could not include file: "+l,e);continue}}}else{if(document.querySelectorAll("include").length>0){var e=document.createElement("div");e.id="error",e.textContent="Web server exports must be hosted on an http / web server to be viewed correctly.",e.style.position="fixed",e.style.top="50%",e.style.left="50%",e.style.transform="translate(-50%, -50%)",e.style.fontSize="1.5em",e.style.fontWeight="bold",e.style.textAlign="center",document.body.appendChild(e),document.querySelector(".document-container")?.classList.remove("hide")}}}document.addEventListener("DOMContentLoaded",(()=>{loadIncludes()}));let isFileProtocol="file:"==location.protocol;function waitLoadScripts(e,t){let o=e.map((e=>document.getElementById(e+"-script"))),l=0;!function e(){let n=o[l];l++,n&&"true"!=n.getAttribute("loaded")||l<o.length&&e(),l<o.length?n.addEventListener("load",e):t()}()}</script><link rel="stylesheet" href="lib/styles/obsidian.css"><link rel="stylesheet" href="lib/styles/theme.css"><link rel="preload" href="lib/styles/global-variable-styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="lib/styles/global-variable-styles.css"></noscript><link rel="preload" href="lib/styles/main-styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="lib/styles/main-styles.css"></noscript></head><body class="publish css-settings-manager theme-dark show-inline-title show-ribbon"><script defer="">let theme=localStorage.getItem("theme")||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");"dark"==theme?(document.body.classList.add("theme-dark"),document.body.classList.remove("theme-light")):(document.body.classList.add("theme-light"),document.body.classList.remove("theme-dark")),window.innerWidth<480?document.body.classList.add("is-phone"):window.innerWidth<768?document.body.classList.add("is-tablet"):window.innerWidth<1024?document.body.classList.add("is-small-screen"):document.body.classList.add("is-large-screen")</script><div class="webpage-container workspace"><div class="sidebar-left sidebar"><div class="sidebar-handle"></div><div class="sidebar-topbar"><div class="topbar-content"><label class="theme-toggle-container" for="theme_toggle"><input class="theme-toggle-input" type="checkbox" id="theme_toggle"><div class="toggle-background"></div></label></div><div class="clickable-icon sidebar-collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="svg-icon"><path d="M21 3H3C1.89543 3 1 3.89543 1 5V19C1 20.1046 1.89543 21 3 21H21C22.1046 21 23 20.1046 23 19V5C23 3.89543 22.1046 3 21 3Z"></path><path d="M10 4V20"></path><path d="M4 7H7"></path><path d="M4 10H7"></path><path d="M4 13H7"></path></svg></div></div><div class="sidebar-content"><div class="search-input-container"><input enterkeyhint="search" type="search" spellcheck="false" placeholder="Search..."><div class="search-input-clear-button" aria-label="Clear search"></div></div><include src="lib/html/file-tree.html"></include></div><script defer="">let ls = document.querySelector(".sidebar-left"); ls.classList.add("is-collapsed"); if (window.innerWidth > 768) ls.classList.remove("is-collapsed"); ls.style.setProperty("--sidebar-width", localStorage.getItem("sidebar-left-width"));</script></div><div class="document-container markdown-reading-view hide"><div class="markdown-preview-view markdown-rendered allow-fold-headings allow-fold-lists is-readable-line-width"><style id="MJX-CHTML-styles">mjx-container[jax=CHTML]{line-height:0}mjx-container [space="1"]{margin-left:.111em}mjx-container [space="2"]{margin-left:.167em}mjx-container [space="3"]{margin-left:.222em}mjx-container [space="4"]{margin-left:.278em}mjx-container [space="5"]{margin-left:.333em}mjx-container [rspace="1"]{margin-right:.111em}mjx-container [rspace="2"]{margin-right:.167em}mjx-container [rspace="3"]{margin-right:.222em}mjx-container [rspace="4"]{margin-right:.278em}mjx-container [rspace="5"]{margin-right:.333em}mjx-container [size="s"]{font-size:70.7%}mjx-container [size=ss]{font-size:50%}mjx-container [size=Tn]{font-size:60%}mjx-container [size=sm]{font-size:85%}mjx-container [size=lg]{font-size:120%}mjx-container [size=Lg]{font-size:144%}mjx-container [size=LG]{font-size:173%}mjx-container [size=hg]{font-size:207%}mjx-container [size=HG]{font-size:249%}mjx-container [width=full]{width:100%}mjx-box{display:inline-block}mjx-block{display:block}mjx-itable{display:inline-table}mjx-row{display:table-row}mjx-row>*{display:table-cell}mjx-mtext{display:inline-block;text-align:left}mjx-mstyle{display:inline-block}mjx-merror{display:inline-block;color:red;background-color:#ff0}mjx-mphantom{visibility:hidden}mjx-assistive-mml{top:0;left:0;clip:rect(1px,1px,1px,1px);user-select:none;position:absolute!important;padding:1px 0 0!important;border:0!important;display:block!important;width:auto!important;overflow:hidden!important}mjx-assistive-mml[display=block]{width:100%!important}mjx-math{display:inline-block;text-align:left;line-height:0;text-indent:0;font-style:normal;font-weight:400;font-size:100%;letter-spacing:normal;border-collapse:collapse;overflow-wrap:normal;word-spacing:normal;white-space:nowrap;direction:ltr;padding:1px 0}mjx-container[jax=CHTML][display=true]{display:block;text-align:center;margin:1em 0}mjx-container[jax=CHTML][display=true][width=full]{display:flex}mjx-container[jax=CHTML][display=true] mjx-math{padding:0}mjx-container[jax=CHTML][justify=left]{text-align:left}mjx-container[jax=CHTML][justify=right]{text-align:right}mjx-c{display:inline-block}mjx-utext{display:inline-block;padding:.75em 0 .2em}mjx-mo{display:inline-block;text-align:left}mjx-stretchy-h{display:inline-table;width:100%}mjx-stretchy-h>*{display:table-cell;width:0}mjx-stretchy-h>*>mjx-c{display:inline-block;transform:scaleX(1)}mjx-stretchy-h>*>mjx-c::before{display:inline-block;width:initial}mjx-stretchy-h>mjx-ext{overflow:clip visible;width:100%}mjx-stretchy-h>mjx-ext>mjx-c::before{transform:scaleX(500)}mjx-stretchy-h>mjx-ext>mjx-c{width:0}mjx-stretchy-h>mjx-beg>mjx-c{margin-right:-.1em}mjx-stretchy-h>mjx-end>mjx-c{margin-left:-.1em}mjx-stretchy-v{display:inline-block}mjx-stretchy-v>*{display:block}mjx-stretchy-v>mjx-beg{height:0}mjx-stretchy-v>mjx-end>mjx-c{display:block}mjx-stretchy-v>*>mjx-c{transform:scaleY(1);transform-origin:left center;overflow:hidden}mjx-stretchy-v>mjx-ext{display:block;height:100%;box-sizing:border-box;border:0 solid transparent;overflow:visible clip}mjx-stretchy-v>mjx-ext>mjx-c::before{width:initial;box-sizing:border-box}mjx-stretchy-v>mjx-ext>mjx-c{transform:scaleY(500) translateY(.075em);overflow:visible}mjx-mark{display:inline-block;height:0}mjx-mfrac{display:inline-block;text-align:left}mjx-frac{display:inline-block;vertical-align:.17em;padding:0 .22em}mjx-frac[type="d"]{vertical-align:.04em}mjx-frac[delims]{padding:0 .1em}mjx-frac[atop]{padding:0 .12em}mjx-frac[atop][delims]{padding:0}mjx-dtable{display:inline-table;width:100%}mjx-dtable>*{font-size:2000%}mjx-dbox{display:block;font-size:5%}mjx-num{display:block;text-align:center}mjx-den{display:block;text-align:center}mjx-mfrac[bevelled]>mjx-num{display:inline-block}mjx-mfrac[bevelled]>mjx-den{display:inline-block}mjx-den[align=right],mjx-num[align=right]{text-align:right}mjx-den[align=left],mjx-num[align=left]{text-align:left}mjx-nstrut{display:inline-block;height:.054em;width:0;vertical-align:-.054em}mjx-nstrut[type="d"]{height:.217em;vertical-align:-.217em}mjx-dstrut{display:inline-block;height:.505em;width:0}mjx-dstrut[type="d"]{height:.726em}mjx-line{display:block;box-sizing:border-box;min-height:1px;height:.06em;border-top:.06em solid;margin:.06em -.1em;overflow:hidden}mjx-line[type="d"]{margin:.18em -.1em}mjx-mn{display:inline-block;text-align:left}mjx-texatom{display:inline-block;text-align:left}mjx-msup{display:inline-block;text-align:left}mjx-c::before{display:block;width:0}.MJX-TEX{font-family:MJXZERO,MJXTEX}.TEX-B{font-family:MJXZERO,MJXTEX-B}.TEX-I{font-family:MJXZERO,MJXTEX-I}.TEX-MI{font-family:MJXZERO,MJXTEX-MI}.TEX-BI{font-family:MJXZERO,MJXTEX-BI}.TEX-S1{font-family:MJXZERO,MJXTEX-S1}.TEX-S2{font-family:MJXZERO,MJXTEX-S2}.TEX-S3{font-family:MJXZERO,MJXTEX-S3}.TEX-S4{font-family:MJXZERO,MJXTEX-S4}.TEX-A{font-family:MJXZERO,MJXTEX-A}.TEX-C{font-family:MJXZERO,MJXTEX-C}.TEX-CB{font-family:MJXZERO,MJXTEX-CB}.TEX-FR{font-family:MJXZERO,MJXTEX-FR}.TEX-FRB{font-family:MJXZERO,MJXTEX-FRB}.TEX-SS{font-family:MJXZERO,MJXTEX-SS}.TEX-SSB{font-family:MJXZERO,MJXTEX-SSB}.TEX-SSI{font-family:MJXZERO,MJXTEX-SSI}.TEX-SC{font-family:MJXZERO,MJXTEX-SC}.TEX-T{font-family:MJXZERO,MJXTEX-T}.TEX-V{font-family:MJXZERO,MJXTEX-V}.TEX-VB{font-family:MJXZERO,MJXTEX-VB}mjx-stretchy-h mjx-c,mjx-stretchy-v mjx-c{font-family:MJXZERO,MJXTEX-S1,MJXTEX-S4,MJXTEX,MJXTEX-A!important}@font-face{font-family:MJXZERO;src:url("lib/fonts/mathjax_zero.woff") format("woff")}@font-face{font-family:MJXTEX;src:url("lib/fonts/mathjax_main-regular.woff") format("woff")}@font-face{font-family:MJXTEX-B;src:url("lib/fonts/mathjax_main-bold.woff") format("woff")}@font-face{font-family:MJXTEX-I;src:url("lib/fonts/mathjax_math-italic.woff") format("woff")}@font-face{font-family:MJXTEX-MI;src:url("lib/fonts/mathjax_main-italic.woff") format("woff")}@font-face{font-family:MJXTEX-BI;src:url("lib/fonts/mathjax_math-bolditalic.woff") format("woff")}@font-face{font-family:MJXTEX-S1;src:url("lib/fonts/mathjax_size1-regular.woff") format("woff")}@font-face{font-family:MJXTEX-S2;src:url("lib/fonts/mathjax_size2-regular.woff") format("woff")}@font-face{font-family:MJXTEX-S3;src:url("lib/fonts/mathjax_size3-regular.woff") format("woff")}@font-face{font-family:MJXTEX-S4;src:url("lib/fonts/mathjax_size4-regular.woff") format("woff")}@font-face{font-family:MJXTEX-A;src:url("lib/fonts/mathjax_ams-regular.woff") format("woff")}@font-face{font-family:MJXTEX-C;src:url("lib/fonts/mathjax_calligraphic-regular.woff") format("woff")}@font-face{font-family:MJXTEX-CB;src:url("lib/fonts/mathjax_calligraphic-bold.woff") format("woff")}@font-face{font-family:MJXTEX-FR;src:url("lib/fonts/mathjax_fraktur-regular.woff") format("woff")}@font-face{font-family:MJXTEX-FRB;src:url("lib/fonts/mathjax_fraktur-bold.woff") format("woff")}@font-face{font-family:MJXTEX-SS;src:url("lib/fonts/mathjax_sansserif-regular.woff") format("woff")}@font-face{font-family:MJXTEX-SSB;src:url("lib/fonts/mathjax_sansserif-bold.woff") format("woff")}@font-face{font-family:MJXTEX-SSI;src:url("lib/fonts/mathjax_sansserif-italic.woff") format("woff")}@font-face{font-family:MJXTEX-SC;src:url("lib/fonts/mathjax_script-regular.woff") format("woff")}@font-face{font-family:MJXTEX-T;src:url("lib/fonts/mathjax_typewriter-regular.woff") format("woff")}@font-face{font-family:MJXTEX-V;src:url("lib/fonts/mathjax_vector-regular.woff") format("woff")}@font-face{font-family:MJXTEX-VB;src:url("lib/fonts/mathjax_vector-bold.woff") format("woff")}mjx-c.mjx-c3D::before{padding:.583em .778em .082em 0;content:"="}mjx-c.mjx-c31::before{padding:.666em .5em 0 0;content:"1"}mjx-c.mjx-c2E::before{padding:.12em .278em 0 0;content:"."}mjx-c.mjx-c30::before{padding:.666em .5em .022em 0;content:"0"}mjx-c.mjx-c28::before{padding:.75em .389em .25em 0;content:"("}mjx-c.mjx-c39::before{padding:.666em .5em .022em 0;content:"9"}mjx-c.mjx-c32::before{padding:.666em .5em 0 0;content:"2"}mjx-c.mjx-c2013::before{padding:.285em .5em 0 0;content:"–"}mjx-c.mjx-c29::before{padding:.75em .389em .25em 0;content:")"}mjx-c.mjx-cD7::before{padding:.491em .778em 0 0;content:"×"}mjx-c.mjx-c2212::before{padding:.583em .778em .082em 0;content:"−"}mjx-c.mjx-c33::before{padding:.665em .5em .022em 0;content:"3"}mjx-c.mjx-c2F::before{padding:.75em .5em .25em 0;content:"/"}mjx-c.mjx-c36::before{padding:.666em .5em .022em 0;content:"6"}</style><div class="markdown-preview-sizer markdown-preview-section"><h1 class="page-title heading inline-title" id="第一部分 将bam文件转化为vcf"><p dir="auto">第一部分 将bam文件转化为vcf</p></h1><div class="heading-wrapper"><div class="heading-children"><div class="heading-wrapper"><h2 data-heading="1 每个bam 文件移动到对应的文件夹" dir="auto" class="heading" id="1_每个bam_文件移动到对应的文件夹"><div class="heading-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>1 每个bam 文件移动到对应的文件夹</h2><div class="heading-children"><div><pre class="language-shell" tabindex="0"><code class="language-shell is-loaded"><span class="token comment"># 移动前缀为list1的bam文件到相应文件夹</span>
+<span class="token keyword">while</span> <span class="token assign-left variable"><span class="token environment constant">IFS</span></span><span class="token operator">=</span> <span class="token builtin class-name">read</span> -r filename<span class="token punctuation">;</span> <span class="token keyword">do</span>
+    <span class="token function">mkdir</span> -p <span class="token string">"<span class="token variable">$filename</span>"</span>
+    <span class="token function">mv</span> <span class="token string">"<span class="token variable">${filename}</span>.chrY.bam"</span> <span class="token string">"<span class="token variable">$filename</span>/"</span>
+<span class="token keyword">done</span> <span class="token operator">&lt;</span> list1
+</code><button class="copy-code-button">复制</button></pre></div><div><p dir="auto">代码含义：</p></div><div><ol>
+<li data-line="0" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>while IFS= read -r filename; do</code></p>
+<ul>
+<li data-line="2" dir="auto">这行代码启动一个 <code>while</code> 循环，读取文件 <code>list1</code> 的每一行。<code>IFS=</code> 设定了内部字段分隔符为空，这样可以防止读取行时对空格进行分割。<code>-r</code> 选项保证读取的内容不会对反斜杠进行特殊处理。读取到的每一行被存储在 <code>filename</code> 变量中。</li>
+</ul>
+</li>
+<li data-line="3" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>mkdir -p "$filename"</code></p>
+<ul>
+<li data-line="5" dir="auto">这行代码使用 <code>mkdir</code> 命令创建一个目录，目录名由变量 <code>filename</code> 指定。<code>-p</code> 选项确保即使目录已经存在，也不会报错。</li>
+</ul>
+</li>
+<li data-line="6" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>mv "${filename}.chrY.bam" "$filename/"</code></p>
+<ul>
+<li data-line="8" dir="auto">这行代码使用 <code>mv</code> 命令将文件移动到新创建的目录中。<code>"${filename}.chrY.bam"</code> 表示要移动的文件名，该文件名是由 <code>filename</code> 变量加上后缀 <code>.chrY.bam</code> 组成的。<code>"$filename/"</code> 表示目标目录。</li>
+</ul>
+</li>
+<li data-line="9" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>done &lt; list1</code></p>
+<ul>
+<li data-line="11" dir="auto">这行代码指定 <code>list1</code> 文件作为 <code>while</code> 循环的输入来源。</li>
+</ul>
+</li>
+</ol></div><div><p dir="auto">总结一下，这段代码的作用是：</p></div><div><ul>
+<li data-line="0" dir="auto">从 <code>list1</code> 文件中读取每一行。</li>
+<li data-line="1" dir="auto">创建一个以每行内容命名的目录。</li>
+<li data-line="2" dir="auto">将对应的 <code>.chrY.bam</code> 文件移动到新创建的目录中。</li>
+</ul></div></div></div><div class="heading-wrapper"><h2 data-heading="2 修改 bam 文件中的 chrY 为 Y" dir="auto" class="heading" id="2_修改_bam_文件中的_chrY_为_Y"><div class="heading-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>2 修改 bam 文件中的 chrY 为 Y</h2><div class="heading-children"><div><pre class="language-shell" tabindex="0"><code class="language-shell is-loaded"><span class="token comment"># 将bam文件中的chrY修改为Y,并得到后缀为Y.bam的文件</span>
+<span class="token keyword">for</span> <span class="token for-or-select variable">i</span> <span class="token keyword">in</span> <span class="token variable"><span class="token variable">$(</span><span class="token function">cat</span> list1<span class="token variable">)</span></span><span class="token punctuation">;</span> <span class="token keyword">do</span>
+    <span class="token punctuation">(</span>cd <span class="token string">"<span class="token variable">$i</span>"</span><span class="token punctuation">;</span> samtools view -@ <span class="token number">30</span> -h <span class="token string">"<span class="token variable">$i</span>.chrY.bam"</span> <span class="token operator">|</span> <span class="token function">sed</span> <span class="token string">"s/chr//g"</span> <span class="token operator">|</span> samtools view -@ <span class="token number">30</span> -b - <span class="token operator">&gt;</span> <span class="token string">"<span class="token variable">$i</span>.Y.bam"</span><span class="token punctuation">;</span> <span class="token builtin class-name">cd</span> <span class="token punctuation">..</span><span class="token punctuation">)</span>
+<span class="token keyword">done</span>
+</code><button class="copy-code-button">复制</button></pre></div><div><p dir="auto">代码含义：</p></div><div><ol>
+<li data-line="0" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>for i in $(cat list1); do</code></p>
+<ul>
+<li data-line="2" dir="auto">这行代码启动一个 <code>for</code> 循环，循环读取 <code>list1</code> 文件中的每一行内容。<code>$(cat list1)</code> 读取 <code>list1</code> 文件的内容，并将每一行内容作为循环变量 <code>i</code>。</li>
+</ul>
+</li>
+<li data-line="3" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>(cd "$i";</code></p>
+<ul>
+<li data-line="5" dir="auto">这部分代码将当前工作目录切换到 <code>i</code> 变量指定的目录。括号 <code>( )</code> 表示在一个子 Shell 中执行这些命令，不会影响父 Shell 的当前工作目录。</li>
+</ul>
+</li>
+<li data-line="6" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>samtools view -@ 30 -h "$i.chrY.bam" | sed "s/chr//g" | samtools view -@ 30 -b - &gt; "$i.Y.bam";</code></p>
+<ul>
+<li data-line="8" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>这行代码使用 <code>samtools</code> 和 <code>sed</code> 命令对 BAM 文件进行处理：
+<ul>
+<li data-line="9" dir="auto"><code>samtools view -@ 30 -h "$i.chrY.bam"</code> 使用 <code>samtools</code> 工具查看 BAM 文件，<code>-@ 30</code> 指定使用 30 个线程，<code>-h</code> 选项保留头信息。</li>
+<li data-line="10" dir="auto"><code>| sed "s/chr//g"</code> 使用 <code>sed</code> 工具对 BAM 文件中的数据进行处理，去掉所有 <code>chr</code> 字符串。</li>
+<li data-line="11" dir="auto"><code>| samtools view -@ 30 -b - &gt; "$i.Y.bam"</code> 使用 <code>samtools</code> 工具将处理后的数据重新生成 BAM 文件，并输出到新的文件 <code>"$i.Y.bam"</code> 中，<code>-b</code> 选项表示输出 BAM 格式，<code>-</code> 表示从标准输入读取数据。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-line="12" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>cd ..)</code></p>
+<ul>
+<li data-line="14" dir="auto">这行代码将当前工作目录切换回到上一级目录，与之前的 <code>cd "$i"</code> 配对使用。</li>
+</ul>
+</li>
+<li data-line="15" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>done</code></p>
+<ul>
+<li data-line="17" dir="auto">这行代码结束 <code>for</code> 循环。</li>
+</ul>
+</li>
+</ol></div><div><p dir="auto">总结一下，这段代码的作用是：</p></div><div><ul>
+<li data-line="0" dir="auto">从 <code>list1</code> 文件中读取每个项目名称。</li>
+<li data-line="1" dir="auto">进入每个项目名称对应的目录。</li>
+<li data-line="2" dir="auto">使用 <code>samtools</code> 和 <code>sed</code> 工具处理 BAM 文件，去掉所有 <code>chr</code> 字符串，并生成一个新的 BAM 文件。</li>
+<li data-line="3" dir="auto">处理完成后，返回到上一级目录。</li>
+</ul></div></div></div><div class="heading-wrapper"><h2 data-heading="3 为每个 Y. bam 文件建立索引" dir="auto" class="heading" id="3_为每个_Y._bam_文件建立索引"><div class="heading-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>3 为每个 Y. bam 文件建立索引</h2><div class="heading-children"><div><pre class="language-shell" tabindex="0"><code class="language-shell is-loaded"><span class="token comment"># 在当前路径下以及其子目录中的所有文件（包括子目录中的文件）中查找以 .Y.bam 为后缀的 BAM 文件，并为它们建立索引</span>
+<span class="token function">find</span> <span class="token builtin class-name">.</span> -type f -name <span class="token string">"*.Y.bam"</span> -execdir samtools index -@ <span class="token number">10</span> <span class="token punctuation">{</span><span class="token punctuation">}</span> <span class="token punctuation">\</span><span class="token punctuation">;</span>
+</code><button class="copy-code-button">复制</button></pre></div><div><p dir="auto">代码解释：</p></div><div><ol>
+<li data-line="0" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>find . -type f -name "*.Y.bam"</code></p>
+<ul>
+<li data-line="2" dir="auto">这部分代码使用 <code>find</code> 命令在当前目录（<code>.</code>）及其子目录中查找所有类型为文件（<code>-type f</code>）且名称匹配模式 <code>*.Y.bam</code> 的文件。也就是说，它会查找所有扩展名为 <code>.Y.bam</code> 的文件。</li>
+</ul>
+</li>
+<li data-line="3" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>-execdir samtools index -@ 10 {} \;</code></p>
+<ul>
+<li data-line="5" dir="auto">这部分代码使用 <code>-execdir</code> 选项执行命令。<code>-execdir</code> 与 <code>-exec</code> 类似，不同之处在于 <code>-execdir</code> 在每个匹配文件所在的目录中执行命令，而不是在执行 <code>find</code> 命令的当前目录中执行。</li>
+<li data-line="6" dir="auto"><code>samtools index -@ 10 {}</code> 是要执行的命令，<code>samtools index</code> 是用来为 BAM 文件创建索引的工具，<code>-@ 10</code> 指定使用 10 个线程，<code>{}</code> 是 <code>find</code> 命令中表示当前匹配到的文件的占位符。</li>
+<li data-line="7" dir="auto"><code>\;</code> 表示命令的结束。</li>
+</ul>
+</li>
+</ol></div><div><p dir="auto">总结一下，这段代码的作用是：</p></div><div><ul>
+<li data-line="0" dir="auto">在当前目录及其子目录中查找所有扩展名为 <code>.Y.bam</code> 的文件。</li>
+<li data-line="1" dir="auto">对每个找到的 <code>.Y.bam</code> 文件，在其所在的目录中使用 <code>samtools index</code> 命令创建索引，使用 10 个线程来加快处理速度。</li>
+</ul></div></div></div><div class="heading-wrapper"><h2 data-heading="4 从 bam 文件call 出 gvcf" dir="auto" class="heading" id="4_从_bam_文件call_出_gvcf"><div class="heading-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>4 从 bam 文件call 出 gvcf</h2><div class="heading-children"><div><pre class="language-shell" tabindex="0"><code class="language-shell is-loaded"><span class="token comment"># call出gvcf的脚本，命名为wgs.1.sh</span>
+<span class="token assign-left variable">rdir</span><span class="token operator">=</span>/home/reference
+<span class="token assign-left variable">ref</span><span class="token operator">=</span>human_g1k_v37.fasta
+gatk  --java-options <span class="token string">"-Xmx10G -XX:+UseParallelGC"</span>   HaplotypeCaller --emit-ref-confidence GVCF -R  <span class="token variable">$rdir</span>/<span class="token variable">$ref</span> -I <span class="token variable">${<span class="token environment constant">PWD</span><span class="token operator">##</span>*<span class="token operator">/</span>}</span>.Y.bam -pairHMM AVX_LOGLESS_CACHING -L Y -ploidy <span class="token number">1</span> --native-pair-hmm-threads <span class="token number">1</span> -O hc.haplo.<span class="token variable">${<span class="token environment constant">PWD</span><span class="token operator">##</span>*<span class="token operator">/</span>}</span>.gvcf.gz -stand-call-conf <span class="token number">10</span>
+tabix -p vcf hc.haplo.<span class="token variable">${<span class="token environment constant">PWD</span><span class="token operator">##</span>*<span class="token operator">/</span>}</span>.gvcf.gz
+</code><button class="copy-code-button">复制</button></pre></div><div><p dir="auto"><strong>第一步代码解释</strong>：</p></div><div><ol>
+<li data-line="0" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>rdir=/home/reference</code></p>
+<ul>
+<li data-line="2" dir="auto">这行代码定义了一个变量 <code>rdir</code>，指定参考基因组文件所在的目录。</li>
+</ul>
+</li>
+<li data-line="3" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>ref=human_g1k_v37.fasta</code></p>
+<ul>
+<li data-line="5" dir="auto">这行代码定义了一个变量 <code>ref</code>，指定参考基因组文件的名称。</li>
+</ul>
+</li>
+<li data-line="6" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>gatk --java-options "-Xmx10G -XX:+UseParallelGC" HaplotypeCaller --emit-ref-confidence GVCF -R $rdir/$ref -I ${PWD##*/}.Y.bam -pairHMM AVX_LOGLESS_CACHING -L Y -ploidy 1 --native-pair-hmm-threads 1 -O hc.haplo.${PWD##*/}.gvcf.gz -stand-call-conf 10</code></p>
+<ul>
+<li data-line="8" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>这行代码使用 GATK 工具的 <code>HaplotypeCaller</code> 模块对 BAM 文件进行变异检测，并生成 GVCF 文件。
+<ul>
+<li data-line="9" dir="auto"><code>gatk</code> 调用 GATK 工具。</li>
+<li data-line="10" dir="auto"><code>--java-options "-Xmx10G -XX:+UseParallelGC"</code> 设置 Java 虚拟机的选项，<code>-Xmx10G</code> 指定最大堆内存为 10GB，<code>-XX:+UseParallelGC</code> 启用并行垃圾回收。</li>
+<li data-line="11" dir="auto"><code>HaplotypeCaller</code> 指定使用 GATK 的 <code>HaplotypeCaller</code> 模块。</li>
+<li data-line="12" dir="auto"><code>--emit-ref-confidence GVCF</code> 指定输出 GVCF 格式的文件。</li>
+<li data-line="13" dir="auto"><code>-R $rdir/$ref</code> 指定参考基因组文件，路径为 <code>/home/reference/human_g1k_v37.fasta</code>。</li>
+<li data-line="14" dir="auto"><code>-I ${PWD##*/}.Y.bam</code> 指定输入的 BAM 文件，文件名为当前工作目录名加上 <code>.Y.bam</code>（例如，如果当前工作目录是 <code>sample1</code>，则输入文件为 <code>sample1.Y.bam</code>）。</li>
+<li data-line="15" dir="auto"><code>-pairHMM AVX_LOGLESS_CACHING</code> 使用优化的 PairHMM 算法。</li>
+<li data-line="16" dir="auto"><code>-L Y</code> 指定只处理 Y 染色体。</li>
+<li data-line="17" dir="auto"><code>-ploidy 1</code> 指定单倍体。</li>
+<li data-line="18" dir="auto"><code>--native-pair-hmm-threads 1</code> 指定使用 1 个线程进行 PairHMM 计算。</li>
+<li data-line="19" dir="auto"><code>-O hc.haplo.${PWD##*/}.gvcf.gz</code> 指定输出文件的名称，文件名为 <code>hc.haplo.</code> 加上当前工作目录名，加上 <code>.gvcf.gz</code> 后缀（例如，<code>hc.haplo.sample1.gvcf.gz</code>）。</li>
+<li data-line="20" dir="auto"><code>-stand-call-conf 10</code> 设置变异调用的置信度阈值为 10。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-line="21" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>tabix -p vcf hc.haplo.${PWD##*/}.gvcf.gz</code></p>
+<ul>
+<li data-line="23" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>这行代码使用 <code>tabix</code> 工具对生成的 GVCF 文件进行索引。
+<ul>
+<li data-line="24" dir="auto"><code>tabix</code> 调用 <code>tabix</code> 工具。</li>
+<li data-line="25" dir="auto"><code>-p vcf</code> 指定输入文件的格式为 VCF。</li>
+<li data-line="26" dir="auto"><code>hc.haplo.${PWD##*/}.gvcf.gz</code> 指定要索引的 GVCF 文件，文件名为之前生成的 GVCF 文件（例如，<code>hc.haplo.sample1.gvcf.gz</code>）。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol></div><div><p dir="auto">总结一下，这段脚本的作用是：</p></div><div><ul>
+<li data-line="0" dir="auto">使用 GATK 的 <code>HaplotypeCaller</code> 模块对当前工作目录下的 BAM 文件进行变异检测，生成 GVCF 文件。</li>
+<li data-line="1" dir="auto">使用 <code>tabix</code> 工具对生成的 GVCF 文件进行索引。</li>
+</ul></div><div><pre class="language-shell" tabindex="0"><code class="language-shell is-loaded"><span class="token comment"># 对list1中包含的每个目录进行wgs.1.sh操作</span>
+<span class="token function">cat</span> list1 <span class="token operator">|</span> <span class="token function">xargs</span> -I <span class="token punctuation">{</span><span class="token punctuation">}</span> -P <span class="token number">10</span> <span class="token function">bash</span> -c <span class="token string">'(cd {} &amp;&amp; bash ../wgs.1.sh &gt; e.haplo.log)'</span>
+</code><button class="copy-code-button">复制</button></pre></div><div><p dir="auto"><strong>第二步代码解释</strong>：</p></div><div><ol>
+<li data-line="0" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>cat list1</code></p>
+<ul>
+<li data-line="2" dir="auto">这部分代码使用 <code>cat</code> 命令读取 <code>list1</code> 文件的内容，逐行输出每个目录名称。</li>
+</ul>
+</li>
+<li data-line="3" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>| xargs -I {} -P 10 bash -c '(cd {} &amp;&amp; bash ../wgs.1.sh &gt; e.haplo.log)'</code></p>
+<ul>
+<li data-line="5" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>这部分代码将 <code>cat list1</code> 输出的每一行作为输入，传递给 <code>xargs</code> 命令来并行执行任务。
+<ul>
+<li data-line="6" dir="auto"><code>-I {}</code> 指定 <code>xargs</code> 使用 <code>{}</code> 作为占位符，代表从 <code>list1</code> 中读取的每一行。</li>
+<li data-line="7" dir="auto"><code>-P 10</code> 指定 <code>xargs</code> 并行执行任务的数量上限为 10，即最多同时运行 10 个任务。</li>
+<li data-line="8" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div><code>bash -c '(cd {} &amp;&amp; bash ../wgs.1.sh &gt; e.haplo.log)'</code> 指定要执行的命令：
+<ul>
+<li data-line="9" dir="auto"><code>bash -c</code> 启动一个新的 Bash 子进程执行命令。</li>
+<li data-line="10" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div><code>(cd {} &amp;&amp; bash ../wgs.1.sh &gt; e.haplo.log)</code> 是实际执行的命令。
+<ul>
+<li data-line="11" dir="auto"><code>cd {}</code> 切换到 <code>list1</code> 文件中指定的目录 <code>{}</code>。</li>
+<li data-line="12" dir="auto"><code>bash ../wgs.1.sh</code> 执行上一级目录中的 <code>wgs.1.sh</code> 脚本。</li>
+<li data-line="13" dir="auto"><code>&gt; e.haplo.log</code> 将脚本的标准输出重定向到 <code>e.haplo.log</code> 文件中。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol></div><div><p dir="auto">总结一下，这段代码的作用是：</p></div><div><ul>
+<li data-line="0" dir="auto">从 <code>list1</code> 文件中读取每个目录名称。</li>
+<li data-line="1" dir="auto">并行切换到每个目录，并在该目录中执行上一级目录的 <code>wgs.1.sh</code> 脚本。</li>
+<li data-line="2" dir="auto">将脚本的输出保存到相应目录下的 <code>e.haplo.log</code> 文件中。</li>
+<li data-line="3" dir="auto">最多同时运行 10 个任务以提高效率。</li>
+</ul></div><div><pre class="language-shell" tabindex="0"><code class="language-shell is-loaded"><span class="token comment"># 操作完后说索引需要更新，所以用一下代码查找所有.gvcf.gz后缀的文件并更新索引</span>
+<span class="token function">find</span> <span class="token builtin class-name">.</span> -type f -name <span class="token string">"*.gvcf.gz"</span> -exec <span class="token function">bash</span> -c <span class="token string">'tabix -f -p vcf "$1" &amp;&amp; echo "索引已更新: $1"'</span> _ <span class="token punctuation">{</span><span class="token punctuation">}</span> <span class="token punctuation">\</span><span class="token punctuation">;</span>
+</code><button class="copy-code-button">复制</button></pre></div><div><p dir="auto"><strong>第三步代码解释</strong>：</p></div><div><ol>
+<li data-line="0" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>find . -type f -name "*.gvcf.gz"</code></p>
+<ul>
+<li data-line="2" dir="auto">这部分代码使用 <code>find</code> 命令在当前目录（<code>.</code>）及其子目录中查找所有类型为文件（<code>-type f</code>）且名称匹配模式 <code>*.gvcf.gz</code> 的文件。也就是说，它会查找所有扩展名为 <code>.gvcf.gz</code> 的文件。</li>
+</ul>
+</li>
+<li data-line="3" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>-exec bash -c 'tabix -f -p vcf "$1" &amp;&amp; echo "索引已更新: $1"' _ {} \;</code></p>
+<ul>
+<li data-line="5" dir="auto">这部分代码使用 <code>-exec</code> 选项执行命令。</li>
+<li data-line="6" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div><code>bash -c 'tabix -f -p vcf "$1" &amp;&amp; echo "索引已更新: $1"'</code> 指定要执行的命令是一个 Bash 脚本，内容如下：
+<ul>
+<li data-line="7" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div><code>tabix -f -p vcf "$1"</code> 使用 <code>tabix</code> 工具为 GVCF 文件创建或更新索引：
+<ul>
+<li data-line="8" dir="auto"><code>-f</code> 强制重新生成索引，即使索引文件已经存在。</li>
+<li data-line="9" dir="auto"><code>-p vcf</code> 指定文件类型为 VCF。</li>
+<li data-line="10" dir="auto"><code>"$1"</code> 是传递给脚本的第一个参数，即当前找到的文件名。</li>
+</ul>
+</li>
+<li data-line="11" dir="auto"><code>&amp;&amp;</code> 表示如果前一个命令成功，则执行下一个命令。</li>
+<li data-line="12" dir="auto"><code>echo "索引已更新: $1"</code> 输出一条消息，表示索引已更新，并显示文件名。</li>
+</ul>
+</li>
+<li data-line="13" dir="auto"><code>_ {}</code> 将当前找到的文件名 <code>{}</code> 作为第一个参数传递给 Bash 脚本。</li>
+</ul>
+</li>
+</ol></div><div><p dir="auto">总结一下，这段代码的作用是：</p></div><div><ul>
+<li data-line="0" dir="auto">在当前目录及其子目录中查找所有扩展名为 <code>.gvcf.gz</code> 的文件。</li>
+<li data-line="1" dir="auto">对每个找到的 <code>.gvcf.gz</code> 文件，使用 <code>tabix</code> 工具强制创建或更新索引。</li>
+<li data-line="2" dir="auto">创建或更新索引后，输出一条消息表示索引已更新，并显示文件名。</li>
+</ul></div></div></div><div class="heading-wrapper"><h2 data-heading="5 分成9个区域来合并gvcf 为vcf，并 genotype" dir="auto" class="heading" id="5_分成9个区域来合并gvcf_为vcf，并_genotype"><div class="heading-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>5 分成9个区域来合并gvcf 为vcf，并 genotype</h2><div class="heading-children"><div><pre class="language-shell" tabindex="0"><code class="language-shell is-loaded"><span class="token assign-left variable">rdir</span><span class="token operator">=</span>/home/reference
+<span class="token assign-left variable">ref</span><span class="token operator">=</span>chrY_hs37d5.fa
+<span class="token keyword">for</span> <span class="token for-or-select variable">i</span> <span class="token keyword">in</span> <span class="token punctuation">{</span>00<span class="token punctuation">..</span>08<span class="token punctuation">}</span><span class="token punctuation">;</span> <span class="token keyword">do</span>
+    <span class="token function">nohup</span> <span class="token function">sh</span> -c <span class="token string">"
+        gatk --java-options <span class="token entity" title="\&quot;">\"</span>-Xmx120G -XX:+UseParallelGC<span class="token entity" title="\&quot;">\"</span> CombineGVCFs -R <span class="token variable">$rdir</span>/<span class="token variable">$ref</span> \<span class="token variable"><span class="token variable">$(</span><span class="token function">ls</span> gvcf_MOVE0425/*vcf.gz <span class="token operator">|</span> <span class="token function">awk</span> <span class="token string">'{print \" --variant \" \$1}'</span><span class="token variable">)</span></span> -L x<span class="token variable">${i}</span>.bed -O haplo.mult.hc.g.<span class="token variable">${i}</span>.vcf.gz &amp;&amp; 
+        gatk --java-options <span class="token entity" title="\&quot;">\"</span>-Xmx120G -XX:+UseParallelGC<span class="token entity" title="\&quot;">\"</span> GenotypeGVCFs -R <span class="token variable">$rdir</span>/<span class="token variable">$ref</span> -V haplo.mult.hc.g.<span class="token variable">${i}</span>.vcf.gz -O haplo.mult.genotype.<span class="token variable">${i}</span>.vcf.gz
+    "</span> <span class="token operator">&gt;</span> nohup_<span class="token variable">${i}</span>.out <span class="token operator"><span class="token file-descriptor important">2</span>&gt;</span><span class="token file-descriptor important">&amp;1</span> <span class="token operator">&amp;</span>
+<span class="token keyword">done</span>
+</code><button class="copy-code-button">复制</button></pre></div><div><ol>
+<li data-line="0" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>rdir=/home/reference</code></p>
+<ul>
+<li data-line="2" dir="auto">这行代码定义了一个变量 <code>rdir</code>，指定参考基因组文件所在的目录。</li>
+</ul>
+</li>
+<li data-line="3" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>ref=chrY_hs37d5.fa</code></p>
+<ul>
+<li data-line="5" dir="auto">这行代码定义了一个变量 <code>ref</code>，指定参考基因组文件的名称。</li>
+</ul>
+</li>
+<li data-line="6" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>for i in {00..08}; do</code></p>
+<ul>
+<li data-line="8" dir="auto">这行代码启动一个 <code>for</code> 循环，循环变量 <code>i</code> 的值从 <code>00</code> 到 <code>08</code>，即包含这 9 个值。</li>
+</ul>
+</li>
+<li data-line="9" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>nohup sh -c " ... " &gt; nohup_${i}.out 2&gt;&amp;1 &amp;</code></p>
+<ul>
+<li data-line="11" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>这部分代码使用 <code>nohup</code> 命令在后台执行一个新的 Shell 命令，并将输出重定向到 <code>nohup_${i}.out</code> 文件中。
+<ul>
+<li data-line="12" dir="auto"><code>nohup</code> 命令确保即使终端关闭，命令也会继续运行。</li>
+<li data-line="13" dir="auto"><code>sh -c " ... "</code> 在一个新的 Shell 中执行包含在双引号中的命令。</li>
+<li data-line="14" dir="auto"><code>&gt; nohup_${i}.out 2&gt;&amp;1</code> 将标准输出和标准错误重定向到 <code>nohup_${i}.out</code> 文件中。</li>
+<li data-line="15" dir="auto"><code>&amp;</code> 表示在后台运行该命令。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-line="16" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>gatk --java-options \"-Xmx120G -XX:+UseParallelGC\" CombineGVCFs -R $rdir/$ref \$(ls gvcf_MOVE0425/*vcf.gz | awk '{print \" --variant \" \$1}') -L x${i}.bed -O haplo.mult.hc.g.${i}.vcf.gz</code></p>
+<ul>
+<li data-line="18" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>这部分代码使用 GATK 工具的 <code>CombineGVCFs</code> 模块将多个 GVCF 文件合并为一个 VCF 文件。
+<ul>
+<li data-line="19" dir="auto"><code>gatk --java-options \"-Xmx120G -XX:+UseParallelGC\"</code> 调用 GATK 工具，并设置 Java 虚拟机的选项，<code>-Xmx120G</code> 指定最大堆内存为 120GB，<code>-XX:+UseParallelGC</code> 启用并行垃圾回收。</li>
+<li data-line="20" dir="auto"><code>CombineGVCFs</code> 指定使用 GATK 的 <code>CombineGVCFs</code> 模块。</li>
+<li data-line="21" dir="auto"><code>-R $rdir/$ref</code> 指定参考基因组文件，路径为 <code>/home/reference/chrY_hs37d5.fa</code>。</li>
+<li data-line="22" dir="auto"><code>\$(ls gvcf_MOVE0425/*vcf.gz | awk '{print \" --variant \" \$1}')</code> 使用 <code>ls</code> 命令列出目录 <code>gvcf_MOVE0425</code> 中的所有 <code>.vcf.gz</code> 文件，并使用 <code>awk</code> 命令将它们转换为 <code>--variant file</code> 格式的参数列表。</li>
+<li data-line="23" dir="auto"><code>-L x${i}.bed</code> 指定感兴趣的区域文件，文件名为 <code>x${i}.bed</code>。</li>
+<li data-line="24" dir="auto"><code>-O haplo.mult.hc.g.${i}.vcf.gz</code> 指定输出文件的名称，文件名为 <code>haplo.mult.hc.g.${i}.vcf.gz</code>。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-line="25" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>gatk --java-options \"-Xmx120G -XX:+UseParallelGC\" GenotypeGVCFs -R $rdir/$ref -V haplo.mult.hc.g.${i}.vcf.gz -O haplo.mult.genotype.${i}.vcf.gz</code></p>
+<ul>
+<li data-line="27" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>这部分代码使用 GATK 工具的 <code>GenotypeGVCFs</code> 模块对合并后的 VCF 文件进行基因型调用。
+<ul>
+<li data-line="28" dir="auto"><code>gatk --java-options \"-Xmx120G -XX:+UseParallelGC\"</code> 调用 GATK 工具，并设置 Java 虚拟机的选项。</li>
+<li data-line="29" dir="auto"><code>GenotypeGVCFs</code> 指定使用 GATK 的 <code>GenotypeGVCFs</code> 模块。</li>
+<li data-line="30" dir="auto"><code>-R $rdir/$ref</code> 指定参考基因组文件。</li>
+<li data-line="31" dir="auto"><code>-V haplo.mult.hc.g.${i}.vcf.gz</code> 指定输入文件为合并后的 VCF 文件。</li>
+<li data-line="32" dir="auto"><code>-O haplo.mult.genotype.${i}.vcf.gz</code> 指定输出文件的名称，文件名为 <code>haplo.mult.genotype.${i}.vcf.gz</code>。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol></div><div><p dir="auto">总结一下，这段代码的作用是：</p></div><div><ul>
+<li data-line="0" dir="auto">定义参考基因组文件所在的目录和文件名。</li>
+<li data-line="1" dir="auto">使用 <code>for</code> 循环并行处理 9 个任务（编号从 <code>00</code> 到 <code>08</code>）。</li>
+<li data-line="2" dir="auto">每个任务中，首先使用 <code>CombineGVCFs</code> 模块将多个 GVCF 文件合并为一个 VCF 文件，然后使用 <code>GenotypeGVCFs</code> 模块对合并后的 VCF 文件进行基因型调用。</li>
+<li data-line="3" dir="auto">所有任务在后台运行，并将输出日志重定向到相应的文件中。</li>
+</ul></div></div></div></div></div><div class="heading-wrapper"><h1 data-heading="第二部分对vcf进行过滤" dir="auto" class="heading" id="第二部分对vcf进行过滤">第二部分对vcf进行过滤</h1><div class="heading-children"><div class="heading-wrapper"><h2 data-heading="1 对各分区的 vcf 进行 genotype，包含未变异位点" dir="auto" class="heading" id="1_对各分区的_vcf_进行_genotype，包含未变异位点"><div class="heading-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>1 对各分区的 vcf 进行 genotype，包含未变异位点</h2><div class="heading-children"><div><pre class="language-shell" tabindex="0"><code class="language-shell is-loaded"><span class="token comment"># 包含未变异位点的分型。将目标文件分成若干个区域，不然速度会很慢，</span>
+<span class="token comment">#写入一个脚本Include_nonvaviants.sh</span>
+<span class="token comment">#!/bin/bash</span>
+<span class="token assign-left variable">rdir</span><span class="token operator">=</span>/home/reference
+<span class="token assign-left variable">ref</span><span class="token operator">=</span>human_g1k_v37.fasta
+<span class="token keyword">for</span> <span class="token for-or-select variable">i</span> <span class="token keyword">in</span> <span class="token punctuation">{</span>00<span class="token punctuation">..</span>08<span class="token punctuation">}</span><span class="token punctuation">;</span> <span class="token keyword">do</span>
+    gatk --java-options <span class="token string">"-Xmx20G -XX:+UseParallelGC"</span> GenotypeGVCFs -include-non-variant-sites -R <span class="token variable">$rdir</span>/<span class="token variable">$ref</span> -L x<span class="token variable">${i}</span>.bed -V haplo.mult.hc.g.<span class="token variable">${i}</span>.vcf.gz -O haplo.mult.hc.gall.<span class="token variable">${i}</span>.vcf.gz <span class="token operator">&gt;</span> x<span class="token variable">${i}</span>.log <span class="token operator"><span class="token file-descriptor important">2</span>&gt;</span><span class="token file-descriptor important">&amp;1</span>
+<span class="token keyword">done</span>
+<span class="token comment">#授权</span>
+<span class="token function">chmod</span> +x Include_nonvaviants.sh
+<span class="token comment">#后台运行</span>
+<span class="token function">nohup</span> ./Include_nonvaviants.sh <span class="token operator">&gt;</span> Include_nonvariants.log <span class="token operator"><span class="token file-descriptor important">2</span>&gt;</span><span class="token file-descriptor important">&amp;1</span> <span class="token operator">&amp;</span>
+</code><button class="copy-code-button">复制</button></pre></div><div><p dir="auto">代码解释：</p></div><div><ol>
+<li data-line="0" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>#!/bin/bash</code></p>
+<ul>
+<li data-line="2" dir="auto">指定使用 Bash 解释器执行脚本。这行必须放在脚本的第一行，告诉操作系统在运行这个脚本时应使用 <code>/bin/bash</code> 解释器。</li>
+</ul>
+</li>
+<li data-line="3" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>rdir=/home/reference</code></p>
+<ul>
+<li data-line="5" dir="auto">定义一个变量 <code>rdir</code>，指定参考基因组文件所在的目录。</li>
+</ul>
+</li>
+<li data-line="6" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>ref=human_g1k_v37.fasta</code></p>
+<ul>
+<li data-line="8" dir="auto">定义一个变量 <code>ref</code>，指定参考基因组文件的名称。</li>
+</ul>
+</li>
+<li data-line="9" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>for i in {00..08}; do</code></p>
+<ul>
+<li data-line="11" dir="auto">启动一个 <code>for</code> 循环，循环变量 <code>i</code> 的值从 <code>00</code> 到 <code>08</code>，即包含这 9 个值。</li>
+</ul>
+</li>
+<li data-line="12" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>gatk --java-options "-Xmx20G -XX:+UseParallelGC" GenotypeGVCFs -include-non-variant-sites -R $rdir/$ref -L x${i}.bed -V haplo.mult.hc.g.${i}.vcf.gz -O haplo.mult.hc.gall.${i}.vcf.gz &gt; x${i}.log 2&gt;&amp;1</code></p>
+<ul>
+<li data-line="14" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>使用 GATK 工具的 <code>GenotypeGVCFs</code> 模块进行基因型调用，并包含非变异位点的信息。
+<ul>
+<li data-line="15" dir="auto"><code>gatk --java-options "-Xmx20G -XX:+UseParallelGC"</code> 调用 GATK 工具，并设置 Java 虚拟机的选项。</li>
+<li data-line="16" dir="auto"><code>GenotypeGVCFs</code> 指定使用 GATK 的 <code>GenotypeGVCFs</code> 模块。</li>
+<li data-line="17" dir="auto"><code>-include-non-variant-sites</code> 指定包含非变异位点的信息。</li>
+<li data-line="18" dir="auto"><code>-R $rdir/$ref</code> 指定参考基因组文件，路径为 <code>/home/reference/human_g1k_v37.fasta</code>。</li>
+<li data-line="19" dir="auto"><code>-L x${i}.bed</code> 指定感兴趣的区域文件，文件名为 <code>x${i}.bed</code>。</li>
+<li data-line="20" dir="auto"><code>-V haplo.mult.hc.g.${i}.vcf.gz</code> 指定输入文件为合并后的 VCF 文件。</li>
+<li data-line="21" dir="auto"><code>-O haplo.mult.hc.gall.${i}.vcf.gz</code> 指定输出文件的名称，文件名为 <code>haplo.mult.hc.gall.${i}.vcf.gz</code>。</li>
+<li data-line="22" dir="auto"><code>&gt; x${i}.log 2&gt;&amp;1</code> 将标准输出和标准错误重定向到 <code>x${i}.log</code> 文件中。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-line="23" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>done</code></p>
+<ul>
+<li data-line="25" dir="auto">结束 <code>for</code> 循环。</li>
+</ul>
+</li>
+<li data-line="26" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>chmod +x Include_nonvaviants.sh</code></p>
+<ul>
+<li data-line="28" dir="auto">授予脚本 <code>Include_nonvaviants.sh</code> 可执行权限。</li>
+</ul>
+</li>
+<li data-line="29" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>nohup ./Include_nonvaviants.sh &gt; Include_nonvariants.log 2&gt;&amp;1 &amp;</code></p>
+<ul>
+<li data-line="31" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>使用 <code>nohup</code> 命令在后台运行脚本 <code>Include_nonvaviants.sh</code>，并将输出重定向到 <code>Include_nonvariants.log</code> 文件中。
+<ul>
+<li data-line="32" dir="auto"><code>nohup</code> 命令确保即使终端关闭，脚本也会继续运行。</li>
+<li data-line="33" dir="auto"><code>./Include_nonvaviants.sh</code> 执行脚本。</li>
+<li data-line="34" dir="auto"><code>&gt; Include_nonvariants.log 2&gt;&amp;1</code> 将标准输出和标准错误重定向到 <code>Include_nonvariants.log</code> 文件中。</li>
+<li data-line="35" dir="auto"><code>&amp;</code> 表示在后台运行该脚本。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol></div><div><p dir="auto">总结：</p></div><div><ul>
+<li data-line="0" dir="auto">定义参考基因组文件所在的目录和文件名。</li>
+<li data-line="1" dir="auto">使用 <code>for</code> 循环并行处理 9 个任务（编号从 <code>00</code> 到 <code>08</code>）。</li>
+<li data-line="2" dir="auto">每个任务中，使用 GATK 工具的 <code>GenotypeGVCFs</code> 模块对 VCF 文件进行基因型调用，并包含非变异位点的信息。</li>
+<li data-line="3" dir="auto">将每个任务的输出日志重定向到相应的文件中。</li>
+<li data-line="4" dir="auto">授予脚本执行权限，并在后台运行脚本。</li>
+</ul></div></div></div><div class="heading-wrapper"><h2 data-heading="2 去除 indel 和 mnp" dir="auto" class="heading" id="2_去除_indel_和_mnp"><div class="heading-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>2 去除 indel 和 mnp</h2><div class="heading-children"><div><pre class="language-shell" tabindex="0"><code class="language-shell is-loaded"><span class="token comment"># 去除indel和mnp</span>
+<span class="token keyword">for</span> <span class="token for-or-select variable">i</span> <span class="token keyword">in</span> <span class="token punctuation">{</span>00<span class="token punctuation">..</span>08<span class="token punctuation">}</span><span class="token punctuation">;</span><span class="token keyword">do</span> <span class="token function">nohup</span>  bcftools view --threads <span class="token number">5</span> -V mnps haplo.mult.hc.gall.<span class="token variable">$i</span>.vcf.gz  <span class="token operator">|</span>bcftools view --threads <span class="token number">5</span> -V indels -o haplo.mult.hc.gall.<span class="token variable">$i</span>.snps.noindels.vcf <span class="token operator">&amp;</span><span class="token keyword">done</span>
+</code><button class="copy-code-button">复制</button></pre></div><div><ol>
+<li data-line="0" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>for i in {00..08}; do</code></p>
+<ul>
+<li data-line="2" dir="auto">启动一个 <code>for</code> 循环，循环变量 <code>i</code> 的值从 <code>00</code> 到 <code>08</code>，即包含这 9 个值。</li>
+</ul>
+</li>
+<li data-line="3" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>nohup bcftools view --threads 5 -V mnps haplo.mult.hc.gall.$i.vcf.gz | bcftools view --threads 5 -V indels -o haplo.mult.hc.gall.$i.snps.noindels.vcf &amp;</code></p>
+<ul>
+<li data-line="5" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>使用 <code>nohup</code> 命令在后台运行一系列 <code>bcftools</code> 命令，并将输出重定向。
+<ul>
+<li data-line="6" dir="auto"><code>nohup</code> 确保即使终端关闭，命令也会继续运行。</li>
+<li data-line="7" dir="auto"><code>bcftools view --threads 5 -V mnps haplo.mult.hc.gall.$i.vcf.gz</code> 使用 <code>bcftools view</code> 命令查看 VCF 文件，<code>--threads 5</code> 指定使用 5 个线程，<code>-V mnps</code> 排除多核苷酸多态性（MNPs）。</li>
+<li data-line="8" dir="auto"><code>|</code> 将前一个命令的输出传递给下一个命令作为输入。</li>
+<li data-line="9" dir="auto"><code>bcftools view --threads 5 -V indels -o haplo.mult.hc.gall.$i.snps.noindels.vcf</code> 使用 <code>bcftools view</code> 命令查看过滤后的 VCF 文件，<code>--threads 5</code> 指定使用 5 个线程，<code>-V indels</code> 排除插入和缺失变异（Indels），<code>-o haplo.mult.hc.gall.$i.snps.noindels.vcf</code> 指定输出文件的名称。</li>
+<li data-line="10" dir="auto"><code>&amp;</code> 表示在后台运行该命令。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-line="11" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>done</code></p>
+<ul>
+<li data-line="13" dir="auto">结束 <code>for</code> 循环。</li>
+</ul>
+</li>
+</ol></div><div><p dir="auto"> 总结：</p></div><div><ul>
+<li data-line="0" dir="auto">使用 <code>for</code> 循环并行处理 9 个任务（编号从 <code>00</code> 到 <code>08</code>）。</li>
+<li data-line="1" dir="auto">每个任务中，首先使用 <code>bcftools view</code> 命令查看并过滤 VCF 文件，排除多核苷酸多态性（MNPs），然后再次使用 <code>bcftools view</code> 命令查看并过滤插入和缺失变异（Indels），最终将输出结果保存到新的 VCF 文件中。</li>
+<li data-line="2" dir="auto">使用 <code>nohup</code> 确保命令在后台运行，即使终端关闭也不会中断。</li>
+</ul></div></div></div><div class="heading-wrapper"><h2 data-heading="3 去除带* 的模糊位点" dir="auto" class="heading" id="3_去除带*_的模糊位点"><div class="heading-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>3 去除带* 的模糊位点</h2><div class="heading-children"><div><pre class="language-shell" tabindex="0"><code class="language-shell is-loaded"><span class="token comment"># 去除模糊位点，带* 会影响异质性的过滤</span>
+<span class="token keyword">for</span> <span class="token for-or-select variable">i</span> <span class="token keyword">in</span> <span class="token punctuation">{</span>00<span class="token punctuation">..</span>08<span class="token punctuation">}</span><span class="token punctuation">;</span> <span class="token keyword">do</span> <span class="token function">nohup</span> <span class="token function">awk</span> -F<span class="token string">'\t'</span> <span class="token string">'$5 !~ /\*/ { print }'</span> haplo.mult.hc.gall.<span class="token variable">$i</span>.snps.noindels.vcf <span class="token operator">&gt;</span> haplo.mult.hc.gall.<span class="token variable">$i</span>.snps.noindels.awk.vcf <span class="token operator">&amp;</span> <span class="token keyword">done</span>
+</code><button class="copy-code-button">复制</button></pre></div><div><ol>
+<li data-line="0" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>for i in {00..08}; do</code></p>
+<ul>
+<li data-line="2" dir="auto">启动一个 <code>for</code> 循环，循环变量 <code>i</code> 的值从 <code>00</code> 到 <code>08</code>，即包含这 9 个值。</li>
+</ul>
+</li>
+<li data-line="3" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>nohup awk -F'\t' '$5 !~ /\*/ { print }' haplo.mult.hc.gall.$i.snps.noindels.vcf &gt; haplo.mult.hc.gall.$i.snps.noindels.awk.vcf &amp;</code></p>
+<ul>
+<li data-line="5" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>使用 <code>nohup</code> 命令在后台运行 <code>awk</code> 命令，并将输出重定向。
+<ul>
+<li data-line="6" dir="auto"><code>nohup</code> 确保即使终端关闭，命令也会继续运行。</li>
+<li data-line="7" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div><code>awk -F'\t' '$5 !~ /\*/ { print }' haplo.mult.hc.gall.$i.snps.noindels.vcf</code> 使用 <code>awk</code> 命令处理 VCF 文件，<code>-F'\t'</code> 指定制表符（Tab）为字段分隔符。
+<ul>
+<li data-line="8" dir="auto"><code>$5 !~ /\*/</code> 检查第五个字段（通常是 ALT 列）是否不包含 <code>*</code> 字符。</li>
+<li data-line="9" dir="auto"><code>{ print }</code> 对于满足条件的行，打印整行。</li>
+</ul>
+</li>
+<li data-line="10" dir="auto"><code>&gt; haplo.mult.hc.gall.$i.snps.noindels.awk.vcf</code> 将 <code>awk</code> 命令的输出重定向到新的文件 <code>haplo.mult.hc.gall.$i.snps.noindels.awk.vcf</code> 中。</li>
+<li data-line="11" dir="auto"><code>&amp;</code> 表示在后台运行该命令。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-line="12" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>done</code></p>
+<ul>
+<li data-line="14" dir="auto">结束 <code>for</code> 循环。</li>
+</ul>
+</li>
+</ol></div><div><p dir="auto">总结：</p></div><div><ul>
+<li data-line="0" dir="auto">使用 <code>for</code> 循环并行处理 9 个任务（编号从 <code>00</code> 到 <code>08</code>）。</li>
+<li data-line="1" dir="auto">每个任务中，使用 <code>awk</code> 命令过滤 VCF 文件 <code>haplo.mult.hc.gall.$i.snps.noindels.vcf</code>，排除第五列包含 <code>*</code> 的行。</li>
+<li data-line="2" dir="auto">将过滤后的输出重定向到新的 VCF 文件 <code>haplo.mult.hc.gall.$i.snps.noindels.awk.vcf</code> 中。</li>
+<li data-line="3" dir="auto">使用 <code>nohup</code> 确保命令在后台运行，即使终端关闭也不会中断。</li>
+</ul></div></div></div><div class="heading-wrapper"><h2 data-heading="4 去除多等位基因" dir="auto" class="heading" id="4_去除多等位基因"><div class="heading-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>4 去除多等位基因</h2><div class="heading-children"><div><pre class="language-shell" tabindex="0"><code class="language-shell is-loaded"><span class="token comment"># 删除多等位基因，否则无法进行下一步去除异质性位点</span>
+<span class="token keyword">for</span> <span class="token for-or-select variable">i</span> <span class="token keyword">in</span> <span class="token punctuation">{</span>00<span class="token punctuation">..</span>08<span class="token punctuation">}</span><span class="token punctuation">;</span> <span class="token keyword">do</span> <span class="token function">nohup</span> <span class="token function">awk</span> <span class="token string">'$1 ~ /^#/ || $5 !~ /,/'</span> haplo.mult.hc.gall.<span class="token variable">$i</span>.snps.noindels.awk.vcf <span class="token operator">&gt;</span> haplo.mult.hc.gall.<span class="token variable">$i</span>.snps.noindels.nomultiallele.awk.vcf
+</code><button class="copy-code-button">复制</button></pre></div><div><ol>
+<li data-line="0" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>for i in {00..08}; do</code></p>
+<ul>
+<li data-line="2" dir="auto">启动一个 <code>for</code> 循环，循环变量 <code>i</code> 的值从 <code>00</code> 到 <code>08</code>，即包含这 9 个值。</li>
+</ul>
+</li>
+<li data-line="3" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>nohup awk '$1 ~ /^#/ || $5 !~ /,/' haplo.mult.hc.gall.$i.snps.noindels.awk.vcf &gt; haplo.mult.hc.gall.$i.snps.noindels.nomultiallele.awk.vcf</code></p>
+<ul>
+<li data-line="5" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>使用 <code>nohup</code> 命令在后台运行 <code>awk</code> 命令，并将输出重定向。
+<ul>
+<li data-line="6" dir="auto"><code>nohup</code> 确保即使终端关闭，命令也会继续运行。</li>
+<li data-line="7" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div><code>awk '$1 ~ /^#/ || $5 !~ /,/' haplo.mult.hc.gall.$i.snps.noindels.awk.vcf</code> 使用 <code>awk</code> 命令处理 VCF 文件。
+<ul>
+<li data-line="8" dir="auto"><code>$1 ~ /^#/</code> 检查第一列是否以 <code>#</code> 开头，表示保留 VCF 文件中的注释行。</li>
+<li data-line="9" dir="auto"><code>||</code> 表示逻辑或。</li>
+<li data-line="10" dir="auto"><code>$5 !~ /,/'</code> 检查第五列（通常是 ALT 列）是否不包含逗号 <code>,</code>，表示过滤掉多等位基因的记录。</li>
+</ul>
+</li>
+<li data-line="11" dir="auto"><code>&gt; haplo.mult.hc.gall.$i.snps.noindels.nomultiallele.awk.vcf</code> 将 <code>awk</code> 命令的输出重定向到新的文件 <code>haplo.mult.hc.gall.$i.snps.noindels.nomultiallele.awk.vcf</code> 中。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-line="12" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>done</code></p>
+<ul>
+<li data-line="14" dir="auto">结束 <code>for</code> 循环。</li>
+</ul>
+</li>
+</ol></div><div><p dir="auto"> 总结：</p></div><div><ul>
+<li data-line="0" dir="auto">使用 <code>for</code> 循环并行处理 9 个任务（编号从 <code>00</code> 到 <code>08</code>）。</li>
+<li data-line="1" dir="auto">每个任务中，使用 <code>awk</code> 命令处理 VCF 文件 <code>haplo.mult.hc.gall.$i.snps.noindels.awk.vcf</code>，保留注释行和第五列不包含逗号（即非多等位基因）的记录。</li>
+<li data-line="2" dir="auto">将过滤后的输出重定向到新的 VCF 文件 <code>haplo.mult.hc.gall.$i.snps.noindels.nomultiallele.awk.vcf</code> 中。</li>
+<li data-line="3" dir="auto">使用 <code>nohup</code> 确保命令在后台运行，即使终端关闭也不会中断。</li>
+</ul></div></div></div><div class="heading-wrapper"><h2 data-heading="5 去除异质性位点，阈值为<0.15" dir="auto" class="heading" id="5_去除异质性位点，阈值为<0.15"><div class="heading-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>5 去除异质性位点，阈值为&lt;0.15</h2><div class="heading-children"><div><pre class="language-shell" tabindex="0"><code class="language-shell is-loaded"><span class="token comment"># 去除异质性0.15的位点</span>
+<span class="token keyword">for</span> <span class="token for-or-select variable">i</span> <span class="token keyword">in</span> <span class="token punctuation">{</span>00<span class="token punctuation">..</span>08<span class="token punctuation">}</span><span class="token punctuation">;</span> <span class="token keyword">do</span> <span class="token function">nohup</span> perl /home/zhiyongwang/perl/het.pl haplo.mult.hc.gall.<span class="token variable">$i</span>.snps.noindels.nomultiallele.awk.vcf haplo.mult.hc.gall.<span class="token variable">$i</span>.snps.noindels.nomultiallele.awk.het0.15.vcf <span class="token variable">$i</span>.output_changed_lines <span class="token variable">$i</span>.multi_changed_lines <span class="token variable">$i</span>.multi_out <span class="token number">0.15</span> <span class="token operator">&gt;</span><span class="token variable">$i</span>.log <span class="token operator">&amp;</span> <span class="token keyword">done</span>
+</code><button class="copy-code-button">复制</button></pre></div><div><ol>
+<li data-line="0" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>for i in {00..08}; do</code></p>
+<ul>
+<li data-line="2" dir="auto">启动一个 <code>for</code> 循环，循环变量 <code>i</code> 的值从 <code>00</code> 到 <code>08</code>，即包含这 9 个值。</li>
+</ul>
+</li>
+<li data-line="3" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>nohup perl /home/zhiyongwang/perl/het.pl haplo.mult.hc.gall.$i.snps.noindels.nomultiallele.awk.vcf haplo.mult.hc.gall.$i.snps.noindels.nomultiallele.awk.het0.15.vcf $i.output_changed_lines $i.multi_changed_lines $i.multi_out 0.15 &gt;$i.log &amp;</code></p>
+<ul>
+<li data-line="5" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>使用 <code>nohup</code> 命令在后台运行一个 Perl 脚本，并将输出重定向。
+<ul>
+<li data-line="6" dir="auto"><code>nohup</code> 确保即使终端关闭，命令也会继续运行。</li>
+<li data-line="7" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div><code>perl /home/zhiyongwang/perl/het.pl haplo.mult.hc.gall.$i.snps.noindels.nomultiallele.awk.vcf haplo.mult.hc.gall.$i.snps.noindels.nomultiallele.awk.het0.15.vcf $i.output_changed_lines $i.multi_changed_lines $i.multi_out 0.15</code> 使用 Perl 解释器运行脚本 <code>het.pl</code>，并传递多个参数。
+<ul>
+<li data-line="8" dir="auto"><code>/home/zhiyongwang/perl/het.pl</code> 指定 Perl 脚本的路径。</li>
+<li data-line="9" dir="auto"><code>haplo.mult.hc.gall.$i.snps.noindels.nomultiallele.awk.vcf</code> 指定输入文件。</li>
+<li data-line="10" dir="auto"><code>haplo.mult.hc.gall.$i.snps.noindels.nomultiallele.awk.het0.15.vcf</code> 指定输出文件。</li>
+<li data-line="11" dir="auto"><code>$i.output_changed_lines</code> 指定输出更改的行的文件。</li>
+<li data-line="12" dir="auto"><code>$i.multi_changed_lines</code> 指定多变异更改行的文件。</li>
+<li data-line="13" dir="auto"><code>$i.multi_out</code> 指定多变异输出文件。</li>
+<li data-line="14" dir="auto"><code>0.15</code> 指定一个阈值参数，可能用于过滤或判定。</li>
+</ul>
+</li>
+<li data-line="15" dir="auto"><code>&gt;$i.log</code> 将标准输出重定向到日志文件 <code>$i.log</code> 中。</li>
+<li data-line="16" dir="auto"><code>&amp;</code> 表示在后台运行该命令。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-line="17" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>done</code></p>
+<ul>
+<li data-line="19" dir="auto">结束 <code>for</code> 循环。</li>
+</ul>
+</li>
+</ol></div><div><p dir="auto">总结：</p></div><div><ul>
+<li data-line="0" dir="auto">使用 <code>for</code> 循环并行处理 9 个任务（编号从 <code>00</code> 到 <code>08</code>）。</li>
+<li data-line="1" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>每个任务中，使用 <code>nohup</code> 在后台运行一个 Perl 脚本 <code>het.pl</code>，处理输入文件 <code>haplo.mult.hc.gall.$i.snps.noindels.nomultiallele.awk.vcf</code> 并生成多个输出文件。
+<ul>
+<li data-line="2" dir="auto">指定输入和输出文件路径，包括更改行的文件、多变异更改行的文件、多变异输出文件和一个阈值参数 <code>0.15</code>。</li>
+</ul>
+</li>
+<li data-line="3" dir="auto">将命令的输出重定向到日志文件 <code>$i.log</code> 中。</li>
+<li data-line="4" dir="auto">使用 <code>nohup</code> 确保命令在后台运行，即使终端关闭也不会中断。</li>
+</ul></div></div></div><div class="heading-wrapper"><h2 data-heading="6 去除GQ小于30的位点" dir="auto" class="heading" id="6_去除GQ小于30的位点"><div class="heading-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>6 去除GQ小于30的位点</h2><div class="heading-children"><div><pre class="language-shell" tabindex="0"><code class="language-shell is-loaded"><span class="token comment"># 去除GQ小于30的位点</span>
+<span class="token keyword">for</span> <span class="token for-or-select variable">i</span> <span class="token keyword">in</span> <span class="token punctuation">{</span>00<span class="token punctuation">..</span>08<span class="token punctuation">}</span><span class="token punctuation">;</span> <span class="token keyword">do</span> <span class="token function">nohup</span> <span class="token function">awk</span> -F<span class="token string">'\t'</span> <span class="token string">'$7 !~ /LowQual/ { print }'</span> haplo.mult.hc.gall.<span class="token variable">$i</span>.snps.noindels.nomultiallele.awk.het0.15.vcf <span class="token operator">&gt;</span> haplo.mult.hc.gall.<span class="token variable">$i</span>.snps.noindels.nomultiallele.awk.het0.15.GQ30.vcf <span class="token operator">&amp;</span> <span class="token keyword">done</span>
+</code><button class="copy-code-button">复制</button></pre></div><div><ol>
+<li data-line="0" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>for i in {00..08}; do</code></p>
+<ul>
+<li data-line="2" dir="auto">启动一个 <code>for</code> 循环，循环变量 <code>i</code> 的值从 <code>00</code> 到 <code>08</code>，即包含这 9 个值。</li>
+</ul>
+</li>
+<li data-line="3" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>nohup awk -F'\t' '$7 !~ /LowQual/ { print }' haplo.mult.hc.gall.$i.snps.noindels.nomultiallele.awk.het0.15.vcf &gt; haplo.mult.hc.gall.$i.snps.noindels.nomultiallele.awk.het0.15.GQ30.vcf &amp;</code></p>
+<ul>
+<li data-line="5" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>使用 <code>nohup</code> 命令在后台运行 <code>awk</code> 命令，并将输出重定向。
+<ul>
+<li data-line="6" dir="auto"><code>nohup</code> 确保即使终端关闭，命令也会继续运行。</li>
+<li data-line="7" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div><code>awk -F'\t' '$7 !~ /LowQual/ { print }' haplo.mult.hc.gall.$i.snps.noindels.nomultiallele.awk.het0.15.vcf</code> 使用 <code>awk</code> 命令处理 VCF 文件。
+<ul>
+<li data-line="8" dir="auto"><code>-F'\t'</code> 指定 <code>awk</code> 以制表符（Tab）作为字段分隔符。</li>
+<li data-line="9" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div><code>$7 !~ /LowQual/ { print }</code> 表示过滤掉第七列包含 <code>LowQual</code> 的行。
+<ul>
+<li data-line="10" dir="auto"><code>$7</code> 表示 VCF 文件的第七列（FILTER列）。</li>
+<li data-line="11" dir="auto"><code>!~</code> 表示不匹配。</li>
+<li data-line="12" dir="auto"><code>/LowQual/</code> 表示匹配 <code>LowQual</code> 字符串。</li>
+<li data-line="13" dir="auto"><code>{ print }</code> 表示输出过滤后的行。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-line="14" dir="auto"><code>&gt; haplo.mult.hc.gall.$i.snps.noindels.nomultiallele.awk.het0.15.GQ30.vcf</code> 将 <code>awk</code> 命令的输出重定向到新的文件 <code>haplo.mult.hc.gall.$i.snps.noindels.nomultiallele.awk.het0.15.GQ30.vcf</code> 中。</li>
+<li data-line="15" dir="auto"><code>&amp;</code> 表示在后台运行该命令。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-line="16" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>done</code></p>
+<ul>
+<li data-line="18" dir="auto">结束 <code>for</code> 循环。</li>
+</ul>
+</li>
+</ol></div><div><p dir="auto"> 总结：</p></div><div><ul>
+<li data-line="0" dir="auto">使用 <code>for</code> 循环并行处理 9 个任务（编号从 <code>00</code> 到 <code>08</code>）。</li>
+<li data-line="1" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>每个任务中，使用 <code>nohup</code> 在后台运行 <code>awk</code> 命令，处理 VCF 文件 <code>haplo.mult.hc.gall.$i.snps.noindels.nomultiallele.awk.het0.15.vcf</code>。
+<ul>
+<li data-line="2" dir="auto">过滤掉第七列（FILTER列）包含 <code>LowQual</code> 的行。</li>
+<li data-line="3" dir="auto">输出过滤后的结果到新的 VCF 文件 <code>haplo.mult.hc.gall.$i.snps.noindels.nomultiallele.awk.het0.15.GQ30.vcf</code> 中。</li>
+</ul>
+</li>
+<li data-line="4" dir="auto">使用 <code>nohup</code> 确保命令在后台运行，即使终端关闭也不会中断。</li>
+</ul></div></div></div><div class="heading-wrapper"><h2 data-heading="7 去除少于 2 个 reads 支持" dir="auto" class="heading" id="7_去除少于_2_个_reads_支持"><div class="heading-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>7 去除少于 2 个 reads 支持</h2><div class="heading-children"><div><pre class="language-shell" tabindex="0"><code class="language-shell is-loaded"><span class="token comment"># 将少于2个read支持的位点转换为缺失,这个脚本是按照上面的het.pl修改过来的，可以看$i.output_changed_line中的内容，就是转换的位点</span>
+<span class="token keyword">for</span> <span class="token for-or-select variable">i</span> <span class="token keyword">in</span> <span class="token punctuation">{</span>00<span class="token punctuation">..</span>08<span class="token punctuation">}</span><span class="token punctuation">;</span> <span class="token keyword">do</span> <span class="token function">nohup</span> perl /home/zhiyongwang/perl/AD2_filter.pl haplo.mult.hc.gall.<span class="token variable">$i</span>.snps.noindels.nomultiallele.awk.het0.15.GQ30.vcf haplo.mult.hc.gall.<span class="token variable">$i</span>.snps.noindels.nomultiallele.awk.het0.15.GQ30.AD2.vcf <span class="token variable">$i</span>.output_changed_lines <span class="token variable">$i</span>.multi_changed_lines <span class="token variable">$i</span>.multi_out <span class="token number">0.15</span> <span class="token operator">&gt;</span><span class="token variable">$i</span>.log <span class="token operator">&amp;</span> <span class="token keyword">done</span>
+</code><button class="copy-code-button">复制</button></pre></div><div><p dir="auto">与去除异质性位点 0.15 类似</p></div></div></div><div class="heading-wrapper"><h2 data-heading="8 去除东南亚样本" dir="auto" class="heading" id="8_去除东南亚样本"><div class="heading-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>8 去除东南亚样本</h2><div class="heading-children"><div><pre class="language-shell" tabindex="0"><code class="language-shell is-loaded"><span class="token comment"># 压缩文件</span>
+<span class="token keyword">for</span> <span class="token for-or-select variable">i</span> <span class="token keyword">in</span> <span class="token punctuation">{</span>00<span class="token punctuation">..</span>08<span class="token punctuation">}</span><span class="token punctuation">;</span> <span class="token keyword">do</span>
+    bgzip -c haplo.mult.hc.gall.<span class="token variable">$i</span>.snps.noindels.nomultiallele.awk.het0.15.GQ30.AD2.vcf <span class="token operator">&gt;</span> haplo.mult.hc.gall.<span class="token variable">$i</span>.snps.noindels.nomultiallele.awk.het0.15.GQ30.AD2.vcf.gz
+<span class="token keyword">done</span>
+<span class="token comment"># 去除东南亚样本,因为东南亚样本位点太少</span>
+<span class="token keyword">for</span> <span class="token for-or-select variable">file</span> <span class="token keyword">in</span> haplo.mult.hc.gall.*.snps.noindels.nomultiallele.awk.het0.15.GQ30.AD2.vcf.gz
+<span class="token keyword">do</span>
+  <span class="token assign-left variable">output_file</span><span class="token operator">=</span><span class="token string">"<span class="token variable">${file<span class="token operator">%</span>.vcf.gz}</span>.noSEA.vcf.gz"</span>
+  bcftools view -S ^remove.list <span class="token string">"<span class="token variable">$file</span>"</span> -o <span class="token string">"<span class="token variable">$output_file</span>"</span> --threads <span class="token number">50</span>
+<span class="token keyword">done</span>
+</code><button class="copy-code-button">复制</button></pre></div><div><p dir="auto">因为 bcftools 处理压缩文件，所以先压缩成vcf.gz 文件<br>
+东南亚样本位点只有 2 百万个，影响整体过滤，所以去除<br>
+<img alt="bb9721a9872d1ff14b41d7b6e2a563f.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405241059254.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"></p></div></div></div><div class="heading-wrapper"><h2 data-heading="9 保留缺失率低于 0.05 位点" dir="auto" class="heading" id="9_保留缺失率低于_0.05_位点"><div class="heading-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>9 保留缺失率低于 0.05 位点</h2><div class="heading-children"><div><pre class="language-shell" tabindex="0"><code class="language-shell is-loaded"><span class="token comment"># 按照0.05进行过滤</span>
+<span class="token function">nohup</span> <span class="token function">bash</span> -c <span class="token string">'
+for i in {00..08}; do
+    bcftools view -i "F_MISSING &lt; 0.05" haplo.mult.hc.gall.$i.snps.noindels.nomultiallele.awk.het0.15.GQ30.AD2.noSEA.vcf.gz -Oz --threads 20 -o haplo.mult.hc.gall.$i.snps.noindels.nomultiallele.awk.het0.15.GQ30.AD2.noSEA.missing0.05.vcf.gz
+done
+'</span> <span class="token operator">&gt;</span> bcftools_0.05.log <span class="token operator"><span class="token file-descriptor important">2</span>&gt;</span><span class="token file-descriptor important">&amp;1</span> <span class="token operator">&amp;</span>
+</code><button class="copy-code-button">复制</button></pre></div><div><ol>
+<li data-line="0" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>nohup bash -c ' ... ' &gt; bcftools_0.05.log 2&gt;&amp;1 &amp;</code></p>
+<ul>
+<li data-line="2" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>使用 <code>nohup</code> 命令在后台运行一个 <code>bash</code> 脚本，并将输出重定向。
+<ul>
+<li data-line="3" dir="auto"><code>nohup</code> 确保即使终端关闭，命令也会继续运行。</li>
+<li data-line="4" dir="auto"><code>bash -c ' ... '</code> 启动一个新的 <code>bash</code> 子进程，执行包含在单引号中的脚本。</li>
+<li data-line="5" dir="auto"><code>&gt; bcftools_0.05.log 2&gt;&amp;1</code> 将标准输出和标准错误重定向到 <code>bcftools_0.05.log</code> 文件中。</li>
+<li data-line="6" dir="auto"><code>&amp;</code> 表示在后台运行该命令。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-line="7" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>for i in {00..08}; do</code></p>
+<ul>
+<li data-line="9" dir="auto">启动一个 <code>for</code> 循环，循环变量 <code>i</code> 的值从 <code>00</code> 到 <code>08</code>，即包含这 9 个值。</li>
+</ul>
+</li>
+<li data-line="10" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>bcftools view -i "F_MISSING &lt; 0.05" haplo.mult.hc.gall.$i.snps.noindels.nomultiallele.awk.het0.15.GQ30.AD2.noSEA.vcf.gz -Oz --threads 20 -o haplo.mult.hc.gall.$i.snps.noindels.nomultiallele.awk.het0.15.GQ30.AD2.noSEA.missing0.05.vcf.gz</code></p>
+<ul>
+<li data-line="12" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>使用 <code>bcftools</code> 命令对 VCF 文件进行过滤和压缩。
+<ul>
+<li data-line="13" dir="auto"><code>bcftools view -i "F_MISSING &lt; 0.05"</code> 使用 <code>bcftools view</code> 命令过滤 VCF 文件，<code>-i "F_MISSING &lt; 0.05"</code> 表示仅保留缺失率低于 5% 的变异位点。</li>
+<li data-line="14" dir="auto"><code>haplo.mult.hc.gall.$i.snps.noindels.nomultiallele.awk.het0.15.GQ30.AD2.noSEA.vcf.gz</code> 指定输入的 VCF 文件。</li>
+<li data-line="15" dir="auto"><code>-Oz</code> 指定输出格式为压缩的 VCF 格式（VCF.GZ）。</li>
+<li data-line="16" dir="auto"><code>--threads 20</code> 使用 20 个线程进行处理，以提高处理速度。</li>
+<li data-line="17" dir="auto"><code>-o haplo.mult.hc.gall.$i.snps.noindels.nomultiallele.awk.het0.15.GQ30.AD2.noSEA.missing0.05.vcf.gz</code> 指定输出文件的名称。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li data-line="18" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>done</code></p>
+<ul>
+<li data-line="20" dir="auto">结束 <code>for</code> 循环。</li>
+</ul>
+</li>
+</ol></div><div><p dir="auto">总结</p></div><div><ul>
+<li data-line="0" dir="auto">使用 <code>nohup</code> 确保脚本在后台运行，即使终端关闭也不会中断。</li>
+<li data-line="1" dir="auto">启动一个 <code>bash</code> 子进程，执行包含的 <code>for</code> 循环脚本。</li>
+<li data-line="2" dir="auto">使用 <code>for</code> 循环并行处理 9 个任务（编号从 <code>00</code> 到 <code>08</code>）。</li>
+<li data-line="3" dir="auto">每个任务中，使用 <code>bcftools</code> 过滤 VCF 文件 <code>haplo.mult.hc.gall.$i.snps.noindels.nomultiallele.awk.het0.15.GQ30.AD2.noSEA.vcf.gz</code>，保留缺失率低于 5% 的变异位点。</li>
+<li data-line="4" dir="auto">将过滤后的结果保存为压缩的 VCF 文件 <code>haplo.mult.hc.gall.$i.snps.noindels.nomultiallele.awk.het0.15.GQ30.AD2.noSEA.missing0.05.vcf.gz</code>。</li>
+<li data-line="5" dir="auto">将标准输出和标准错误重定向到日志文件 <code>bcftools_0.05.log</code> 中。</li>
+</ul></div></div></div><div class="heading-wrapper"><h2 data-heading="10 合并 9 个分区" dir="auto" class="heading" id="10_合并_9_个分区"><div class="heading-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>10 合并 9 个分区</h2><div class="heading-children"><div><pre class="language-shell" tabindex="0"><code class="language-shell is-loaded"><span class="token comment"># 将分开的区域进行合并</span>
+<span class="token comment">#在此之前需要先建立索引</span>
+<span class="token keyword">for</span> <span class="token for-or-select variable">file</span> <span class="token keyword">in</span> *AD2.noSEA.missing0.05.vcf.gz<span class="token punctuation">;</span> <span class="token keyword">do</span>
+    bcftools index <span class="token variable">$file</span>
+<span class="token keyword">done</span>
+<span class="token comment">#合并</span>
+<span class="token function">nohup</span> <span class="token function">sh</span> -c <span class="token string">'ls *AD2.noSEA.missing0.05.vcf.gz | xargs bcftools concat -a -d all -Oz -o haplo.mult.hc.gall.all.snps.noindels.nomultiallele.awk.het0.15.GQ30.AD2.noSEA.missing0.05.vcf.gz'</span> <span class="token operator">&gt;</span> bcftools_all0_8.log <span class="token operator"><span class="token file-descriptor important">2</span>&gt;</span><span class="token file-descriptor important">&amp;1</span> <span class="token operator">&amp;</span>
+</code><button class="copy-code-button">复制</button></pre></div><div><p dir="auto">因为 <code>bcftools</code> 进行文件合并（<code>bcftools concat</code>）时，需要快速定位和读取数据，这些操作依赖于索引文件，所以建立索引。</p></div><div><ol>
+<li data-line="0" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>nohup sh -c '...' &gt; bcftools_all0_8.log 2&gt;&amp;1 &amp;</code></p>
+<ul>
+<li data-line="2" dir="auto"><code>nohup</code>：确保命令在后台运行，即使终端关闭也不会中断。</li>
+<li data-line="3" dir="auto"><code>sh -c '...'</code>：启动一个新的 shell 执行包含在单引号中的命令。</li>
+<li data-line="4" dir="auto"><code>&gt; bcftools_all0_8.log 2&gt;&amp;1</code>：将标准输出和标准错误重定向到 <code>bcftools_all0_8.log</code> 文件中。</li>
+<li data-line="5" dir="auto"><code>&amp;</code>：在后台运行该命令。</li>
+</ul>
+</li>
+<li data-line="6" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>ls *AD2.noSEA.missing0.05.vcf.gz</code></p>
+<ul>
+<li data-line="8" dir="auto">列出当前目录中所有匹配 <code>*AD2.noSEA.missing0.05.vcf.gz</code> 模式的文件。</li>
+</ul>
+</li>
+<li data-line="9" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>
+<p><code>| xargs bcftools concat -a -d all -Oz -o haplo.mult.hc.gall.all.snps.noindels.nomultiallele.awk.het0.15.GQ30.AD2.noSEA.missing0.05.vcf.gz</code></p>
+<ul>
+<li data-line="11" dir="auto"><code>|</code>：将 <code>ls</code> 命令的输出传递给 <code>xargs</code> 作为输入。</li>
+<li data-line="12" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div><code>xargs bcftools concat -a -d all -Oz -o haplo.mult.hc.gall.all.snps.noindels.nomultiallele.awk.het0.15.GQ30.AD2.noSEA.missing0.05.vcf.gz</code>：
+<ul>
+<li data-line="13" dir="auto"><code>xargs</code>：将前一个命令的输出作为参数传递给 <code>bcftools concat</code> 命令。</li>
+<li data-line="14" dir="auto"><div class="list-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div><code>bcftools concat</code>：使用 <code>bcftools</code> 工具将多个 VCF 文件合并为一个。
+<ul>
+<li data-line="15" dir="auto"><code>-a</code>：合并所有文件中的相同位置的变异。</li>
+<li data-line="16" dir="auto"><code>-d all</code>：在输出文件中保留所有记录。</li>
+<li data-line="17" dir="auto"><code>-Oz</code>：输出压缩的 VCF 文件（.vcf.gz）。</li>
+<li data-line="18" dir="auto"><code>-o haplo.mult.hc.gall.all.snps.noindels.nomultiallele.awk.het0.15.GQ30.AD2.noSEA.missing0.05.vcf.gz</code>：指定输出文件的名称。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol></div><div><p dir="auto"> 总结</p></div><div><p dir="auto">这段代码的作用是：</p></div><div><ol>
+<li data-line="0" dir="auto">使用 <code>ls</code> 命令列出所有符合模式 <code>*AD2.noSEA.missing0.05.vcf.gz</code> 的文件。</li>
+<li data-line="1" dir="auto">使用 <code>xargs</code> 命令将这些文件作为参数传递给 <code>bcftools concat</code> 命令进行合并。</li>
+<li data-line="2" dir="auto">使用 <code>bcftools concat</code> 命令将这些 VCF 文件合并成一个压缩的 VCF 文件，输出文件名为 <code>haplo.mult.hc.gall.all.snps.noindels.nomultiallele.awk.het0.15.GQ30.AD2.noSEA.missing0.05.vcf.gz</code>。</li>
+<li data-line="3" dir="auto">使用 <code>nohup</code> 和 <code>&amp;</code> 确保该操作在后台运行，并将所有输出和错误日志记录到 <code>bcftools_all0_8.log</code> 文件中。</li>
+</ol></div></div></div><div class="heading-wrapper"><h2 data-heading="11 统计位点变异情况" dir="auto" class="heading" id="11_统计位点变异情况"><div class="heading-collapse-indicator collapse-indicator collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon right-triangle"><path d="M3 8L12 17L21 8"></path></svg></div>11 统计位点变异情况</h2><div class="heading-children"><div><pre class="language-shell" tabindex="0"><code class="language-shell is-loaded"><span class="token comment"># 统计变异和未变异位点数量,在终端中显示</span>
+bcftools +counts haplo.mult.hc.gall.all.snps.noindels.nomultiallele.awk.het0.15.GQ30.AD2.noSEA.missing0.05.vcf.gz
+</code><button class="copy-code-button">复制</button></pre></div><div><p dir="auto">结果显示如图（7.4 G，8 M 的位点大概统计了 1 h）</p></div><div><p dir="auto"><img alt="0177bd60a01a783b821db9f6414f1bb.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202405241650103.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"></p></div><div class="mod-footer"></div></div></div></div></div></div></div></div><div class="sidebar-right sidebar"><div class="sidebar-handle"></div><div class="sidebar-topbar"><div class="topbar-content"></div><div class="clickable-icon sidebar-collapse-icon"><svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="svg-icon"><path d="M21 3H3C1.89543 3 1 3.89543 1 5V19C1 20.1046 1.89543 21 3 21H21C22.1046 21 23 20.1046 23 19V5C23 3.89543 22.1046 3 21 3Z"></path><path d="M10 4V20"></path><path d="M4 7H7"></path><path d="M4 10H7"></path><path d="M4 13H7"></path></svg></div></div><div class="sidebar-content"><div class="graph-view-wrapper"><div class="sidebar-section-header">Interactive Graph</div><div class="graph-view-placeholder">
+		<div class="graph-view-container">
+			<div class="graph-icon graph-expand" role="button" aria-label="Expand" data-tooltip-position="top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg></div>
+			<canvas id="graph-canvas" class="hide" width="512px" height="512px"></canvas>
+		</div>
+		</div></div><div class="tree-container mod-root nav-folder tree-item outline-tree" data-depth="0"><div class="tree-header"><span class="sidebar-section-header">Table Of Contents</span><button class="clickable-icon collapse-tree-button" aria-label="Collapse All"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg></button></div><div class="tree-scroll-area tree-item-children nav-folder-children"><div class="tree-item mod-tree-folder nav-folder mod-collapsible is-collapsed" style="display: none;"></div><div class="tree-item" data-depth="1"><a class="tree-link" href="软件操作\linux命令行\vcf上游处理全流程.html#第一部分 将bam文件转化为vcf"><div class="tree-item-contents heading-link" heading-name="第一部分 将bam文件转化为vcf"><span class="tree-item-title">第一部分 将bam文件转化为vcf</span></div></a><div class="tree-item-children nav-folder-children"><div class="tree-item" data-depth="2"><a class="tree-link" href="软件操作\linux命令行\vcf上游处理全流程.html#1_每个bam_文件移动到对应的文件夹"><div class="tree-item-contents heading-link" heading-name="1 每个bam 文件移动到对应的文件夹"><span class="tree-item-title">1 每个bam 文件移动到对应的文件夹</span></div></a><div class="tree-item-children nav-folder-children"></div></div><div class="tree-item" data-depth="2"><a class="tree-link" href="软件操作\linux命令行\vcf上游处理全流程.html#2_修改_bam_文件中的_chrY_为_Y"><div class="tree-item-contents heading-link" heading-name="2 修改 bam 文件中的 chrY 为 Y"><span class="tree-item-title">2 修改 bam 文件中的 chrY 为 Y</span></div></a><div class="tree-item-children nav-folder-children"></div></div><div class="tree-item" data-depth="2"><a class="tree-link" href="软件操作\linux命令行\vcf上游处理全流程.html#3_为每个_Y._bam_文件建立索引"><div class="tree-item-contents heading-link" heading-name="3 为每个 Y. bam 文件建立索引"><span class="tree-item-title">3 为每个 Y. bam 文件建立索引</span></div></a><div class="tree-item-children nav-folder-children"></div></div><div class="tree-item" data-depth="2"><a class="tree-link" href="软件操作\linux命令行\vcf上游处理全流程.html#4_从_bam_文件call_出_gvcf"><div class="tree-item-contents heading-link" heading-name="4 从 bam 文件call 出 gvcf"><span class="tree-item-title">4 从 bam 文件call 出 gvcf</span></div></a><div class="tree-item-children nav-folder-children"></div></div><div class="tree-item" data-depth="2"><a class="tree-link" href="软件操作\linux命令行\vcf上游处理全流程.html#5_分成9个区域来合并gvcf_为vcf，并_genotype"><div class="tree-item-contents heading-link" heading-name="5 分成9个区域来合并gvcf 为vcf，并 genotype"><span class="tree-item-title">5 分成9个区域来合并gvcf 为vcf，并 genotype</span></div></a><div class="tree-item-children nav-folder-children"></div></div></div></div><div class="tree-item" data-depth="1"><a class="tree-link" href="软件操作\linux命令行\vcf上游处理全流程.html#第二部分对vcf进行过滤"><div class="tree-item-contents heading-link" heading-name="第二部分对vcf进行过滤"><span class="tree-item-title">第二部分对vcf进行过滤</span></div></a><div class="tree-item-children nav-folder-children"><div class="tree-item" data-depth="2"><a class="tree-link" href="软件操作\linux命令行\vcf上游处理全流程.html#1_对各分区的_vcf_进行_genotype，包含未变异位点"><div class="tree-item-contents heading-link" heading-name="1 对各分区的 vcf 进行 genotype，包含未变异位点"><span class="tree-item-title">1 对各分区的 vcf 进行 genotype，包含未变异位点</span></div></a><div class="tree-item-children nav-folder-children"></div></div><div class="tree-item" data-depth="2"><a class="tree-link" href="软件操作\linux命令行\vcf上游处理全流程.html#2_去除_indel_和_mnp"><div class="tree-item-contents heading-link" heading-name="2 去除 indel 和 mnp"><span class="tree-item-title">2 去除 indel 和 mnp</span></div></a><div class="tree-item-children nav-folder-children"></div></div><div class="tree-item" data-depth="2"><a class="tree-link" href="软件操作\linux命令行\vcf上游处理全流程.html#3_去除带*_的模糊位点"><div class="tree-item-contents heading-link" heading-name="3 去除带* 的模糊位点"><span class="tree-item-title">3 去除带* 的模糊位点</span></div></a><div class="tree-item-children nav-folder-children"></div></div><div class="tree-item" data-depth="2"><a class="tree-link" href="软件操作\linux命令行\vcf上游处理全流程.html#4_去除多等位基因"><div class="tree-item-contents heading-link" heading-name="4 去除多等位基因"><span class="tree-item-title">4 去除多等位基因</span></div></a><div class="tree-item-children nav-folder-children"></div></div><div class="tree-item" data-depth="2"><a class="tree-link" href="软件操作\linux命令行\vcf上游处理全流程.html#5_去除异质性位点，阈值为<0.15"><div class="tree-item-contents heading-link" heading-name="5 去除异质性位点，阈值为<0.15"><span class="tree-item-title">5 去除异质性位点，阈值为&lt;0.15</span></div></a><div class="tree-item-children nav-folder-children"></div></div><div class="tree-item" data-depth="2"><a class="tree-link" href="软件操作\linux命令行\vcf上游处理全流程.html#6_去除GQ小于30的位点"><div class="tree-item-contents heading-link" heading-name="6 去除GQ小于30的位点"><span class="tree-item-title">6 去除GQ小于30的位点</span></div></a><div class="tree-item-children nav-folder-children"></div></div><div class="tree-item" data-depth="2"><a class="tree-link" href="软件操作\linux命令行\vcf上游处理全流程.html#7_去除少于_2_个_reads_支持"><div class="tree-item-contents heading-link" heading-name="7 去除少于 2 个 reads 支持"><span class="tree-item-title">7 去除少于 2 个 reads 支持</span></div></a><div class="tree-item-children nav-folder-children"></div></div><div class="tree-item" data-depth="2"><a class="tree-link" href="软件操作\linux命令行\vcf上游处理全流程.html#8_去除东南亚样本"><div class="tree-item-contents heading-link" heading-name="8 去除东南亚样本"><span class="tree-item-title">8 去除东南亚样本</span></div></a><div class="tree-item-children nav-folder-children"></div></div><div class="tree-item" data-depth="2"><a class="tree-link" href="软件操作\linux命令行\vcf上游处理全流程.html#9_保留缺失率低于_0.05_位点"><div class="tree-item-contents heading-link" heading-name="9 保留缺失率低于 0.05 位点"><span class="tree-item-title">9 保留缺失率低于 0.05 位点</span></div></a><div class="tree-item-children nav-folder-children"></div></div><div class="tree-item" data-depth="2"><a class="tree-link" href="软件操作\linux命令行\vcf上游处理全流程.html#10_合并_9_个分区"><div class="tree-item-contents heading-link" heading-name="10 合并 9 个分区"><span class="tree-item-title">10 合并 9 个分区</span></div></a><div class="tree-item-children nav-folder-children"></div></div><div class="tree-item" data-depth="2"><a class="tree-link" href="软件操作\linux命令行\vcf上游处理全流程.html#11_统计位点变异情况"><div class="tree-item-contents heading-link" heading-name="11 统计位点变异情况"><span class="tree-item-title">11 统计位点变异情况</span></div></a><div class="tree-item-children nav-folder-children"></div></div></div></div></div></div></div><script defer="">let rs = document.querySelector(".sidebar-right"); rs.classList.add("is-collapsed"); if (window.innerWidth > 768) rs.classList.remove("is-collapsed"); rs.style.setProperty("--sidebar-width", localStorage.getItem("sidebar-right-width"));</script></div></div></body></html>

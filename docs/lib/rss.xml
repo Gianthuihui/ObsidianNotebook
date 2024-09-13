@@ -1,4 +1,175 @@
-<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[长脑子了]]></title><description><![CDATA[Obsidian digital garden]]></description><link>http://github.com/dylang/node-rss</link><image><url>lib\media\favicon.png</url><title>长脑子了</title><link/></image><generator>Webpage HTML Export plugin for Obsidian</generator><lastBuildDate>Fri, 13 Sep 2024 03:45:08 GMT</lastBuildDate><atom:link href="lib\rss.xml" rel="self" type="application/rss+xml"/><pubDate>Fri, 13 Sep 2024 03:44:08 GMT</pubDate><ttl>60</ttl><dc:creator/><item><title><![CDATA[输入文件]]></title><description><![CDATA[ 
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[长脑子了]]></title><description><![CDATA[Obsidian digital garden]]></description><link>http://github.com/dylang/node-rss</link><image><url>lib\media\favicon.png</url><title>长脑子了</title><link/></image><generator>Webpage HTML Export plugin for Obsidian</generator><lastBuildDate>Fri, 13 Sep 2024 07:15:38 GMT</lastBuildDate><atom:link href="lib\rss.xml" rel="self" type="application/rss+xml"/><pubDate>Fri, 13 Sep 2024 07:15:37 GMT</pubDate><ttl>60</ttl><dc:creator/><item><title><![CDATA[数据准备]]></title><description><![CDATA[ 
+ <br><br><br>需要美化的原始树文件，为 nwk 格式。<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409011757591.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>自己整理的样本信息文件，被称为元数据metadata，格式为 txt。<br>
+注意，表头都不能改，只能是 ID，Label，Strip，Branch，Range，Symbol 等，否则 R 包无法识别。ID 列是树文件中的原始 ID，一定要和一一对应，Label 是需要替换的 ID，其他的几列请按照自己的分组需求进行安排<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409131508450.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>文本示例<br>ID	Label	Strip	Branch	Range	Symbol
+X111.1694.3181_C1a1a1a1Korean_Heilongjiang1_C1a1a1a1KoreanlinepublishedHeilongjiang
+X111.1255.8082_C1b1a1a2aXibe_Liaoning2_C1b1a1a2aTungusiclinepublishedLiaoning
+X111.1653.9674_C1b1a1b2Uyghur_Xinjiang3_C1b1a1b2TurkiclinepublishedXinjiang
+X111.1781.6958_C1b1a2bZhuang_Guangxi4_C1b1a2bTai_KadailinepublishedGuangxi
+HGDP01310_C1b1a2bDai_Myanmar5_C1b1a2bTai_KadailinepublishedMyanmar
+X111.1280.1843_C2a1Manchu_Liaoning6_C2a1TungusiclinepublishedLiaoning
+X990.0002.7094_C2a1bManchu_Liaoning7_C2a1bTungusiclinepublishedLiaoning
+X990.0002.6929_C2a1bManchu_Liaoning8_C2a1bTungusiclinepublishedLiaoning
+X111.1805.2478_C2a1bManchu_Liaoning9_C2a1bTungusiclinepublishedLiaoning
+X111.1824.6204_C2a1bManchu_Shandong10_C2a1bTungusiclinepublishedShandong
+Y2384_C2a1aManchu_Liaoning11_C2a1aTungusiclinepublishedLiaoning
+X111.1731.2382_C2a1a1b1a4Kazakh_Xinjiang12_C2a1a1b1a4TurkiclinepublishedXinjiang
+X111.1655.7340_C2a1a1b1a4Kazakh_Xinjiang13_C2a1a1b1a4TurkiclinepublishedXinjiang
+X111.1855.5092_C2a1a1b1a4Kazakh_Xinjiang14_C2a1a1b1a4TurkiclinepublishedXinjiang
+X111.1739.6931_C2a1a1b1a4Kazakh_Xinjiang15_C2a1a1b1a4TurkiclinepublishedXinjiang
+X111.1669.3598_C2a1a1b1a2a1Manchu_Beijing16_C2a1a1b1a2a1TungusiclinepublishedBeijing
+X111.1261.2081_C2a1a1b1a2a1Manchu_Hebei17_C2a1a1b1a2a1TungusiclinepublishedHebei
+复制<br><br>txt 格式文件，这个文件手动准备就行。<br>
+有时候会遇到树文件中有些样本需要删除的情况，这个文件的目的就是只保留现有树文件中感兴趣的样本，在本文件中出现的 ID 是保留在树上的样本，未出现的样本则被删除。红框中的两个表头不能更改，直接把需要保留的样本 ID 粘贴到第3行之后就可以。<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409011806604.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>PRUNE
+DATA
+X111.1694.3181_C1a1a1a1
+X111.1255.8082_C1b1a1a2a
+X111.1653.9674_C1b1a1b2
+X111.1781.6958_C1b1a2b
+HGDP01310_C1b1a2b
+X111.1280.1843_C2a1
+X990.0002.7094_C2a1b
+X990.0002.6929_C2a1b
+X111.1805.2478_C2a1b
+X111.1824.6204_C2a1b
+Y2384_C2a1a
+复制<br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031023145.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>这部分代码必须要运行，注意修改这三个路径。然后根据自己的需要选择接下来运行的代码，将生成的注释文件拖入 itol 网站的界面就可以了。<br>注意，应该检查下注释文件中样本的数目是否和树文件中的样本数目一致，如果准备的 metadata 文件中 ID 和树文件内的 ID 不一致，会导致无法将 ID 全部替换过来。比如本来有300个样本，生成的注释文件中只有290个样本，可能就是有10个样本的 ID 在树文件和 metadata 中不一样。<br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031019018.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>这部分代码生成用于替换 label 的注释文件<br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031024926.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>效果图<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031055525.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031047228.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>这部分代码生成用于样本 ID背景的注释文件<br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031049532.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>效果图<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031051578.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031056442.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>这个 strip要先把这一行 branch 给注释掉，才不会改变branch 的颜色<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409061424515.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031058575.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031100137.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031108878.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>其中 nomal 代表实线。如果想要把某些枝变成虚线，可以把在 excel 中将部分 normal 改成 dashed。1和2代表线的粗细，也可以在 itol 中进行调节<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031112001.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>效果图<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031113644.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409131449232.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+如果 metadata 里面有些样本不需要添加 symbol，该部分 ID 的 Symbol 列无内容就可以，不会影响代码运行，例如<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409131505893.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409131459908.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>每一个数据的数字有相应的含义，例如 X12001809291229_O1a1a1a1a1b,2,2,#4daf4a,1,1<br>
+依次对应的是 ，形状，形状大小，颜色，是否填充，位置。在代码里面不好修改，推荐还是在生成的注释文件里进行相应的设置：<br>
+<br>
+ID：ID，不用改，就是树文件中的原始 ID
+
+<br>
+形状：1 矩形，2 圆形，3星形，4右边尖的三角形，5左边尖的三角形，6勾<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409131425496.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+大小：可以设置成任意值，在 R代码的 size = 2 可以设置，2 为所有样本的形状大小；如果需要强调某些样本，推荐在注释文件中进行设置，如强调的样本设置为最大值，如 10，然后在表头的设置 MAXIMUM_SIZE,10，其他的 ID 对应的大小的值就会成比例的更小些，比如其他 ID 设置成 5，那么形状就会是2倍大小，如图绿色的圈。<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409131437013.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409131437250.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>颜色：自己找喜欢的颜色，替换颜色值即可
+<br>是否填充：0为仅有轮廓，1为填充形状
+<br>位置：大小为0-1，0在枝的根部，1在枝的末端，中间值就在中间位置
+<br><br>现在生成的结果文件拖入 itol 里面没有 legend，只能手动添加形状对应的 label<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409131455260.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>填入对应的  label 后，点击 Update dataset legend<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409131455270.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>效果图<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409131513064.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br># 加载必要的R包
+library(dplyr)  # 加载dplyr包，用于数据处理和管道操作
+library(itol.toolkit)  # 加载itol.toolkit包，用于制作和管理iTOL树图的数据单元
+library(data.table)  # 加载data.table包，提供高效的数据读取和操作功能
+
+# 设置工作目录
+setwd("C:/Users/LuzHu/Desktop/")  # 将当前R会话的工作目录设置为指定路径
+
+# 读取和处理数据
+tree_1 &lt;- "Hui_192_aDNA.nwk"  # 指定新克文件的路径，这个文件包含树的信息
+hub_1 &lt;- create_hub(tree_1)  # 创建一个以此树为中心的hub，用于添加不同的数据单元
+data_file_1 &lt;- "all_Hui_aDNA_metadata.txt"  # 指定元数据文件的路径
+data_1 &lt;- data.table::fread(data_file_1)  # 使用data.table的fread函数读取元数据文件
+
+############################功能1################################################
+# 为树的节点添加标签按Label分类
+unit_1 &lt;- create_unit(data = data_1 %&gt;% select(ID, Label),  # 从data_1中选取ID和Label列
+                      key = "itol_labels",  # 为这个单元设置一个键名
+                      type = "LABELS",  # 设置数据单元的类型为标签
+                      tree = tree_1)  # 指定这个单元关联的树文件
+write_unit(unit_1, paste0(getwd(), "/itol_labels.txt"))  # 将单元写入文件
+
+#############################功能2################################################
+# 为树的节点添加颜色，按Range分类
+unit_2 &lt;- create_unit(data = data_1 %&gt;% select(ID, Range),
+                      key = "itol_range",
+                      type = "TREE_COLORS",  # 设置类型为树颜色
+                      subtype = "range",  # 子类型为范围，表示颜色将根据指定的范围变化
+                      tree = tree_1)
+write_unit(unit_2, paste0(getwd(), "/itol_range.txt"))
+
+#############################功能3################################################
+# 为树添加颜色条带，按Strip分类
+set.seed(123)  # 设置随机数种子，确保颜色选择的可重复性
+unit_3 &lt;- create_unit(data = data_1 %&gt;% select(ID, Strip),
+                      key = "itol_strip",
+                      type = "DATASET_COLORSTRIP",  # 设置类型为颜色条带
+                      color = "wesanderson",  # 使用Wes Anderson调色板
+                      tree = tree_1)
+unit_3@common_themes$basic_theme$margin &lt;- 50  # 设置条带的边缘空白
+write_unit(unit_3, paste0(getwd(), "/itol_strip.txt"))
+
+#############################功能9################################################
+# 为树添加枝上的形状，按Symbol分类
+unit_9 &lt;- create_unit(data = data_1 %&gt;%  select(ID, Symbol),
+                      key = "Sample_Symbols", 
+                      type = "DATASET_SYMBOL",
+                      position = 1,
+                      size = 2,
+                      subtype = "Symbol",
+                      tree = tree_1,
+                      fill = 1)
+write_unit(unit_9,paste0(getwd(),"/itol_Symbol.txt"))
+
+
+#############################功能8################################################
+# 为树的分支添加颜色和形状，按Branch分类
+# 生成每个唯一Branch的随机颜色
+Branch_unique &lt;- unique(data_1$Branch)  # 提取所有唯一的Branch值
+set.seed(123)  # 设置随机种子以保证颜色可以复现
+colors &lt;- sample(colors(), length(Branch_unique), replace = FALSE)  # 为每个Branch随机分配颜色
+Branch_colors &lt;- setNames(colors, Branch_unique)  # 创建一个以Branch为名称、颜色为值的向量
+data_1$Color &lt;- Branch_colors[data_1$Branch]  # 将颜色值分配给相应的Branch
+unit_colors &lt;- create_unit(data = select(data_1, ID, Color),
+                           key = "itol_random_Branch_colors",
+                           type = "TREE_COLORS",
+                           subtype = "branch",  # 指定subtype为branch，可以改为range或clade
+                           tree = tree_1)  # 请替换为您的树文件名称
+write_unit(unit_colors, paste0(getwd(), "/itol_Branch.txt"))
+
+
+
+
+#############################功能4################################################
+# 添加柱状图，表示某个数值特征
+# unit_4 &lt;- create_unit(data = data_1 %&gt;% select(ID, NS),
+#                       key = "itol_3al_4_simplebar",
+#                       type = "DATASET_SIMPLEBAR",  # 类型为简单柱状图
+#                       tree = tree_1)
+# unit_4@specific_themes$basic_plot$size_max &lt;- 100  # 设置柱状图的最大宽度
+# write_unit(unit_4, paste0(getwd(), "/itol_3al_4_simplebar.txt"))
+
+#############################功能5################################################
+# 添加多数据柱状图，同时表示多个数值特征
+# unit_5 &lt;- create_unit(data = data_1 %&gt;% select(ID, NS, OS),
+#                       key = "itol_3al_5_multibar",
+#                       type = "DATASET_MULTIBAR",  # 类型为多数据柱状图
+#                       tree = tree_1)
+# unit_5@specific_themes$basic_plot$size_max &lt;- 100  # 设置柱状图的最大宽度
+# write_unit(unit_5, paste0(getwd(), "/itol_3al_5_multibar.txt"))
+
+#############################功能6################################################
+# 添加梯度色柱状图，用于展示数据的变化
+# unit_6 &lt;- create_unit(data = data_1 %&gt;% select(ID, Dissimilarity),
+#                       key = "itol_3al_6_gradient",
+#                       type = "DATASET_GRADIENT",  # 类型为渐变数据集
+#                       tree = tree_1)
+# unit_6@specific_themes$heatmap$color$min &lt;- "#0000ff"  # 设置渐变的最小颜色
+# unit_6@specific_themes$heatmap$color$max &lt;- "#ff0000"  # 设置渐变的最大颜色
+# write_unit(unit_6, paste0(getwd(), "/itol_3al_6_gradient.txt"))
+
+#############################功能7################################################
+# 绘制热图，用于展示多个变量的组合数据
+# unit_7 &lt;- create_unit(data = data_1 %&gt;% select(ID, NS, OS),
+#                       key = "itol_7_heatmap",
+#                       type = "DATASET_HEATMAP",  # 类型为热图
+#                       tree = tree_1)
+# write_unit(unit_7, paste0(getwd(), "/itol_7_heatmap.txt"))
+复制]]></description><link>软件操作\分析软件\r语言\r包：itol注释文件的使用.html</link><guid isPermaLink="false">软件操作/分析软件/R语言/R包：itol注释文件的使用.md</guid><pubDate>Fri, 13 Sep 2024 07:14:39 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409011757591.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409011757591.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[输入文件]]></title><description><![CDATA[ 
  <br><br>只需要准备一个 csv 格式文件，第一列可不要，其他列名必须是：Haplotype 和classification<br>
 <img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202407051514129.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>classification 的内容是对群体的分类，比如南北等<br><br>
 <br>更改文件路径<br>
@@ -387,30 +558,7 @@ process_names(input_file, output_file)
 <img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409021536742.png" referrerpolicy="no-referrer"><br>然后，导出原数据：<br>
 <img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409021536046.png" referrerpolicy="no-referrer"><br>
 点击图中的&nbsp;Export Data Table.<br>检查导出的文件，是否存在异常，如果有，记得删去！<br>
-<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409072016116.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">]]></description><link>软件操作\分析软件\python\python：bsp美化.html</link><guid isPermaLink="false">软件操作/分析软件/Python/Python：BSP美化.md</guid><pubDate>Tue, 10 Sep 2024 12:58:01 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409021536742.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409021536742.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[数据准备]]></title><description><![CDATA[ 
- <br><br><br>需要美化的原始树文件，为 nwk 格式。<br>
-<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409011757591.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>自己整理的样本信息文件，被称为元数据metadata，格式为 txt，整理的时候有一些坑，见 <a data-href="itol树美化样本信息准备" href="itol树美化样本信息准备" class="internal-link" target="_self" rel="noopener">itol树美化样本信息准备</a>。<br>
-注意，表头都不能改，只能是 ID，Label，Strip，Branch，Range，否则 R 包无法识别。<br>
-<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031022243.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>txt 格式文件，这个文件手动准备就行。<br>
-有时候会遇到树文件中有些样本需要删除的情况，这个文件的目的就是只保留现有树文件中感兴趣的样本，在本文件中出现的 ID 是保留在树上的样本，未出现的样本则被删除。红框中的两个表头不能更改，直接把需要保留的样本 ID 粘贴到第3行之后就可以。<br>
-<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409011806604.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>PRUNE
-DATA
-X111.1694.3181_C1a1a1a1
-X111.1255.8082_C1b1a1a2a
-X111.1653.9674_C1b1a1b2
-X111.1781.6958_C1b1a2b
-HGDP01310_C1b1a2b
-X111.1280.1843_C2a1
-X990.0002.7094_C2a1b
-X990.0002.6929_C2a1b
-X111.1805.2478_C2a1b
-X111.1824.6204_C2a1b
-Y2384_C2a1a
-复制<br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031023145.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>这部分代码必须要运行，注意修改这三个路径。然后根据自己的需要选择接下来运行的代码，将生成的注释文件拖入 itol 网站的界面就可以了。<br>注意，应该检查下注释文件中样本的数目是否和树文件中的样本数目一致，如果准备的 metadata 文件中 ID 和树文件内的 ID 不一致，会导致无法将 ID 全部替换过来。比如本来有300个样本，生成的注释文件中只有290个样本，可能就是有10个样本的 ID 在树文件和 metadata 中不一样。<br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031019018.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>这部分代码生成用于替换 label 的注释文件<br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031024926.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>效果图<br>
-<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031055525.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031047228.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>这部分代码生成用于样本 ID背景的注释文件<br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031049532.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>效果图<br>
-<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031051578.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031056442.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>这个 strip要先把这一行 branch 给注释掉，才不会改变branch 的颜色<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409061424515.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031058575.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031100137.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031108878.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>其中 nomal 代表实线。如果想要把某些枝变成虚线，可以把在 excel 中将部分 normal 改成 dashed<br>
-<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031112001.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>效果图<br>
-<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409031113644.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">]]></description><link>软件操作\分析软件\r语言\r包：itol注释文件的使用.html</link><guid isPermaLink="false">软件操作/分析软件/R语言/R包：itol注释文件的使用.md</guid><pubDate>Thu, 12 Sep 2024 14:06:05 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409011757591.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409011757591.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[输入文件 ：vcf 或vcf.gz]]></title><description><![CDATA[ 
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409072016116.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">]]></description><link>软件操作\分析软件\python\python：bsp美化.html</link><guid isPermaLink="false">软件操作/分析软件/Python/Python：BSP美化.md</guid><pubDate>Tue, 10 Sep 2024 12:58:01 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409021536742.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409021536742.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[输入文件 ：vcf 或vcf.gz]]></title><description><![CDATA[ 
  <br><br>这是本代码中唯一需要准备的输入文件。注意是一个已经进行过上游处理（异质性等），并且只选择变异位点后（二等位基因、AC=0）的 vcf  文件或者压缩的 vcf.gz 文件。区别只在于代码处理时是否需要解压缩的步骤。<br>
 <img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408301449484.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>表头最后1行，从第10列开始是 ID 信息。此时的 vcf 文件中 ID 不包含单倍群。<br>
 <img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202408301450032.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br><br>ped 文件是基因型信息。ID 有两列，从第7列开始是基因型，每个位点的信息重复了1次，如位点原本为G，显示为 GG<br>

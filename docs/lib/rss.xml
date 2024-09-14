@@ -1,4 +1,58 @@
-<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[长脑子了]]></title><description><![CDATA[Obsidian digital garden]]></description><link>http://github.com/dylang/node-rss</link><image><url>lib\media\favicon.png</url><title>长脑子了</title><link/></image><generator>Webpage HTML Export plugin for Obsidian</generator><lastBuildDate>Fri, 13 Sep 2024 07:20:21 GMT</lastBuildDate><atom:link href="lib\rss.xml" rel="self" type="application/rss+xml"/><pubDate>Fri, 13 Sep 2024 07:19:52 GMT</pubDate><ttl>60</ttl><dc:creator/><item><title><![CDATA[输入文件]]></title><description><![CDATA[ 
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[长脑子了]]></title><description><![CDATA[Obsidian digital garden]]></description><link>http://github.com/dylang/node-rss</link><image><url>lib\media\favicon.png</url><title>长脑子了</title><link/></image><generator>Webpage HTML Export plugin for Obsidian</generator><lastBuildDate>Sat, 14 Sep 2024 06:40:08 GMT</lastBuildDate><atom:link href="lib\rss.xml" rel="self" type="application/rss+xml"/><pubDate>Sat, 14 Sep 2024 06:40:07 GMT</pubDate><ttl>60</ttl><dc:creator/><item><title><![CDATA[下载]]></title><description><![CDATA[ 
+ <br>视频教程： <a rel="noopener" class="external-link" href="https://www.youtube.com/watch?v=DIiyWkCDKUw&amp;t=277s" target="_blank">https://www.youtube.com/watch?v=DIiyWkCDKUw&amp;t=277s</a><br><br>
+<br>
+点击链接：<a data-tooltip-position="top" aria-label="https://v2rayssr.com/gui-for-singbox.html" rel="noopener" class="external-link" href="https://v2rayssr.com/gui-for-singbox.html" target="_blank">强大的代理工具！GUI.For.SingBox 的正确食用方式！SingBox 内核配置，规则详细讲解，保姆级教程！ – V2RaySSR综合网</a>
+
+<br>
+点击此处进入 github 下载软件 GUI.For.SingBox<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409141308939.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+选择 win 版本<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409141309307.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+配置过程中需要全程开启 v2rayN，因为需要访问 github。先解压安装包，放在自己的软件盘，双击启动<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409141312708.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+设置成中文<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409141313500.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409141313461.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>
+<br>跟着点击设置就行，打开 规则集 和 计划任务<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409141321336.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>打开 以管理员身份运行<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409141320825.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>还需要在 win11的 个性化 中开启软件的系统托盘<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409141318898.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409141319662.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>然后在右下角系统托盘，点击 退出，让管理员身份生效<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409141320380.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>重新打开软件，点击 设置，更新两个内核<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409141404435.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>默认 稳定版 即可<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409141406704.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><br>
+<br>点击 插件 ，进入插件中心<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409141407135.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>节点转换 是必装的，点击 添加<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409141407000.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>回到 概览，点击 快速开始<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409141409599.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>输入订阅链接，点击 保存<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409141409695.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>
+点击 订阅，可以看到下方内容，可以在这里对节点进行编辑<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409141415767.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>
+继续在 概览，点击 启动内核 之后，可以把 v2rayN 关了（清除系统代理）<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409141416618.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+
+<br>点击打开 系统代理，右下角托盘变绿，说明打开了<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409141419269.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br><img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409141419151.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>
+<br>每次开机后都需要设置一下出口，点击 系统代理 旁边的三个杠<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409141426873.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">
+<br>点击 出站接口名称<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409141427070.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>选择 WLAN<br>
+<img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409141427853.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;">]]></description><link>软件操作\gui.for.singbox下载及配置.html</link><guid isPermaLink="false">软件操作/GUI.for.SingBox下载及配置.md</guid><pubDate>Sat, 14 Sep 2024 06:27:40 GMT</pubDate><enclosure url="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409141308939.png" length="0" type="image/png"/><content:encoded>&lt;figure&gt;&lt;img src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202409141308939.png"&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[输入文件]]></title><description><![CDATA[ 
  <br><br>只需要准备一个 csv 格式文件，第一列可不要，其他列名必须是：Haplotype 和classification<br>
 <img alt="image.png" src="https://picturerealm.oss-cn-chengdu.aliyuncs.com/obsidian/202407051514129.png" referrerpolicy="no-referrer" style="width: 500px; max-width: 100%;"><br>classification 的内容是对群体的分类，比如南北等<br><br>
 <br>更改文件路径<br>

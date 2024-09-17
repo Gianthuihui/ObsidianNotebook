@@ -1,6 +1,6 @@
 {
   "vaultName": "长脑子了",
-  "lastExport": 1726308222711,
+  "lastExport": 1726554711170,
   "pluginVersion": "1.8.01",
   "validBodyClasses": "publish css-settings-manager theme-dark show-inline-title show-ribbon",
   "useCustomHeadContent": false,
@@ -27,6 +27,7 @@
     "软件操作/分析软件/Arcgis Pro采样地图气泡图（新.md",
     "软件操作/分析软件/Arcgis pro单倍群频率地图+热点.md",
     "软件操作/分析软件/Arcgis采样地图.md",
+    "软件操作/分析软件/Beast 1.8简易手册-修订版.md",
     "软件操作/分析软件/Beast-Beast树.md",
     "软件操作/分析软件/Beast-BSP设置.md",
     "软件操作/分析软件/Beast-logCombiner.md",
@@ -82,6 +83,7 @@
     "软件操作/谷歌API的启用.md",
     "软件操作/通配符.md",
     "软件操作/用API查询经纬度.md",
+    "软件操作/Adobe绕过通行证检查.md",
     "软件操作/AI中批量替换颜色.md",
     "软件操作/Beast-bModelTest下载.md",
     "软件操作/Github笔记上传操作.md",
@@ -216,181 +218,181 @@
       "dependencies": []
     },
     "lib/scripts/graph-wasm.wasm": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 23377,
       "exportedPath": "lib/scripts/graph-wasm.wasm",
       "dependencies": []
     },
     "lib/fonts/94f2f163d4b698242fef.otf": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 66800,
       "exportedPath": "lib/fonts/94f2f163d4b698242fef.otf",
       "dependencies": []
     },
     "lib/fonts/72505e6a122c6acd5471.woff2": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 104232,
       "exportedPath": "lib/fonts/72505e6a122c6acd5471.woff2",
       "dependencies": []
     },
     "lib/fonts/2d5198822ab091ce4305.woff2": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 104332,
       "exportedPath": "lib/fonts/2d5198822ab091ce4305.woff2",
       "dependencies": []
     },
     "lib/fonts/c8ba52b05a9ef10f4758.woff2": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 98868,
       "exportedPath": "lib/fonts/c8ba52b05a9ef10f4758.woff2",
       "dependencies": []
     },
     "lib/fonts/cb10ffd7684cd9836a05.woff2": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 106876,
       "exportedPath": "lib/fonts/cb10ffd7684cd9836a05.woff2",
       "dependencies": []
     },
     "lib/fonts/b5f0f109bc88052d4000.woff2": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 105804,
       "exportedPath": "lib/fonts/b5f0f109bc88052d4000.woff2",
       "dependencies": []
     },
     "lib/fonts/cbe0ae49c52c920fd563.woff2": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 106108,
       "exportedPath": "lib/fonts/cbe0ae49c52c920fd563.woff2",
       "dependencies": []
     },
     "lib/fonts/535a6cf662596b3bd6a6.woff2": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 111708,
       "exportedPath": "lib/fonts/535a6cf662596b3bd6a6.woff2",
       "dependencies": []
     },
     "lib/fonts/70cc7ff27245e82ad414.ttf": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 192740,
       "exportedPath": "lib/fonts/70cc7ff27245e82ad414.ttf",
       "dependencies": []
     },
     "lib/fonts/454577c22304619db035.ttf": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 161376,
       "exportedPath": "lib/fonts/454577c22304619db035.ttf",
       "dependencies": []
     },
     "lib/fonts/52ac8f3034507f1d9e53.ttf": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 191568,
       "exportedPath": "lib/fonts/52ac8f3034507f1d9e53.ttf",
       "dependencies": []
     },
     "lib/fonts/05b618077343fbbd92b7.ttf": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 155288,
       "exportedPath": "lib/fonts/05b618077343fbbd92b7.ttf",
       "dependencies": []
     },
     "lib/fonts/4bb6ac751d1c5478ff3a.woff2": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 7876,
       "exportedPath": "lib/fonts/4bb6ac751d1c5478ff3a.woff2",
       "dependencies": []
     },
     "lib/media/874d8b8e340f75575caa.svg": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 317,
       "exportedPath": "lib/media/874d8b8e340f75575caa.svg",
       "dependencies": []
     },
     "lib/media/3d6c1bdc4d87cde4de67.svg": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 279,
       "exportedPath": "lib/media/3d6c1bdc4d87cde4de67.svg",
       "dependencies": []
     },
     "lib/html/file-tree.html": {
-      "modifiedTime": 1726308222711,
-      "sourceSize": 36920,
+      "modifiedTime": 1726554711170,
+      "sourceSize": 37577,
       "exportedPath": "lib/html/file-tree.html",
       "dependencies": []
     },
     "lib/scripts/webpage.js": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 47290,
       "exportedPath": "lib/scripts/webpage.js",
       "dependencies": []
     },
     "lib/scripts/graph-view.js": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 15519,
       "exportedPath": "lib/scripts/graph-view.js",
       "dependencies": []
     },
     "lib/scripts/graph-wasm.js": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 14021,
       "exportedPath": "lib/scripts/graph-wasm.js",
       "dependencies": []
     },
     "lib/scripts/graph-render-worker.js": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 5179,
       "exportedPath": "lib/scripts/graph-render-worker.js",
       "dependencies": []
     },
     "lib/scripts/tinycolor.js": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 29832,
       "exportedPath": "lib/scripts/tinycolor.js",
       "dependencies": []
     },
     "lib/scripts/pixi.js": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 449509,
       "exportedPath": "lib/scripts/pixi.js",
       "dependencies": []
     },
     "lib/scripts/minisearch.js": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 29422,
       "exportedPath": "lib/scripts/minisearch.js",
       "dependencies": []
     },
     "lib/media/favicon.png": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 1105,
       "exportedPath": "lib/media/favicon.png",
       "dependencies": []
     },
     "lib/scripts/graph-data.js": {
-      "modifiedTime": 1726308222711,
-      "sourceSize": 5064,
+      "modifiedTime": 1726554711170,
+      "sourceSize": 5169,
       "exportedPath": "lib/scripts/graph-data.js",
       "dependencies": []
     },
     "lib/styles/obsidian.css": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 130471,
       "exportedPath": "lib/styles/obsidian.css",
       "dependencies": []
     },
     "lib/styles/theme.css": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 1675887,
       "exportedPath": "lib/styles/theme.css",
       "dependencies": []
     },
     "lib/styles/global-variable-styles.css": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 294,
       "exportedPath": "lib/styles/global-variable-styles.css",
       "dependencies": []
     },
     "lib/styles/main-styles.css": {
-      "modifiedTime": 1726308222711,
+      "modifiedTime": 1726554711170,
       "sourceSize": 23130,
       "exportedPath": "lib/styles/main-styles.css",
       "dependencies": []
@@ -1014,9 +1016,21 @@
       "dependencies": []
     },
     "软件操作/GUI.for.SingBox下载及配置.md": {
-      "modifiedTime": 1726296007490,
-      "sourceSize": 3686,
+      "modifiedTime": 1726554711170,
+      "sourceSize": 3545,
       "exportedPath": "软件操作/gui.for.singbox下载及配置.html",
+      "dependencies": []
+    },
+    "软件操作/分析软件/Beast 1.8简易手册-修订版.md": {
+      "modifiedTime": 1726554711170,
+      "sourceSize": 83833,
+      "exportedPath": "软件操作/分析软件/beast-1.8简易手册-修订版.html",
+      "dependencies": []
+    },
+    "软件操作/Adobe绕过通行证检查.md": {
+      "modifiedTime": 1726554711170,
+      "sourceSize": 205,
+      "exportedPath": "软件操作/adobe绕过通行证检查.html",
       "dependencies": []
     }
   }

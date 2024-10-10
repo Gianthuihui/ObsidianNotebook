@@ -1,95 +1,20 @@
 {
   "vaultName": "长脑子了",
-  "lastExport": 1726554711170,
+  "lastExport": 1728529855692,
   "pluginVersion": "1.8.01",
   "validBodyClasses": "publish css-settings-manager theme-dark show-inline-title show-ribbon",
   "useCustomHeadContent": false,
   "useCustomFavicon": false,
   "files": [
+    "软件操作/分析软件/Python/Python：按地区比例进行抽样.md",
     "软件操作/分析软件/Python/Python：从单倍群频率一键出曼哈顿图.md",
+    "软件操作/分析软件/Python/python：单倍群多样性计算.md",
+    "软件操作/分析软件/Python/Python：共享单倍群个体数目的Venn图.md",
     "软件操作/分析软件/Python/Python：计算BSP最小Ne时间的置信区间.md",
     "软件操作/分析软件/Python/Python：自动计数相同内容并编号.md",
+    "软件操作/分析软件/Python/Python：Arlequin便携分组.md",
     "软件操作/分析软件/Python/Python：BSP美化.md",
-    "软件操作/分析软件/R语言/R包：itol注释文件的使用.md",
-    "软件操作/分析软件/Shell/从Vcf获得带单倍群信息的fasta.md",
-    "软件操作/分析软件/单倍群频率地图+热点地图.md",
-    "软件操作/分析软件/单倍群频率计算与排序（数据透视表）.md",
-    "软件操作/分析软件/单倍群频率热图.md",
-    "软件操作/分析软件/高程数据下载.md",
-    "软件操作/分析软件/曼哈顿图绘制.md",
-    "软件操作/分析软件/魔方单倍群经纬度相关性绘制.md",
-    "软件操作/分析软件/魔方目标单倍群寻找.md",
-    "软件操作/分析软件/三维地形图.md",
-    "软件操作/分析软件/似然树构建.md",
-    "软件操作/分析软件/用Mega画NJ树.md",
-    "软件操作/分析软件/AMOVA工作流程.md",
-    "软件操作/分析软件/Arcgis pro采样地图（原始.md",
-    "软件操作/分析软件/Arcgis Pro采样地图气泡图（新.md",
-    "软件操作/分析软件/Arcgis pro单倍群频率地图+热点.md",
-    "软件操作/分析软件/Arcgis采样地图.md",
-    "软件操作/分析软件/Beast 1.8简易手册-修订版.md",
-    "软件操作/分析软件/Beast-Beast树.md",
-    "软件操作/分析软件/Beast-BSP设置.md",
-    "软件操作/分析软件/Beast-logCombiner.md",
-    "软件操作/分析软件/FastHaN软件制作Network.md",
-    "软件操作/分析软件/Fst流程.md",
-    "软件操作/分析软件/MDS工作流程.md",
-    "软件操作/分析软件/Network + Network Publisher.md",
-    "软件操作/分析软件/NJ Tree.md",
-    "软件操作/分析软件/PCA计算变异解释度.md",
-    "软件操作/分析软件/sublime用法-序列检查.md",
-    "软件操作/分析软件/WGS操作流程.md",
-    "软件操作/分析原理/初探PLINK文件格式（bed，bim，fam）.md",
-    "软件操作/分析原理/单体型网络(Haplotype Network)的构建及展示.md",
-    "软件操作/分析原理/评估树可靠性的方法.md",
-    "软件操作/分析原理/群体分化指数-Fst.md",
-    "软件操作/分析原理/群体结构分析-PCA，TREE，STRUCTURE.md",
-    "软件操作/分析原理/生信常用数据格式汇总——fasta、fastq、gff、gtf、sam、bam、VCF格式及构成信息.md",
-    "软件操作/分析原理/AMOVA分子方差分析原理.md",
-    "软件操作/分析原理/bam文件含义.md",
-    "软件操作/分析原理/BLAST获取目标序列.md",
-    "软件操作/分析原理/fasta，fastq，sam，bam，vcf，bed文件的获得顺序.md",
-    "软件操作/分析原理/Fst-选择信号.md",
-    "软件操作/分析原理/Linux 文件基本属性.md",
-    "软件操作/分析原理/Linux常用命令.md",
-    "软件操作/分析原理/Linux环境变量配置竟有这么多学问，你真的会了吗？.md",
-    "软件操作/分析原理/Linux硬、软链接.md",
-    "软件操作/分析原理/MDS原理.md",
-    "软件操作/分析原理/MEGA多序列比对及建树（NJ）.md",
-    "软件操作/分析原理/PCA原理.md",
-    "软件操作/绘图配色/科研配色  10色.md",
-    "软件操作/绘图配色/科研配色｜第13期 2-5色.md",
-    "软件操作/数据库/大cohort文章list.md",
-    "软件操作/数据库/Ensemble查找chrY.md",
-    "软件操作/Linux命令行/超算常用命令.md",
-    "软件操作/Linux命令行/处理bam转vcf.md",
-    "软件操作/Linux命令行/服务器内存.md",
-    "软件操作/Linux命令行/监控和kill掉进程.md",
-    "软件操作/Linux命令行/列出所有文件并计数.md",
-    "软件操作/Linux命令行/清屏.md",
-    "软件操作/Linux命令行/三种引号：反、单和双.md",
-    "软件操作/Linux命令行/下载安装beagle.md",
-    "软件操作/Linux命令行/aspera下载bam.md",
-    "软件操作/Linux命令行/awk提取第3列.md",
-    "软件操作/Linux命令行/Beast服务器安装.md",
-    "软件操作/Linux命令行/Cut文本处理工具.md",
-    "软件操作/Linux命令行/haplogrouper分单倍群报错.md",
-    "软件操作/Linux命令行/linux下载软件Aspera.md",
-    "软件操作/Linux命令行/nohup 某个脚本.md",
-    "软件操作/Linux命令行/sed编辑器.md",
-    "软件操作/Linux命令行/vcf基本信息.md",
-    "软件操作/Linux命令行/Vcf上游处理全流程.md",
-    "软件操作/Linux命令行/vcf上游perl脚本的过滤原理.md",
-    "软件操作/谷歌API的启用.md",
-    "软件操作/通配符.md",
-    "软件操作/用API查询经纬度.md",
-    "软件操作/Adobe绕过通行证检查.md",
-    "软件操作/AI中批量替换颜色.md",
-    "软件操作/Beast-bModelTest下载.md",
-    "软件操作/Github笔记上传操作.md",
-    "软件操作/GUI.for.SingBox下载及配置.md",
-    "软件操作/python、R安装包的方法.md",
-    "软件操作/windows端下载软件iqtree2.md",
+    "软件操作/分析软件/Python/Python：fasta转Arp.md",
     "小鹿绅士/1 文体学概述：开始创造性地使用语言.md",
     "小鹿绅士/2 句子扩展：让语句更加具体且形象.md",
     "小鹿绅士/3 同义表达：使用有自己特色的语言.md",
@@ -115,6 +40,28 @@
     "lib/fonts/4bb6ac751d1c5478ff3a.woff2",
     "lib/media/874d8b8e340f75575caa.svg",
     "lib/media/3d6c1bdc4d87cde4de67.svg",
+    "lib/fonts/mathjax_zero.woff",
+    "lib/fonts/mathjax_main-regular.woff",
+    "lib/fonts/mathjax_main-bold.woff",
+    "lib/fonts/mathjax_math-italic.woff",
+    "lib/fonts/mathjax_main-italic.woff",
+    "lib/fonts/mathjax_math-bolditalic.woff",
+    "lib/fonts/mathjax_size1-regular.woff",
+    "lib/fonts/mathjax_size2-regular.woff",
+    "lib/fonts/mathjax_size3-regular.woff",
+    "lib/fonts/mathjax_size4-regular.woff",
+    "lib/fonts/mathjax_ams-regular.woff",
+    "lib/fonts/mathjax_calligraphic-regular.woff",
+    "lib/fonts/mathjax_calligraphic-bold.woff",
+    "lib/fonts/mathjax_fraktur-regular.woff",
+    "lib/fonts/mathjax_fraktur-bold.woff",
+    "lib/fonts/mathjax_sansserif-regular.woff",
+    "lib/fonts/mathjax_sansserif-bold.woff",
+    "lib/fonts/mathjax_sansserif-italic.woff",
+    "lib/fonts/mathjax_script-regular.woff",
+    "lib/fonts/mathjax_typewriter-regular.woff",
+    "lib/fonts/mathjax_vector-regular.woff",
+    "lib/fonts/mathjax_vector-bold.woff",
     "lib/html/file-tree.html",
     "lib/scripts/webpage.js",
     "lib/scripts/graph-view.js",
@@ -147,6 +94,28 @@
     "lib/fonts/4bb6ac751d1c5478ff3a.woff2",
     "lib/media/874d8b8e340f75575caa.svg",
     "lib/media/3d6c1bdc4d87cde4de67.svg",
+    "lib/fonts/mathjax_zero.woff",
+    "lib/fonts/mathjax_main-regular.woff",
+    "lib/fonts/mathjax_main-bold.woff",
+    "lib/fonts/mathjax_math-italic.woff",
+    "lib/fonts/mathjax_main-italic.woff",
+    "lib/fonts/mathjax_math-bolditalic.woff",
+    "lib/fonts/mathjax_size1-regular.woff",
+    "lib/fonts/mathjax_size2-regular.woff",
+    "lib/fonts/mathjax_size3-regular.woff",
+    "lib/fonts/mathjax_size4-regular.woff",
+    "lib/fonts/mathjax_ams-regular.woff",
+    "lib/fonts/mathjax_calligraphic-regular.woff",
+    "lib/fonts/mathjax_calligraphic-bold.woff",
+    "lib/fonts/mathjax_fraktur-regular.woff",
+    "lib/fonts/mathjax_fraktur-bold.woff",
+    "lib/fonts/mathjax_sansserif-regular.woff",
+    "lib/fonts/mathjax_sansserif-bold.woff",
+    "lib/fonts/mathjax_sansserif-italic.woff",
+    "lib/fonts/mathjax_script-regular.woff",
+    "lib/fonts/mathjax_typewriter-regular.woff",
+    "lib/fonts/mathjax_vector-regular.woff",
+    "lib/fonts/mathjax_vector-bold.woff",
     "lib/html/file-tree.html",
     "lib/scripts/webpage.js",
     "lib/scripts/graph-view.js",
@@ -218,319 +187,313 @@
       "dependencies": []
     },
     "lib/scripts/graph-wasm.wasm": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 23377,
       "exportedPath": "lib/scripts/graph-wasm.wasm",
       "dependencies": []
     },
     "lib/fonts/94f2f163d4b698242fef.otf": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 66800,
       "exportedPath": "lib/fonts/94f2f163d4b698242fef.otf",
       "dependencies": []
     },
     "lib/fonts/72505e6a122c6acd5471.woff2": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 104232,
       "exportedPath": "lib/fonts/72505e6a122c6acd5471.woff2",
       "dependencies": []
     },
     "lib/fonts/2d5198822ab091ce4305.woff2": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 104332,
       "exportedPath": "lib/fonts/2d5198822ab091ce4305.woff2",
       "dependencies": []
     },
     "lib/fonts/c8ba52b05a9ef10f4758.woff2": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 98868,
       "exportedPath": "lib/fonts/c8ba52b05a9ef10f4758.woff2",
       "dependencies": []
     },
     "lib/fonts/cb10ffd7684cd9836a05.woff2": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 106876,
       "exportedPath": "lib/fonts/cb10ffd7684cd9836a05.woff2",
       "dependencies": []
     },
     "lib/fonts/b5f0f109bc88052d4000.woff2": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 105804,
       "exportedPath": "lib/fonts/b5f0f109bc88052d4000.woff2",
       "dependencies": []
     },
     "lib/fonts/cbe0ae49c52c920fd563.woff2": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 106108,
       "exportedPath": "lib/fonts/cbe0ae49c52c920fd563.woff2",
       "dependencies": []
     },
     "lib/fonts/535a6cf662596b3bd6a6.woff2": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 111708,
       "exportedPath": "lib/fonts/535a6cf662596b3bd6a6.woff2",
       "dependencies": []
     },
     "lib/fonts/70cc7ff27245e82ad414.ttf": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 192740,
       "exportedPath": "lib/fonts/70cc7ff27245e82ad414.ttf",
       "dependencies": []
     },
     "lib/fonts/454577c22304619db035.ttf": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 161376,
       "exportedPath": "lib/fonts/454577c22304619db035.ttf",
       "dependencies": []
     },
     "lib/fonts/52ac8f3034507f1d9e53.ttf": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 191568,
       "exportedPath": "lib/fonts/52ac8f3034507f1d9e53.ttf",
       "dependencies": []
     },
     "lib/fonts/05b618077343fbbd92b7.ttf": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 155288,
       "exportedPath": "lib/fonts/05b618077343fbbd92b7.ttf",
       "dependencies": []
     },
     "lib/fonts/4bb6ac751d1c5478ff3a.woff2": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 7876,
       "exportedPath": "lib/fonts/4bb6ac751d1c5478ff3a.woff2",
       "dependencies": []
     },
     "lib/media/874d8b8e340f75575caa.svg": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 317,
       "exportedPath": "lib/media/874d8b8e340f75575caa.svg",
       "dependencies": []
     },
     "lib/media/3d6c1bdc4d87cde4de67.svg": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 279,
       "exportedPath": "lib/media/3d6c1bdc4d87cde4de67.svg",
       "dependencies": []
     },
     "lib/html/file-tree.html": {
-      "modifiedTime": 1726554711170,
-      "sourceSize": 37577,
+      "modifiedTime": 1728529855692,
+      "sourceSize": 9296,
       "exportedPath": "lib/html/file-tree.html",
       "dependencies": []
     },
     "lib/scripts/webpage.js": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 47290,
       "exportedPath": "lib/scripts/webpage.js",
       "dependencies": []
     },
     "lib/scripts/graph-view.js": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 15519,
       "exportedPath": "lib/scripts/graph-view.js",
       "dependencies": []
     },
     "lib/scripts/graph-wasm.js": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 14021,
       "exportedPath": "lib/scripts/graph-wasm.js",
       "dependencies": []
     },
     "lib/scripts/graph-render-worker.js": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 5179,
       "exportedPath": "lib/scripts/graph-render-worker.js",
       "dependencies": []
     },
     "lib/scripts/tinycolor.js": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 29832,
       "exportedPath": "lib/scripts/tinycolor.js",
       "dependencies": []
     },
     "lib/scripts/pixi.js": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 449509,
       "exportedPath": "lib/scripts/pixi.js",
       "dependencies": []
     },
     "lib/scripts/minisearch.js": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 29422,
       "exportedPath": "lib/scripts/minisearch.js",
       "dependencies": []
     },
     "lib/media/favicon.png": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 1105,
       "exportedPath": "lib/media/favicon.png",
       "dependencies": []
     },
     "lib/scripts/graph-data.js": {
-      "modifiedTime": 1726554711170,
-      "sourceSize": 5169,
+      "modifiedTime": 1728529855692,
+      "sourceSize": 1383,
       "exportedPath": "lib/scripts/graph-data.js",
       "dependencies": []
     },
     "lib/styles/obsidian.css": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 130471,
       "exportedPath": "lib/styles/obsidian.css",
       "dependencies": []
     },
     "lib/styles/theme.css": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 1675887,
       "exportedPath": "lib/styles/theme.css",
       "dependencies": []
     },
     "lib/styles/global-variable-styles.css": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 294,
       "exportedPath": "lib/styles/global-variable-styles.css",
       "dependencies": []
     },
     "lib/styles/main-styles.css": {
-      "modifiedTime": 1726554711170,
+      "modifiedTime": 1728529855692,
       "sourceSize": 23130,
       "exportedPath": "lib/styles/main-styles.css",
       "dependencies": []
     },
-    "软件操作/分析软件/R语言/R包：itol注释文件的使用.md": {
-      "modifiedTime": 1726211737521,
-      "sourceSize": 13790,
-      "exportedPath": "软件操作/分析软件/r语言/r包：itol注释文件的使用.html",
-      "dependencies": []
-    },
     "lib/fonts/mathjax_zero.woff": {
-      "modifiedTime": 1726211992230,
+      "modifiedTime": 1728529855692,
       "sourceSize": 1368,
       "exportedPath": "lib/fonts/mathjax_zero.woff",
       "dependencies": []
     },
     "lib/fonts/mathjax_main-regular.woff": {
-      "modifiedTime": 1726211992230,
+      "modifiedTime": 1728529855692,
       "sourceSize": 34160,
       "exportedPath": "lib/fonts/mathjax_main-regular.woff",
       "dependencies": []
     },
     "lib/fonts/mathjax_main-bold.woff": {
-      "modifiedTime": 1726211992230,
+      "modifiedTime": 1728529855692,
       "sourceSize": 34464,
       "exportedPath": "lib/fonts/mathjax_main-bold.woff",
       "dependencies": []
     },
     "lib/fonts/mathjax_math-italic.woff": {
-      "modifiedTime": 1726211992230,
+      "modifiedTime": 1728529855692,
       "sourceSize": 19360,
       "exportedPath": "lib/fonts/mathjax_math-italic.woff",
       "dependencies": []
     },
     "lib/fonts/mathjax_main-italic.woff": {
-      "modifiedTime": 1726211992230,
+      "modifiedTime": 1728529855692,
       "sourceSize": 20832,
       "exportedPath": "lib/fonts/mathjax_main-italic.woff",
       "dependencies": []
     },
     "lib/fonts/mathjax_math-bolditalic.woff": {
-      "modifiedTime": 1726211992230,
+      "modifiedTime": 1728529855692,
       "sourceSize": 19776,
       "exportedPath": "lib/fonts/mathjax_math-bolditalic.woff",
       "dependencies": []
     },
     "lib/fonts/mathjax_size1-regular.woff": {
-      "modifiedTime": 1726211992230,
+      "modifiedTime": 1728529855692,
       "sourceSize": 5792,
       "exportedPath": "lib/fonts/mathjax_size1-regular.woff",
       "dependencies": []
     },
     "lib/fonts/mathjax_size2-regular.woff": {
-      "modifiedTime": 1726211992230,
+      "modifiedTime": 1728529855692,
       "sourceSize": 5464,
       "exportedPath": "lib/fonts/mathjax_size2-regular.woff",
       "dependencies": []
     },
     "lib/fonts/mathjax_size3-regular.woff": {
-      "modifiedTime": 1726211992230,
+      "modifiedTime": 1728529855692,
       "sourceSize": 3244,
       "exportedPath": "lib/fonts/mathjax_size3-regular.woff",
       "dependencies": []
     },
     "lib/fonts/mathjax_size4-regular.woff": {
-      "modifiedTime": 1726211992230,
+      "modifiedTime": 1728529855692,
       "sourceSize": 5148,
       "exportedPath": "lib/fonts/mathjax_size4-regular.woff",
       "dependencies": []
     },
     "lib/fonts/mathjax_ams-regular.woff": {
-      "modifiedTime": 1726211992230,
+      "modifiedTime": 1728529855692,
       "sourceSize": 40808,
       "exportedPath": "lib/fonts/mathjax_ams-regular.woff",
       "dependencies": []
     },
     "lib/fonts/mathjax_calligraphic-regular.woff": {
-      "modifiedTime": 1726211992230,
+      "modifiedTime": 1728529855692,
       "sourceSize": 9600,
       "exportedPath": "lib/fonts/mathjax_calligraphic-regular.woff",
       "dependencies": []
     },
     "lib/fonts/mathjax_calligraphic-bold.woff": {
-      "modifiedTime": 1726211992230,
+      "modifiedTime": 1728529855692,
       "sourceSize": 9908,
       "exportedPath": "lib/fonts/mathjax_calligraphic-bold.woff",
       "dependencies": []
     },
     "lib/fonts/mathjax_fraktur-regular.woff": {
-      "modifiedTime": 1726211992230,
+      "modifiedTime": 1728529855692,
       "sourceSize": 21480,
       "exportedPath": "lib/fonts/mathjax_fraktur-regular.woff",
       "dependencies": []
     },
     "lib/fonts/mathjax_fraktur-bold.woff": {
-      "modifiedTime": 1726211992230,
+      "modifiedTime": 1728529855692,
       "sourceSize": 22340,
       "exportedPath": "lib/fonts/mathjax_fraktur-bold.woff",
       "dependencies": []
     },
     "lib/fonts/mathjax_sansserif-regular.woff": {
-      "modifiedTime": 1726211992230,
+      "modifiedTime": 1728529855692,
       "sourceSize": 12660,
       "exportedPath": "lib/fonts/mathjax_sansserif-regular.woff",
       "dependencies": []
     },
     "lib/fonts/mathjax_sansserif-bold.woff": {
-      "modifiedTime": 1726211992230,
+      "modifiedTime": 1728529855692,
       "sourceSize": 15944,
       "exportedPath": "lib/fonts/mathjax_sansserif-bold.woff",
       "dependencies": []
     },
     "lib/fonts/mathjax_sansserif-italic.woff": {
-      "modifiedTime": 1726211992230,
+      "modifiedTime": 1728529855692,
       "sourceSize": 14628,
       "exportedPath": "lib/fonts/mathjax_sansserif-italic.woff",
       "dependencies": []
     },
     "lib/fonts/mathjax_script-regular.woff": {
-      "modifiedTime": 1726211992230,
+      "modifiedTime": 1728529855692,
       "sourceSize": 11852,
       "exportedPath": "lib/fonts/mathjax_script-regular.woff",
       "dependencies": []
     },
     "lib/fonts/mathjax_typewriter-regular.woff": {
-      "modifiedTime": 1726211992230,
+      "modifiedTime": 1728529855692,
       "sourceSize": 17604,
       "exportedPath": "lib/fonts/mathjax_typewriter-regular.woff",
       "dependencies": []
     },
     "lib/fonts/mathjax_vector-regular.woff": {
-      "modifiedTime": 1726211992230,
+      "modifiedTime": 1728529855692,
       "sourceSize": 1136,
       "exportedPath": "lib/fonts/mathjax_vector-regular.woff",
       "dependencies": []
     },
     "lib/fonts/mathjax_vector-bold.woff": {
-      "modifiedTime": 1726211992230,
+      "modifiedTime": 1728529855692,
       "sourceSize": 1116,
       "exportedPath": "lib/fonts/mathjax_vector-bold.woff",
       "dependencies": []
@@ -559,478 +522,34 @@
       "exportedPath": "软件操作/分析软件/python/python：bsp美化.html",
       "dependencies": []
     },
-    "软件操作/分析软件/Shell/从Vcf获得带单倍群信息的fasta.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 3625,
-      "exportedPath": "软件操作/分析软件/shell/从vcf获得带单倍群信息的fasta.html",
+    "软件操作/分析软件/Python/Python：按地区比例进行抽样.md": {
+      "modifiedTime": 1728529855692,
+      "sourceSize": 4612,
+      "exportedPath": "软件操作/分析软件/python/python：按地区比例进行抽样.html",
       "dependencies": []
     },
-    "软件操作/分析软件/单倍群频率地图+热点地图.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 6458,
-      "exportedPath": "软件操作/分析软件/单倍群频率地图+热点地图.html",
+    "软件操作/分析软件/Python/python：单倍群多样性计算.md": {
+      "modifiedTime": 1728529855692,
+      "sourceSize": 542,
+      "exportedPath": "软件操作/分析软件/python/python：单倍群多样性计算.html",
       "dependencies": []
     },
-    "软件操作/分析软件/单倍群频率计算与排序（数据透视表）.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 2691,
-      "exportedPath": "软件操作/分析软件/单倍群频率计算与排序（数据透视表）.html",
+    "软件操作/分析软件/Python/Python：共享单倍群个体数目的Venn图.md": {
+      "modifiedTime": 1728529855692,
+      "sourceSize": 12143,
+      "exportedPath": "软件操作/分析软件/python/python：共享单倍群个体数目的venn图.html",
       "dependencies": []
     },
-    "软件操作/分析软件/单倍群频率热图.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 1894,
-      "exportedPath": "软件操作/分析软件/单倍群频率热图.html",
+    "软件操作/分析软件/Python/Python：Arlequin便携分组.md": {
+      "modifiedTime": 1728529855692,
+      "sourceSize": 1678,
+      "exportedPath": "软件操作/分析软件/python/python：arlequin便携分组.html",
       "dependencies": []
     },
-    "软件操作/分析软件/高程数据下载.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 3446,
-      "exportedPath": "软件操作/分析软件/高程数据下载.html",
-      "dependencies": []
-    },
-    "软件操作/分析软件/曼哈顿图绘制.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 3000,
-      "exportedPath": "软件操作/分析软件/曼哈顿图绘制.html",
-      "dependencies": []
-    },
-    "软件操作/分析软件/魔方单倍群经纬度相关性绘制.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 3500,
-      "exportedPath": "软件操作/分析软件/魔方单倍群经纬度相关性绘制.html",
-      "dependencies": []
-    },
-    "软件操作/分析软件/魔方目标单倍群寻找.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 657,
-      "exportedPath": "软件操作/分析软件/魔方目标单倍群寻找.html",
-      "dependencies": []
-    },
-    "软件操作/分析软件/三维地形图.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 570,
-      "exportedPath": "软件操作/分析软件/三维地形图.html",
-      "dependencies": []
-    },
-    "软件操作/分析软件/似然树构建.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 11495,
-      "exportedPath": "软件操作/分析软件/似然树构建.html",
-      "dependencies": []
-    },
-    "软件操作/分析软件/用Mega画NJ树.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 2879,
-      "exportedPath": "软件操作/分析软件/用mega画nj树.html",
-      "dependencies": []
-    },
-    "软件操作/分析软件/AMOVA工作流程.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 2476,
-      "exportedPath": "软件操作/分析软件/amova工作流程.html",
-      "dependencies": []
-    },
-    "软件操作/分析软件/Arcgis pro采样地图（原始.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 2253,
-      "exportedPath": "软件操作/分析软件/arcgis-pro采样地图（原始.html",
-      "dependencies": []
-    },
-    "软件操作/分析软件/Arcgis Pro采样地图气泡图（新.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 2323,
-      "exportedPath": "软件操作/分析软件/arcgis-pro采样地图气泡图（新.html",
-      "dependencies": []
-    },
-    "软件操作/分析软件/Arcgis pro单倍群频率地图+热点.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 1900,
-      "exportedPath": "软件操作/分析软件/arcgis-pro单倍群频率地图+热点.html",
-      "dependencies": []
-    },
-    "软件操作/分析软件/Arcgis采样地图.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 1608,
-      "exportedPath": "软件操作/分析软件/arcgis采样地图.html",
-      "dependencies": []
-    },
-    "软件操作/分析软件/Beast-Beast树.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 2340,
-      "exportedPath": "软件操作/分析软件/beast-beast树.html",
-      "dependencies": []
-    },
-    "软件操作/分析软件/Beast-BSP设置.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 1380,
-      "exportedPath": "软件操作/分析软件/beast-bsp设置.html",
-      "dependencies": []
-    },
-    "软件操作/分析软件/Beast-logCombiner.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 2821,
-      "exportedPath": "软件操作/分析软件/beast-logcombiner.html",
-      "dependencies": []
-    },
-    "软件操作/分析软件/FastHaN软件制作Network.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 2534,
-      "exportedPath": "软件操作/分析软件/fasthan软件制作network.html",
-      "dependencies": []
-    },
-    "软件操作/分析软件/Fst流程.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 4190,
-      "exportedPath": "软件操作/分析软件/fst流程.html",
-      "dependencies": []
-    },
-    "软件操作/分析软件/MDS工作流程.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 2512,
-      "exportedPath": "软件操作/分析软件/mds工作流程.html",
-      "dependencies": []
-    },
-    "软件操作/分析软件/Network + Network Publisher.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 1550,
-      "exportedPath": "软件操作/分析软件/network-+-network-publisher.html",
-      "dependencies": []
-    },
-    "软件操作/分析软件/NJ Tree.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 280,
-      "exportedPath": "软件操作/分析软件/nj-tree.html",
-      "dependencies": []
-    },
-    "软件操作/分析软件/PCA计算变异解释度.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 591,
-      "exportedPath": "软件操作/分析软件/pca计算变异解释度.html",
-      "dependencies": []
-    },
-    "软件操作/分析软件/sublime用法-序列检查.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 2374,
-      "exportedPath": "软件操作/分析软件/sublime用法-序列检查.html",
-      "dependencies": []
-    },
-    "软件操作/分析软件/WGS操作流程.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 1080,
-      "exportedPath": "软件操作/分析软件/wgs操作流程.html",
-      "dependencies": []
-    },
-    "软件操作/分析原理/初探PLINK文件格式（bed，bim，fam）.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 3915,
-      "exportedPath": "软件操作/分析原理/初探plink文件格式（bed，bim，fam）.html",
-      "dependencies": []
-    },
-    "软件操作/分析原理/单体型网络(Haplotype Network)的构建及展示.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 6285,
-      "exportedPath": "软件操作/分析原理/单体型网络(haplotype-network)的构建及展示.html",
-      "dependencies": []
-    },
-    "软件操作/分析原理/评估树可靠性的方法.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 1182,
-      "exportedPath": "软件操作/分析原理/评估树可靠性的方法.html",
-      "dependencies": []
-    },
-    "软件操作/分析原理/群体分化指数-Fst.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 10668,
-      "exportedPath": "软件操作/分析原理/群体分化指数-fst.html",
-      "dependencies": []
-    },
-    "软件操作/分析原理/群体结构分析-PCA，TREE，STRUCTURE.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 8383,
-      "exportedPath": "软件操作/分析原理/群体结构分析-pca，tree，structure.html",
-      "dependencies": []
-    },
-    "软件操作/分析原理/生信常用数据格式汇总——fasta、fastq、gff、gtf、sam、bam、VCF格式及构成信息.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 6947,
-      "exportedPath": "软件操作/分析原理/生信常用数据格式汇总——fasta、fastq、gff、gtf、sam、bam、vcf格式及构成信息.html",
-      "dependencies": []
-    },
-    "软件操作/分析原理/AMOVA分子方差分析原理.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 4466,
-      "exportedPath": "软件操作/分析原理/amova分子方差分析原理.html",
-      "dependencies": []
-    },
-    "软件操作/分析原理/bam文件含义.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 4482,
-      "exportedPath": "软件操作/分析原理/bam文件含义.html",
-      "dependencies": []
-    },
-    "软件操作/分析原理/BLAST获取目标序列.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 11502,
-      "exportedPath": "软件操作/分析原理/blast获取目标序列.html",
-      "dependencies": []
-    },
-    "软件操作/分析原理/fasta，fastq，sam，bam，vcf，bed文件的获得顺序.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 2416,
-      "exportedPath": "软件操作/分析原理/fasta，fastq，sam，bam，vcf，bed文件的获得顺序.html",
-      "dependencies": []
-    },
-    "软件操作/分析原理/Fst-选择信号.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 5293,
-      "exportedPath": "软件操作/分析原理/fst-选择信号.html",
-      "dependencies": []
-    },
-    "软件操作/分析原理/Linux 文件基本属性.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 7390,
-      "exportedPath": "软件操作/分析原理/linux-文件基本属性.html",
-      "dependencies": []
-    },
-    "软件操作/分析原理/Linux常用命令.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 13364,
-      "exportedPath": "软件操作/分析原理/linux常用命令.html",
-      "dependencies": []
-    },
-    "软件操作/分析原理/Linux环境变量配置竟有这么多学问，你真的会了吗？.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 8952,
-      "exportedPath": "软件操作/分析原理/linux环境变量配置竟有这么多学问，你真的会了吗？.html",
-      "dependencies": []
-    },
-    "软件操作/分析原理/Linux硬、软链接.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 3643,
-      "exportedPath": "软件操作/分析原理/linux硬、软链接.html",
-      "dependencies": []
-    },
-    "软件操作/分析原理/MDS原理.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 4787,
-      "exportedPath": "软件操作/分析原理/mds原理.html",
-      "dependencies": []
-    },
-    "软件操作/分析原理/MEGA多序列比对及建树（NJ）.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 43310,
-      "exportedPath": "软件操作/分析原理/mega多序列比对及建树（nj）.html",
-      "dependencies": []
-    },
-    "软件操作/分析原理/PCA原理.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 6744,
-      "exportedPath": "软件操作/分析原理/pca原理.html",
-      "dependencies": []
-    },
-    "软件操作/绘图配色/科研配色  10色.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 14712,
-      "exportedPath": "软件操作/绘图配色/科研配色-10色.html",
-      "dependencies": []
-    },
-    "软件操作/绘图配色/科研配色｜第13期 2-5色.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 5781,
-      "exportedPath": "软件操作/绘图配色/科研配色｜第13期-2-5色.html",
-      "dependencies": []
-    },
-    "软件操作/数据库/大cohort文章list.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 617,
-      "exportedPath": "软件操作/数据库/大cohort文章list.html",
-      "dependencies": []
-    },
-    "软件操作/数据库/Ensemble查找chrY.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 300,
-      "exportedPath": "软件操作/数据库/ensemble查找chry.html",
-      "dependencies": []
-    },
-    "软件操作/Linux命令行/超算常用命令.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 102,
-      "exportedPath": "软件操作/linux命令行/超算常用命令.html",
-      "dependencies": []
-    },
-    "软件操作/Linux命令行/处理bam转vcf.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 0,
-      "exportedPath": "软件操作/linux命令行/处理bam转vcf.html",
-      "dependencies": []
-    },
-    "软件操作/Linux命令行/服务器内存.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 517,
-      "exportedPath": "软件操作/linux命令行/服务器内存.html",
-      "dependencies": []
-    },
-    "软件操作/Linux命令行/监控和kill掉进程.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 171,
-      "exportedPath": "软件操作/linux命令行/监控和kill掉进程.html",
-      "dependencies": []
-    },
-    "软件操作/Linux命令行/列出所有文件并计数.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 79,
-      "exportedPath": "软件操作/linux命令行/列出所有文件并计数.html",
-      "dependencies": []
-    },
-    "软件操作/Linux命令行/清屏.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 6,
-      "exportedPath": "软件操作/linux命令行/清屏.html",
-      "dependencies": []
-    },
-    "软件操作/Linux命令行/三种引号：反、单和双.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 3292,
-      "exportedPath": "软件操作/linux命令行/三种引号：反、单和双.html",
-      "dependencies": []
-    },
-    "软件操作/Linux命令行/下载安装beagle.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 6517,
-      "exportedPath": "软件操作/linux命令行/下载安装beagle.html",
-      "dependencies": []
-    },
-    "软件操作/Linux命令行/aspera下载bam.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 232,
-      "exportedPath": "软件操作/linux命令行/aspera下载bam.html",
-      "dependencies": []
-    },
-    "软件操作/Linux命令行/awk提取第3列.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 62,
-      "exportedPath": "软件操作/linux命令行/awk提取第3列.html",
-      "dependencies": []
-    },
-    "软件操作/Linux命令行/Beast服务器安装.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 210,
-      "exportedPath": "软件操作/linux命令行/beast服务器安装.html",
-      "dependencies": []
-    },
-    "软件操作/Linux命令行/Cut文本处理工具.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 461,
-      "exportedPath": "软件操作/linux命令行/cut文本处理工具.html",
-      "dependencies": []
-    },
-    "软件操作/Linux命令行/haplogrouper分单倍群报错.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 405,
-      "exportedPath": "软件操作/linux命令行/haplogrouper分单倍群报错.html",
-      "dependencies": []
-    },
-    "软件操作/Linux命令行/linux下载软件Aspera.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 1158,
-      "exportedPath": "软件操作/linux命令行/linux下载软件aspera.html",
-      "dependencies": []
-    },
-    "软件操作/Linux命令行/nohup 某个脚本.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 344,
-      "exportedPath": "软件操作/linux命令行/nohup-某个脚本.html",
-      "dependencies": []
-    },
-    "软件操作/Linux命令行/sed编辑器.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 844,
-      "exportedPath": "软件操作/linux命令行/sed编辑器.html",
-      "dependencies": []
-    },
-    "软件操作/Linux命令行/vcf基本信息.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 3496,
-      "exportedPath": "软件操作/linux命令行/vcf基本信息.html",
-      "dependencies": []
-    },
-    "软件操作/Linux命令行/Vcf上游处理全流程.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 35240,
-      "exportedPath": "软件操作/linux命令行/vcf上游处理全流程.html",
-      "dependencies": []
-    },
-    "软件操作/Linux命令行/vcf上游perl脚本的过滤原理.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 3428,
-      "exportedPath": "软件操作/linux命令行/vcf上游perl脚本的过滤原理.html",
-      "dependencies": []
-    },
-    "软件操作/谷歌API的启用.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 964,
-      "exportedPath": "软件操作/谷歌api的启用.html",
-      "dependencies": []
-    },
-    "软件操作/通配符.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 195,
-      "exportedPath": "软件操作/通配符.html",
-      "dependencies": []
-    },
-    "软件操作/用API查询经纬度.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 1404,
-      "exportedPath": "软件操作/用api查询经纬度.html",
-      "dependencies": []
-    },
-    "软件操作/AI中批量替换颜色.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 1552,
-      "exportedPath": "软件操作/ai中批量替换颜色.html",
-      "dependencies": []
-    },
-    "软件操作/Beast-bModelTest下载.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 1239,
-      "exportedPath": "软件操作/beast-bmodeltest下载.html",
-      "dependencies": []
-    },
-    "软件操作/Github笔记上传操作.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 1620,
-      "exportedPath": "软件操作/github笔记上传操作.html",
-      "dependencies": []
-    },
-    "软件操作/python、R安装包的方法.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 558,
-      "exportedPath": "软件操作/python、r安装包的方法.html",
-      "dependencies": []
-    },
-    "软件操作/windows端下载软件iqtree2.md": {
-      "modifiedTime": 1726211992230,
-      "sourceSize": 759,
-      "exportedPath": "软件操作/windows端下载软件iqtree2.html",
-      "dependencies": []
-    },
-    "软件操作/GUI.for.SingBox下载及配置.md": {
-      "modifiedTime": 1726554711170,
-      "sourceSize": 3545,
-      "exportedPath": "软件操作/gui.for.singbox下载及配置.html",
-      "dependencies": []
-    },
-    "软件操作/分析软件/Beast 1.8简易手册-修订版.md": {
-      "modifiedTime": 1726554711170,
-      "sourceSize": 83833,
-      "exportedPath": "软件操作/分析软件/beast-1.8简易手册-修订版.html",
-      "dependencies": []
-    },
-    "软件操作/Adobe绕过通行证检查.md": {
-      "modifiedTime": 1726554711170,
-      "sourceSize": 205,
-      "exportedPath": "软件操作/adobe绕过通行证检查.html",
+    "软件操作/分析软件/Python/Python：fasta转Arp.md": {
+      "modifiedTime": 1728529855692,
+      "sourceSize": 3869,
+      "exportedPath": "软件操作/分析软件/python/python：fasta转arp.html",
       "dependencies": []
     }
   }
